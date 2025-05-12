@@ -23,25 +23,35 @@ app.post('/api/planificateur', async (req, res) => {
   console.log("📦 Données reçues :", req.body);
 
   const prompt = `
-Tu es un expert en voyages sur mesure au Japon.
+Tu es un expert en voyages au Japon, spécialisé dans les itinéraires personnalisés de grande qualité. Tu t’adresses à un voyageur francophone qui attend un conseil haut de gamme, structuré, clair et inspirant.
 
-Voici les données utilisateur à intégrer directement dans ta réponse (pas de \${...}, pas de variables) :
+Voici les informations fournies par le voyageur :
 
 - 🗓 Date de départ : ${start}
 - ⏱ Durée du séjour : ${duration} jours
-- 💶 Budget : ${budget} €
+- 💶 Budget approximatif : ${budget} €
 - 🎯 Centres d’intérêt : ${interests.join(', ')}
 
-Ta mission est de créer un **itinéraire détaillé jour par jour** adapté à ce voyageur :
+Ta mission est de proposer un **itinéraire détaillé jour par jour**, structuré ainsi :
 
-- Chaque jour commence par le lieu ou la ville principale
-- Inclue des activités pertinentes, des conseils de visite, des idées repas ou expériences uniques
-- Garde un ton clair, fluide, et humain
-- Évite absolument toute répétition de variable non interprétée (ex. : "\${duration}")
-- Parle comme un conseiller humain
+📍 **Ville principale du jour**  
+🕗 **Matin** : activité, visite ou expérience  
+🕑 **Après-midi** : découverte locale ou moment libre  
+🌙 **Soir** : suggestion de dîner ou quartier à explorer  
+🏨 **Hébergement recommandé** (niveau cohérent avec le budget : capsule, ryokan, business hôtel, hôtel design…)
 
-Commence dès la première ligne par un résumé personnalisé intégrant toutes les données ci-dessus.
-  `;
+🚄 Si changement de ville, indique le mode de transport et la durée estimée (ex. : "Train JR Tokyo → Kanazawa – 2h30")
+
+🍱 Chaque jour, propose aussi une **spécialité culinaire locale** à tester (avec contexte culturel ou anecdote si possible)
+
+🧘‍♀️ Tu peux ajouter une touche de spiritualité, nature ou culture pop selon les centres d’intérêt.
+
+📝 Sois fluide, humain, et évocateur. Ne fais jamais de liste sèche. Ne réutilise pas les variables brutes comme \${duration} ou \${budget}.
+
+Commence par un **résumé personnalisé du voyage**, puis déroule chaque jour clairement.
+
+Ta réponse doit donner envie de partir immédiatement.
+`;
 
   try {
     const completion = await openai.chat.completions.create({
