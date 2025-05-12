@@ -67,7 +67,7 @@ Ta mission :
 
 ${dataContext ? "Informations locales disponibles :\n" + dataContext : ""}
 
-Sois fluide, précis, inspirant. Commence par une brève présentation de la ville.\nSi la période du voyage est précisée, filtre les événements extraits pour qu’ils correspondent à cette période.\n Rédige en français naturel et agréable.
+Sois fluide, précis, inspirant. Commence par une brève présentation de la ville. Rédige en français naturel et agréable.
     `;
   } else {
     prompt = `
@@ -101,11 +101,7 @@ Propose un itinéraire complet, jour par jour, structuré comme suit :
 
 ${dataContext ? "Informations locales disponibles :\n" + dataContext : ""}
 
-Commence par un court résumé du voyage. Utilise un ton fluide, humain, inspirant.
-
-Tu disposes d’un ensemble d’événements locaux extraits automatiquement pour certaines régions du Japon. Si l’un ou plusieurs de ces événements correspondent aux villes ou régions visitées durant le séjour, intègre-les directement dans le programme jour par jour (matin, après-midi ou soir), de façon naturelle et cohérente. Mentionne le nom de l’événement, sa spécificité, et pourquoi il vaut la peine d’y assister. Ne surcharge pas chaque journée, mais propose des moments culturels riches lorsque les données le permettent.
-
-Aide ce voyageur à vivre un moment inoubliable.
+Commence par un court résumé du voyage. Utilise un ton fluide, humain, inspirant. Aide ce voyageur à vivre un moment inoubliable.
     `;
   }
 
