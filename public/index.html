@@ -29,12 +29,18 @@
       margin: 0.5rem 0;
     }
 
-    input, select {
+    input[type="text"],
+    input[type="number"],
+    input[type="date"] {
       padding: 0.5rem;
       font-size: 1rem;
       margin-top: 0.2rem;
       border: 1px solid #ccc;
       border-radius: 4px;
+    }
+
+    input[type="radio"] {
+      margin-right: 0.5rem;
     }
 
     button {
@@ -61,12 +67,14 @@
       overflow: visible;
     }
 
-    .mode-section {
+    .hidden {
       display: none;
     }
 
-    .visible {
-      display: block;
+    .section-title {
+      margin-top: 1.5rem;
+      font-size: 1.2rem;
+      color: #DF2A2F;
     }
   </style>
 </head>
@@ -74,19 +82,16 @@
 
 <h2>Assistant de voyage au Japon</h2>
 
-<form id="selector-form">
-  <fieldset>
-    <legend>Que souhaitez-vous planifier ?</legend>
-    <label><input type="radio" name="mode" value="complet"> Un voyage complet</label><br>
-    <label><input type="radio" name="mode" value="ville"> L'exploration d'une ville</label>
-  </fieldset>
+<form id="mode-form">
+  <p>Que souhaitez-vous planifier ?</p>
+  <label><input type="radio" name="mode" value="complet"> Un voyage complet sur mesure</label>
+  <label><input type="radio" name="mode" value="ville"> L'exploration d'une ville en particulier</label>
 </form>
 
-<!-- Formulaire voyage complet -->
-<form id="form-complet" class="mode-section">
-  <h3>Voyage sur mesure</h3>
+<form id="form-complet" class="hidden">
+  <div class="section-title">Informations pour un voyage complet</div>
 
-  <label>Votre nom :
+  <label>Votre prénom :
     <input type="text" name="username">
   </label>
 
@@ -98,37 +103,12 @@
     <input type="number" name="duration" min="1">
   </label>
 
-  <label>Budget approximatif (€) :
+  <label>Budget estimé (€) :
     <input type="number" name="budget" min="0">
   </label>
 
-  <label>Centres d’intérêt :
-    <input type="text" name="interests" placeholder="ex. culture, gastronomie, nature">
-  </label>
-
-  <label>Type de voyageur :
-    <select name="type">
-      <option value="solo">Solo</option>
-      <option value="couple">Couple</option>
-      <option value="famille">Famille</option>
-      <option value="amis">Entre amis</option>
-    </select>
-  </label>
-
-  <label>Style de voyage :
-    <select name="style">
-      <option value="authentique">Authentique</option>
-      <option value="classique">Classique</option>
-      <option value="hors sentiers battus">Hors des sentiers battus</option>
-    </select>
-  </label>
-
-  <label>Rythme :
-    <select name="rythme">
-      <option value="tranquille">Tranquille</option>
-      <option value="modéré">Modéré</option>
-      <option value="intense">Intense</option>
-    </select>
+  <label>Centres d’intérêt (ex. temples, gastronomie, nature) :
+    <input type="text" name="interests">
   </label>
 
   <label>Villes ou régions souhaitées :
@@ -140,33 +120,42 @@
   </label>
 
   <label>Est-ce votre premier voyage au Japon ?
-    <select name="firstTime">
-      <option value="oui">Oui</option>
-      <option value="non">Non</option>
-    </select>
+    <input type="radio" name="firstTime" value="oui"> Oui
+    <input type="radio" name="firstTime" value="non"> Non
+  </label>
+
+  <label>Type de voyageur (ex. solo, couple, famille) :
+    <input type="text" name="type">
+  </label>
+
+  <label>Style de voyage souhaité (ex. authentique, classique, insolite) :
+    <input type="text" name="style">
+  </label>
+
+  <label>Rythme de voyage (ex. tranquille, modéré, intense) :
+    <input type="text" name="rythme">
   </label>
 
   <button type="submit">Générer mon voyage</button>
 </form>
 
-<!-- Formulaire exploration de ville -->
-<form id="form-ville" class="mode-section">
-  <h3>Exploration d'une ville</h3>
+<form id="form-ville" class="hidden">
+  <div class="section-title">Informations pour une ville à explorer</div>
 
   <label>Ville à explorer :
-    <input type="text" name="ville" required>
+    <input type="text" name="ville">
   </label>
 
-  <label>Période du voyage :
-    <input type="text" name="periodeVille" placeholder="ex. mai 2025 ou été 2025">
+  <label>Période du voyage (mois ou saison + année) :
+    <input type="text" name="periodeVille">
   </label>
 
   <label>Durée sur place (en jours) :
-    <input type="number" name="joursVille" min="1" required>
+    <input type="number" name="joursVille" min="1">
   </label>
 
   <label>Centres d’intérêt :
-    <input type="text" name="interests" placeholder="ex. temples, gastronomie, nature">
+    <input type="text" name="interests">
   </label>
 
   <button type="submit">Générer mon itinéraire</button>
@@ -175,29 +164,32 @@
 <div id="result"></div>
 
 <script>
-  const selectorForm = document.getElementById('selector-form');
+  const modeForm = document.getElementById('mode-form');
   const formComplet = document.getElementById('form-complet');
   const formVille = document.getElementById('form-ville');
   const resultBox = document.getElementById('result');
 
-  selectorForm.addEventListener('change', () => {
-    const selected = selectorForm.querySelector('input[name="mode"]:checked');
-    formComplet.classList.remove('visible');
-    formVille.classList.remove('visible');
-    if (selected && selected.value === 'complet') formComplet.classList.add('visible');
-    else if (selected && selected.value === 'ville') formVille.classList.add('visible');
+  modeForm.addEventListener('change', () => {
+    const selected = modeForm.querySelector('input[name="mode"]:checked');
+    formComplet.classList.add('hidden');
+    formVille.classList.add('hidden');
+    if (selected) {
+      if (selected.value === 'complet') formComplet.classList.remove('hidden');
+      else if (selected.value === 'ville') formVille.classList.remove('hidden');
+    }
   });
 
   const submitHandler = async (e, mode) => {
     e.preventDefault();
     resultBox.innerHTML = "⏳ Génération de votre itinéraire en cours...";
-
     const form = e.target;
     const data = { mode };
 
     for (const el of form.elements) {
       if (el.name) {
-        if (el.type === "text" || el.type === "number" || el.type === "date" || el.tagName === "SELECT") {
+        if (el.type === "radio") {
+          if (el.checked) data[el.name] = el.value;
+        } else {
           data[el.name] = el.value;
         }
       }
@@ -227,8 +219,8 @@
     }
   };
 
-  document.getElementById('form-complet').addEventListener('submit', e => submitHandler(e, 'complet'));
-  document.getElementById('form-ville').addEventListener('submit', e => submitHandler(e, 'ville'));
+  formComplet.addEventListener('submit', e => submitHandler(e, 'complet'));
+  formVille.addEventListener('submit', e => submitHandler(e, 'ville'));
 </script>
 
 </body>
