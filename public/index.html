@@ -194,6 +194,13 @@
         resultBox.innerText = "❌ Une erreur est survenue lors de la génération.";
       }
     });
-  </script>
+  
+window.onload = () => {
+  window.parent.postMessage({
+    type: "setHeight",
+    height: document.body.scrollHeight
+  }, "*");
+};
+</script>
 </body>
 </html>
