@@ -42,7 +42,7 @@ app.post('/api/planificateur', async (req, res) => {
   const {
     username, mode, start, duration, budget, interests = [],
     type, style, rythme, villesSouhaitees, lieuxAeviter, firstTime,
-    ville, joursVille
+    ville, joursVille, periodeVille
   } = req.body;
   console.log("📦 Données reçues :", req.body);
 
@@ -54,7 +54,7 @@ app.post('/api/planificateur', async (req, res) => {
     prompt = `
 Tu es un expert francophone du Japon. Voici une demande d'un utilisateur souhaitant explorer une ville spécifique au Japon.
 
-Ville demandée : ${ville}
+Ville demandée : ${ville}\nPériode du voyage : ${periodeVille || 'non précisée'}
 Durée sur place : ${joursVille} jours
 Centres d’intérêt : ${interests.join(', ')}
 
@@ -67,7 +67,7 @@ Ta mission :
 
 ${dataContext ? "Informations locales disponibles :\n" + dataContext : ""}
 
-Sois fluide, précis, inspirant. Commence par une brève présentation de la ville. Rédige en français naturel et agréable.
+Sois fluide, précis, inspirant. Commence par une brève présentation de la ville.\nSi la période du voyage est précisée, filtre les événements extraits pour qu’ils correspondent à cette période.\n Rédige en français naturel et agréable.
     `;
   } else {
     prompt = `
