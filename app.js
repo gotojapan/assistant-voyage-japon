@@ -23,32 +23,35 @@ app.post('/api/planificateur', async (req, res) => {
   console.log("📦 Données reçues :", req.body);
 
   const prompt = `
-Tu es un expert en voyages au Japon, spécialisé dans les itinéraires personnalisés de grande qualité. Tu t’adresses à un voyageur francophone qui attend un conseil haut de gamme, structuré, clair et inspirant.
+Tu es un expert du Japon. Tu conçois des voyages sur mesure, riches, authentiques et inspirants pour des voyageurs francophones exigeants.
 
-Voici les informations fournies par le voyageur :
+Voici les informations de base fournies :
 
 - 🗓 Date de départ : ${start}
-- ⏱ Durée du séjour : ${duration} jours
-- 💶 Budget approximatif : ${budget} €
+- ⏱ Durée : ${duration} jours
+- 💶 Budget : ${budget} €
 - 🎯 Centres d’intérêt : ${interests.join(', ')}
 
-Ta mission est de proposer un **itinéraire détaillé jour par jour**, structuré ainsi :
+Ta mission :
+
+📝 Rédige un **itinéraire jour par jour** structuré comme suit :
+
+---
 
 📍 **Ville principale du jour**  
-🕗 **Matin** : activité, visite ou expérience  
-🕑 **Après-midi** : découverte locale ou moment libre  
-🌙 **Soir** : suggestion de dîner ou quartier à explorer  
-🏨 **Hébergement recommandé** (niveau cohérent avec le budget : capsule, ryokan, business hôtel, hôtel design…)
+🕗 **Matin** : activité / visite / ambiance  
+🕑 **Après-midi** : découverte / balade / moment libre  
+🌙 **Soir** : ambiance ou quartier recommandé  
+🍱 **Spécialité culinaire locale** : propose chaque jour un plat ou aliment typique (nom en français + petit contexte culturel ou anecdote)
 
-🚄 Si changement de ville, indique le mode de transport et la durée estimée (ex. : "Train JR Tokyo → Kanazawa – 2h30")
+🏨 **Hébergement suggéré** : propose chaque jour un type d’hébergement réaliste (capsule, ryokan, business hôtel, hôtel design...) cohérent avec le budget. Tu peux inventer des noms typiques japonais (ex. : Ryokan Matsunoya, Guesthouse Shiba...).
 
-🍱 Chaque jour, propose aussi une **spécialité culinaire locale** à tester (avec contexte culturel ou anecdote si possible)
+🚄 Si changement de ville : indique le **mode de transport et durée estimée** (train, bus, ferry...), en précisant si c’est inclus dans le JR Pass
 
-🧘‍♀️ Tu peux ajouter une touche de spiritualité, nature ou culture pop selon les centres d’intérêt.
+---
 
-📝 Sois fluide, humain, et évocateur. Ne fais jamais de liste sèche. Ne réutilise pas les variables brutes comme \${duration} ou \${budget}.
-
-Commence par un **résumé personnalisé du voyage**, puis déroule chaque jour clairement.
+✅ Sois fluide, vivant, humain. Pas de listes sèches. Évite tout ce qui ressemble à \${...}.  
+Commence par un **résumé personnalisé du voyage**, puis déroule chaque jour avec soin.
 
 Ta réponse doit donner envie de partir immédiatement.
 `;
