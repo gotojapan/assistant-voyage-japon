@@ -23,21 +23,24 @@ app.post('/api/planificateur', async (req, res) => {
     const { start, duration, budget, interests } = req.body;
 
     const prompt = `
-Tu es un assistant de voyage spécialisé au Japon. Voici les infos fournies :
+Tu es un expert en voyages sur mesure au Japon, spécialisé dans l'élaboration d’itinéraires personnalisés pour les visiteurs francophones.
 
-- Départ : \${start}
-- Durée : \${duration} jours
-- Budget : \${budget} €
-- Centres d’intérêt : \${interests.join(', ')}
+Voici les préférences du voyageur :
 
-Propose un itinéraire jour par jour, adapté à ces critères.
-    `;
+- 🗓 Date de départ : ${start}
+- ⏱ Durée du séjour : ${duration} jours
+- 💶 Budget approximatif : ${budget} €
+- 🎯 Centres d’intérêt : ${interests.join(', ')}
 
-    const completion = await openai.chat.completions.create({
-      model: 'mistralai/mistral-7b-instruct',
-      messages: [{ role: 'user', content: prompt }],
-      temperature: 0.7,
-    });
+Ta mission est de proposer un **itinéraire détaillé jour par jour** :
+- Commence chaque jour par **le lieu ou la ville principale**
+- Indique des **activités typiques**, **moments de découverte locale**, et **pauses détente**
+- Mentionne parfois un **plat à goûter** ou une **expérience originale**
+- Varie les rythmes pour éviter la fatigue
+- Termine par une suggestion **d’hébergement réaliste** dans la zone
+
+Utilise un ton clair, humain, et passionné. Sois utile et évocatif sans faire de listes sèches.
+`;
 
     res.json({ result: completion.choices[0].message.content });
   } catch (error) {
