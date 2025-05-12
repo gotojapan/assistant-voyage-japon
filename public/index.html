@@ -13,7 +13,7 @@
       color: #111;
     }
 
-    h1 {
+    h2 {
       color: #DF2A2F;
       text-align: center;
     }
@@ -29,7 +29,7 @@
       margin: 0.5rem 0;
     }
 
-    input, select, textarea {
+    input, select {
       padding: 0.5rem;
       font-size: 1rem;
       margin-top: 0.2rem;
@@ -60,18 +60,106 @@
       height: auto;
       overflow: visible;
     }
+
+    .mode-section {
+      display: none;
+    }
+
+    .visible {
+      display: block;
+    }
   </style>
 </head>
 <body>
 
-<form id="form">
-  <h2>Exploration d'une ville au Japon</h2>
+<h2>Assistant de voyage au Japon</h2>
 
-  <label>Quelle ville souhaitez-vous explorer ?
+<form id="selector-form">
+  <label>Que souhaitez-vous planifier ?
+    <select id="mode-selector" required>
+      <option value="">-- Choisissez une option --</option>
+      <option value="complet">Un voyage complet</option>
+      <option value="ville">L'exploration d'une ville</option>
+    </select>
+  </label>
+</form>
+
+<!-- Formulaire voyage complet -->
+<form id="form-complet" class="mode-section">
+  <h3>Voyage sur mesure</h3>
+
+  <label>Votre nom :
+    <input type="text" name="username">
+  </label>
+
+  <label>Date de départ :
+    <input type="date" name="start">
+  </label>
+
+  <label>Durée du séjour (en jours) :
+    <input type="number" name="duration" min="1">
+  </label>
+
+  <label>Budget approximatif (€) :
+    <input type="number" name="budget" min="0">
+  </label>
+
+  <label>Centres d’intérêt :
+    <input type="text" name="interests" placeholder="ex. culture, gastronomie, nature">
+  </label>
+
+  <label>Type de voyageur :
+    <select name="type">
+      <option value="solo">Solo</option>
+      <option value="couple">Couple</option>
+      <option value="famille">Famille</option>
+      <option value="amis">Entre amis</option>
+    </select>
+  </label>
+
+  <label>Style de voyage :
+    <select name="style">
+      <option value="authentique">Authentique</option>
+      <option value="classique">Classique</option>
+      <option value="hors sentiers battus">Hors des sentiers battus</option>
+    </select>
+  </label>
+
+  <label>Rythme :
+    <select name="rythme">
+      <option value="tranquille">Tranquille</option>
+      <option value="modéré">Modéré</option>
+      <option value="intense">Intense</option>
+    </select>
+  </label>
+
+  <label>Villes ou régions souhaitées :
+    <input type="text" name="villesSouhaitees">
+  </label>
+
+  <label>Lieux à éviter :
+    <input type="text" name="lieuxAeviter">
+  </label>
+
+  <label>Est-ce votre premier voyage au Japon ?
+    <select name="firstTime">
+      <option value="oui">Oui</option>
+      <option value="non">Non</option>
+    </select>
+  </label>
+
+  <button type="submit">Générer mon voyage</button>
+</form>
+
+<!-- Formulaire exploration de ville -->
+<form id="form-ville" class="mode-section">
+  <h3>Exploration d'une ville</h3>
+
+  <label>Ville à explorer :
     <input type="text" name="ville" required>
   </label>
 
-  <label>Période du voyage (mois ou saison + année) :
+  <label>Période du voyage :
     <input type="text" name="periodeVille" placeholder="ex. mai 2025 ou été 2025">
   </label>
 
@@ -79,7 +167,7 @@
     <input type="number" name="joursVille" min="1" required>
   </label>
 
-  <label>Vos centres d’intérêt :
+  <label>Centres d’intérêt :
     <input type="text" name="interests" placeholder="ex. temples, gastronomie, nature">
   </label>
 
@@ -89,20 +177,36 @@
 <div id="result"></div>
 
 <script>
-  const form = document.getElementById('form');
+  const selector = document.getElementById('mode-selector');
+  const formComplet = document.getElementById('form-complet');
+  const formVille = document.getElementById('form-ville');
   const resultBox = document.getElementById('result');
 
-  form.addEventListener('submit', async (e) => {
+  selector.addEventListener('change', () => {
+    formComplet.classList.remove('visible');
+    formVille.classList.remove('visible');
+    if (selector.value === 'complet') formComplet.classList.add('visible');
+    else if (selector.value === 'ville') formVille.classList.add('visible');
+  });
+
+  const submitHandler = async (e, mode) => {
     e.preventDefault();
     resultBox.innerHTML = "⏳ Génération de votre itinéraire en cours...";
 
-    const data = {
-      mode: "ville",
-      ville: form.ville.value,
-      periodeVille: form.periodeVille.value,
-      joursVille: form.joursVille.value,
-      interests: form.interests.value.split(',').map(i => i.trim())
-    };
+    const form = e.target;
+    const data = { mode };
+
+    for (const el of form.elements) {
+      if (el.name) {
+        if (el.type === "text" || el.type === "number" || el.type === "date" || el.tagName === "SELECT") {
+          data[el.name] = el.value;
+        }
+      }
+    }
+
+    if (data.interests) {
+      data.interests = data.interests.split(',').map(i => i.trim());
+    }
 
     try {
       const res = await fetch('/api/planificateur', {
@@ -122,7 +226,11 @@
       resultBox.innerText = "❌ Une erreur est survenue lors de la génération de l’itinéraire.";
       console.error(err);
     }
-  });
+  };
+
+  document.getElementById('form-complet').addEventListener('submit', e => submitHandler(e, 'complet'));
+  document.getElementById('form-ville').addEventListener('submit', e => submitHandler(e, 'ville'));
 </script>
+
 </body>
 </html>
