@@ -61,8 +61,6 @@
       background-color: #c92226;
     }
     #result {
-      height: auto;
-      overflow: visible;
       max-width: 700px;
       margin: 2rem auto;
       padding: 1rem;
@@ -75,7 +73,7 @@
   </style>
 </head>
 <body>
-  
+  <h1>Assistant de voyage au Japon</h1>
   <form id="tripForm">
     <label>Nom ou pseudo :
       <input type="text" name="username">
@@ -141,6 +139,12 @@
       <label>Quelle ville souhaitez-vous explorer ?
         <input type="text" name="ville">
       </label>
+      <label>Période du voyage (mois ou saison + année) :
+        <input type="text" name="periodeVille" placeholder="ex. mai 2025 ou été 2025">
+      </label>
+      <label>Durée sur place (en jours) :
+        <input type="text" name="ville">
+      </label>
       <label>Durée sur place (en jours) :
         <input type="number" name="joursVille">
       </label>
@@ -192,10 +196,6 @@
         });
         const json = await res.json();
         resultBox.innerText = json.result;
-      window.parent.postMessage({
-        type: "setHeight",
-        height: document.body.scrollHeight
-      }, "*");
       } catch (err) {
         resultBox.innerText = "❌ Une erreur est survenue lors de la génération.";
       }
