@@ -23,23 +23,24 @@ app.post('/api/planificateur', async (req, res) => {
     const { start, duration, budget, interests } = req.body;
 
     const prompt = `
-Tu es un expert en voyages sur mesure au Japon, spécialisé dans l'élaboration d’itinéraires personnalisés pour les visiteurs francophones.
+Tu es un expert en voyages sur mesure au Japon.
 
-Voici vos préférences de voyage :
+Voici les données utilisateur à intégrer directement dans ta réponse (pas de \${...}, pas de variables) :
 
 - 🗓 Date de départ : ${start}
 - ⏱ Durée du séjour : ${duration} jours
-- 💶 Budget approximatif : ${budget} €
+- 💶 Budget : ${budget} €
 - 🎯 Centres d’intérêt : ${interests.join(', ')}
 
-Ta mission est de proposer un **itinéraire détaillé jour par jour** :
-- Commence chaque jour par **le lieu ou la ville principale**
-- Indique des **activités typiques**, **moments de découverte locale**, et **pauses détente**
-- Mentionne parfois un **plat à goûter** ou une **expérience originale**
-- Varie les rythmes pour éviter la fatigue
-- Termine par une suggestion **d’hébergement réaliste** dans la zone
+Ta mission est de créer un **itinéraire détaillé jour par jour** adapté à ce voyageur :
 
-Utilise un ton clair, humain, et passionné. Sois utile et évocatif sans faire de listes sèches.
+- Chaque jour commence par le lieu ou la ville principale
+- Inclue des activités pertinentes, des conseils de visite, des idées repas ou expériences uniques
+- Garde un ton clair, fluide, et humain
+- Évite absolument toute répétition de variable non interprétée (ex. : "\${duration}")
+- Parle comme un conseiller humain
+
+Commence dès la première ligne par un résumé personnalisé intégrant toutes les données ci-dessus.
 `;
 
     res.json({ result: completion.choices[0].message.content });
