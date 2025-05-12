@@ -25,7 +25,7 @@ app.post('/api/planificateur', async (req, res) => {
     const prompt = `
 Tu es un expert en voyages sur mesure au Japon, spécialisé dans l'élaboration d’itinéraires personnalisés pour les visiteurs francophones.
 
-Voici les préférences du voyageur :
+Voici vos préférences de voyage :
 
 - 🗓 Date de départ : ${start}
 - ⏱ Durée du séjour : ${duration} jours
