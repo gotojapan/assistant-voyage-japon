@@ -1,0 +1,159 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Assistant de voyage au Japon</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Lato', sans-serif;
+      margin: 0;
+      padding: 2rem;
+      background-color: #fff;
+      color: #000;
+    }
+    h1 {
+      color: #DF2A2F;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    form {
+      max-width: 600px;
+      margin: auto;
+      background: #f9f9f9;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    label, fieldset {
+      display: block;
+      margin-bottom: 1rem;
+    }
+    input[type="text"], input[type="number"], input[type="date"] {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.3rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    fieldset {
+      border: none;
+      padding: 0;
+    }
+    legend {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+    input[type="checkbox"] {
+      margin-right: 0.5rem;
+    }
+    button {
+      background-color: #DF2A2F;
+      color: #fff;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #c92226;
+    }
+    #result {
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 1rem;
+      background: #f0f0f0;
+      border-left: 5px solid #DF2A2F;
+      font-size: 1rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+    #loading {
+      display: none;
+      text-align: center;
+      margin-top: 2rem;
+    }
+    .spinner {
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #DF2A2F;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <h1>Assistant de voyage au Japon</h1>
+  <form id="tripForm">
+    <label>Date de départ :
+      <input type="date" name="start" required>
+    </label>
+    <label>Durée (jours) :
+      <input type="number" name="duration" required>
+    </label>
+    <label>Budget (€) :
+      <input type="number" name="budget" required>
+    </label>
+    <fieldset>
+      <legend>Centres d’intérêt :</legend>
+      <label><input type="checkbox" name="interests" value="culture"> Culture</label>
+      <label><input type="checkbox" name="interests" value="nature"> Nature</label>
+      <label><input type="checkbox" name="interests" value="gastronomie"> Gastronomie</label>
+      <label><input type="checkbox" name="interests" value="technologie"> Technologie</label>
+    </fieldset>
+    <button type="submit">Générer mon itinéraire</button>
+  </form>
+
+  <div id="loading">
+    <div class="spinner"></div>
+    <p style="color:#DF2A2F;">Préparation de votre voyage en cours...</p>
+  </div>
+
+  <div id="result"></div>
+
+  <script>
+    function sendIframeHeight() {
+      if (window.parent) {
+        const height = document.body.scrollHeight;
+        window.parent.postMessage({ type: "setHeight", height }, "*");
+      }
+    }
+
+    window.addEventListener("load", sendIframeHeight);
+    const observer = new MutationObserver(sendIframeHeight);
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    document.getElementById('tripForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const data = {
+        start: form.start.value,
+        duration: form.duration.value,
+        budget: form.budget.value,
+        interests: Array.from(form.querySelectorAll('input[name="interests"]:checked')).map(el => el.value)
+      };
+
+      document.getElementById('loading').style.display = 'block';
+      document.getElementById('result').innerText = '';
+
+      const res = await fetch('/api/planificateur', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      const json = await res.json();
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('result').innerText = json.result;
+    });
+  </script>
+</body>
+</html>
