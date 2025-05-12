@@ -1,3 +1,4 @@
+
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -19,42 +20,67 @@ const openai = new OpenAI({
 
 app.post('/api/planificateur', async (req, res) => {
   console.log("🔔 Requête reçue !");
-  const { start, duration, budget, interests } = req.body;
+  const {
+    username, mode, start, duration, budget, interests = [],
+    type, style, rythme, villesSouhaitees, lieuxAeviter, firstTime,
+    ville, joursVille
+  } = req.body;
   console.log("📦 Données reçues :", req.body);
 
-  const prompt = `
-Tu es un expert du Japon. Tu conçois des voyages sur mesure, riches, authentiques et inspirants pour des voyageurs francophones exigeants.
+  let prompt = "";
 
-Voici les informations de base fournies :
+  if (mode === "ville") {
+    prompt = `
+Tu es un expert francophone du Japon. Voici une demande d'un utilisateur souhaitant explorer une ville spécifique au Japon.
 
-- 🗓 Date de départ : ${start}
-- ⏱ Durée : ${duration} jours
-- 💶 Budget : ${budget} €
-- 🎯 Centres d’intérêt : ${interests.join(', ')}
+Ville demandée : ${ville}
+Durée sur place : ${joursVille} jours
+Centres d’intérêt : ${interests.join(', ')}
 
 Ta mission :
+- Proposer un guide détaillé pour découvrir cette ville jour par jour
+- Intégrer des suggestions d’activités (matin / après-midi / soir)
+- Proposer un plat typique par jour (nom, description)
+- Recommander un type d’hébergement local par nuit (ex. ryokan, capsule…)
+- Indiquer les quartiers incontournables, les spécificités culturelles et les ambiances à vivre
 
-📝 Rédige un **itinéraire jour par jour** structuré comme suit :
+Tu peux ajouter des anecdotes, conseils pratiques, événements saisonniers, etc.
 
----
+Sois fluide, précis, inspirant. Commence par une brève présentation de la ville. Rédige en français naturel et agréable.
+    `;
+  } else {
+    prompt = `
+Tu es un expert francophone en voyages au Japon. Tu aides un voyageur à organiser un séjour sur mesure, complet et riche.
 
-📍 **Ville principale du jour**  
-🕗 **Matin** : activité / visite / ambiance  
-🕑 **Après-midi** : découverte / balade / moment libre  
-🌙 **Soir** : ambiance ou quartier recommandé  
-🍱 **Spécialité culinaire locale** : propose chaque jour un plat ou aliment typique (nom en français + petit contexte culturel ou anecdote)
+Voici les informations fournies :
 
-🏨 **Hébergement suggéré** : propose chaque jour un type d’hébergement réaliste (capsule, ryokan, business hôtel, hôtel design...) cohérent avec le budget. Tu peux inventer des noms typiques japonais (ex. : Ryokan Matsunoya, Guesthouse Shiba...).
+Nom : ${username || "Voyageur"}
+Date de départ : ${start}
+Durée : ${duration} jours
+Budget : ${budget} €
+Centres d’intérêt : ${interests.join(', ')}
+Type de voyageur : ${type}
+Style de voyage préféré : ${style}
+Rythme souhaité : ${rythme}
+Souhaits particuliers : inclure ${villesSouhaitees || "aucune indication"}
+Éviter : ${lieuxAeviter || "non précisé"}
+Est-ce son premier voyage ? ${firstTime === 'oui' ? "Oui" : "Non"}
 
-🚄 Si changement de ville : indique le **mode de transport et durée estimée** (train, bus, ferry...), en précisant si c’est inclus dans le JR Pass
+Consignes :
 
----
+Propose un itinéraire complet, jour par jour, structuré comme suit :
 
-✅ Sois fluide, vivant, humain. Pas de listes sèches. Évite tout ce qui ressemble à \${...}.  
-Commence par un **résumé personnalisé du voyage**, puis déroule chaque jour avec soin.
+📍 Ville principale du jour  
+🕗 Matin : activité ou lieu  
+🕑 Après-midi : découverte ou temps libre  
+🌙 Soir : ambiance ou suggestion locale  
+🍱 Plat typique ou spécialité à goûter  
+🏨 Hébergement suggéré (adapté au budget)  
+🚄 Trajet inter-ville (si besoin, avec durée estimée)
 
-Ta réponse doit donner envie de partir immédiatement.
-`;
+Commence par un court résumé du voyage. Utilise un ton fluide, humain, inspirant. Aide ce voyageur à vivre un moment inoubliable.
+    `;
+  }
 
   try {
     const completion = await openai.chat.completions.create({
@@ -68,7 +94,7 @@ Ta réponse doit donner envie de partir immédiatement.
     res.json({ result });
 
   } catch (error) {
-    console.error("❌ Erreur lors de la génération :", error.message);
+    console.error("❌ Erreur :", error.message);
     if (error.response) {
       console.error("💥 Réponse brute :", error.response.data);
     }
