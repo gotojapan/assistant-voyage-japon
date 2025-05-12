@@ -3,6 +3,8 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const OpenAI = require('openai');
+const fs = require('fs');
+const path = require('path');
 
 const app = express();
 app.use(cors());
@@ -18,6 +20,23 @@ const openai = new OpenAI({
   }
 });
 
+const REGIONS = ["hokkaido", "tohoku", "kanto", "chubu", "kinki", "chugoku", "shikoku", "kyushu_okinawa"];
+
+function extractRegionData(inputText) {
+  const matches = [];
+  const searchText = (inputText || '').toLowerCase();
+  for (const region of REGIONS) {
+    if (searchText.includes(region) || (region === 'kanto' && searchText.includes('tokyo'))) {
+      const filePath = path.join(__dirname, `data/events_${region}.txt`);
+      if (fs.existsSync(filePath)) {
+        const content = fs.readFileSync(filePath, 'utf-8');
+        matches.push(`📍 Événements dans la région ${region.toUpperCase()} :\n${content}`);
+      }
+    }
+  }
+  return matches.join('\n\n');
+}
+
 app.post('/api/planificateur', async (req, res) => {
   console.log("🔔 Requête reçue !");
   const {
@@ -26,6 +45,8 @@ app.post('/api/planificateur', async (req, res) => {
     ville, joursVille
   } = req.body;
   console.log("📦 Données reçues :", req.body);
+
+  const dataContext = extractRegionData((ville || '') + ' ' + (villesSouhaitees || ''));
 
   let prompt = "";
 
@@ -44,7 +65,7 @@ Ta mission :
 - Recommander un type d’hébergement local par nuit (ex. ryokan, capsule…)
 - Indiquer les quartiers incontournables, les spécificités culturelles et les ambiances à vivre
 
-Tu peux ajouter des anecdotes, conseils pratiques, événements saisonniers, etc.
+${dataContext ? "Informations locales disponibles :\n" + dataContext : ""}
 
 Sois fluide, précis, inspirant. Commence par une brève présentation de la ville. Rédige en français naturel et agréable.
     `;
@@ -78,7 +99,13 @@ Propose un itinéraire complet, jour par jour, structuré comme suit :
 🏨 Hébergement suggéré (adapté au budget)  
 🚄 Trajet inter-ville (si besoin, avec durée estimée)
 
-Commence par un court résumé du voyage. Utilise un ton fluide, humain, inspirant. Aide ce voyageur à vivre un moment inoubliable.
+${dataContext ? "Informations locales disponibles :\n" + dataContext : ""}
+
+Commence par un court résumé du voyage. Utilise un ton fluide, humain, inspirant.
+
+Tu disposes d’un ensemble d’événements locaux extraits automatiquement pour certaines régions du Japon. Si l’un ou plusieurs de ces événements correspondent aux villes ou régions visitées durant le séjour, intègre-les directement dans le programme jour par jour (matin, après-midi ou soir), de façon naturelle et cohérente. Mentionne le nom de l’événement, sa spécificité, et pourquoi il vaut la peine d’y assister. Ne surcharge pas chaque journée, mais propose des moments culturels riches lorsque les données le permettent.
+
+Aide ce voyageur à vivre un moment inoubliable.
     `;
   }
 
