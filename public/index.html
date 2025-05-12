@@ -75,13 +75,11 @@
 <h2>Assistant de voyage au Japon</h2>
 
 <form id="selector-form">
-  <label>Que souhaitez-vous planifier ?
-    <select id="mode-selector" required>
-      <option value="">-- Choisissez une option --</option>
-      <option value="complet">Un voyage complet</option>
-      <option value="ville">L'exploration d'une ville</option>
-    </select>
-  </label>
+  <fieldset>
+    <legend>Que souhaitez-vous planifier ?</legend>
+    <label><input type="radio" name="mode" value="complet"> Un voyage complet</label><br>
+    <label><input type="radio" name="mode" value="ville"> L'exploration d'une ville</label>
+  </fieldset>
 </form>
 
 <!-- Formulaire voyage complet -->
@@ -177,16 +175,17 @@
 <div id="result"></div>
 
 <script>
-  const selector = document.getElementById('mode-selector');
+  const selectorForm = document.getElementById('selector-form');
   const formComplet = document.getElementById('form-complet');
   const formVille = document.getElementById('form-ville');
   const resultBox = document.getElementById('result');
 
-  selector.addEventListener('change', () => {
+  selectorForm.addEventListener('change', () => {
+    const selected = selectorForm.querySelector('input[name="mode"]:checked');
     formComplet.classList.remove('visible');
     formVille.classList.remove('visible');
-    if (selector.value === 'complet') formComplet.classList.add('visible');
-    else if (selector.value === 'ville') formVille.classList.add('visible');
+    if (selected && selected.value === 'complet') formComplet.classList.add('visible');
+    else if (selected && selected.value === 'ville') formVille.classList.add('visible');
   });
 
   const submitHandler = async (e, mode) => {
