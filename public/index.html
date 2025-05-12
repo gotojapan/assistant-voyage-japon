@@ -150,18 +150,49 @@
   <div id="result"></div>
 
   <script>
+    const form = document.getElementById('tripForm');
+    const resultBox = document.getElementById('result');
+
+    // Toggle entre modes
     document.querySelectorAll('input[name="mode"]').forEach(input => {
       input.addEventListener('change', () => {
-        const complet = document.getElementById("mode-complet");
-        const ville = document.getElementById("mode-ville");
-        if (input.value === "ville") {
-          complet.style.display = "none";
-          ville.style.display = "block";
-        } else {
-          complet.style.display = "block";
-          ville.style.display = "none";
-        }
+        document.getElementById("mode-complet").style.display = input.value === "complet" ? "block" : "none";
+        document.getElementById("mode-ville").style.display = input.value === "ville" ? "block" : "none";
       });
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const data = {
+        username: formData.get("username"),
+        mode: formData.get("mode"),
+        start: formData.get("start"),
+        duration: formData.get("duration"),
+        budget: formData.get("budget"),
+        interests: formData.getAll("interests"),
+        type: formData.get("type"),
+        style: formData.get("style"),
+        rythme: formData.get("rythme"),
+        villesSouhaitees: formData.get("villesSouhaitees"),
+        lieuxAeviter: formData.get("lieuxAeviter"),
+        firstTime: formData.get("firstTime"),
+        ville: formData.get("ville"),
+        joursVille: formData.get("joursVille")
+      };
+
+      resultBox.innerText = "⏳ Génération de votre itinéraire en cours...";
+      try {
+        const res = await fetch('/api/planificateur', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        const json = await res.json();
+        resultBox.innerText = json.result;
+      } catch (err) {
+        resultBox.innerText = "❌ Une erreur est survenue lors de la génération.";
+      }
     });
   </script>
 </body>
