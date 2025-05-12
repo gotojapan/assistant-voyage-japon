@@ -61,6 +61,8 @@
       background-color: #c92226;
     }
     #result {
+      height: auto;
+      overflow: visible;
       max-width: 700px;
       margin: 2rem auto;
       padding: 1rem;
@@ -73,7 +75,7 @@
   </style>
 </head>
 <body>
-  <!-- <h1>Assistant de voyage au Japon</h1> -->
+  <h1>Assistant de voyage au Japon</h1>
   <form id="tripForm">
     <label>Nom ou pseudo :
       <input type="text" name="username">
@@ -190,6 +192,10 @@
         });
         const json = await res.json();
         resultBox.innerText = json.result;
+      window.parent.postMessage({
+        type: "setHeight",
+        height: document.body.scrollHeight
+      }, "*");
       } catch (err) {
         resultBox.innerText = "❌ Une erreur est survenue lors de la génération.";
       }
