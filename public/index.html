@@ -107,8 +107,14 @@
     <input type="number" name="budget" min="0">
   </label>
 
-  <label>Centres d’intérêt (ex. temples, gastronomie, nature) :
-    <input type="text" name="interests">
+  <label>Centres d’intérêt :
+    <br>
+    <label><input type="checkbox" name="interests" value="temples"> Temples</label>
+    <label><input type="checkbox" name="interests" value="gastronomie"> Gastronomie</label>
+    <label><input type="checkbox" name="interests" value="nature"> Nature</label>
+    <label><input type="checkbox" name="interests" value="musées"> Musées</label>
+    <label><input type="checkbox" name="interests" value="traditions"> Traditions</label>
+    <label><input type="checkbox" name="interests" value="technologie"> Technologie</label>
   </label>
 
   <label>Villes ou régions souhaitées :
@@ -124,16 +130,26 @@
     <input type="radio" name="firstTime" value="non"> Non
   </label>
 
-  <label>Type de voyageur (ex. solo, couple, famille) :
-    <input type="text" name="type">
+  <label>Type de voyageur :
+    <br>
+    <label><input type="radio" name="type" value="solo"> Solo</label>
+    <label><input type="radio" name="type" value="couple"> Couple</label>
+    <label><input type="radio" name="type" value="famille"> Famille</label>
+    <label><input type="radio" name="type" value="amis"> Entre amis</label>
   </label>
 
-  <label>Style de voyage souhaité (ex. authentique, classique, insolite) :
-    <input type="text" name="style">
+  <label>Style de voyage souhaité :
+    <br>
+    <label><input type="radio" name="style" value="authentique"> Authentique</label>
+    <label><input type="radio" name="style" value="classique"> Classique</label>
+    <label><input type="radio" name="style" value="hors des sentiers battus"> Hors des sentiers battus</label>
   </label>
 
-  <label>Rythme de voyage (ex. tranquille, modéré, intense) :
-    <input type="text" name="rythme">
+  <label>Rythme de voyage :
+    <br>
+    <label><input type="radio" name="rythme" value="tranquille"> Tranquille</label>
+    <label><input type="radio" name="rythme" value="modéré"> Modéré</label>
+    <label><input type="radio" name="rythme" value="intense"> Intense</label>
   </label>
 
   <button type="submit">Générer mon voyage</button>
