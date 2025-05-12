@@ -4,73 +4,51 @@
 <head>
   <meta charset="UTF-8">
   <title>Assistant de voyage au Japon</title>
-  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Lato', sans-serif;
-      margin: 0;
-      padding: 2rem;
+      margin: 2rem;
       background-color: #fff;
-      color: #000;
+      color: #111;
     }
+
     h1 {
       color: #DF2A2F;
       text-align: center;
-      margin-bottom: 2rem;
     }
+
     form {
       max-width: 700px;
-      margin: auto;
-      background: #f9f9f9;
-      padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
     }
-    label, fieldset {
-      display: block;
-      margin-bottom: 1rem;
+
+    label {
+      margin: 0.5rem 0;
     }
-    input[type="text"], input[type="number"], input[type="date"], textarea {
-      width: 100%;
+
+    input, select, textarea {
       padding: 0.5rem;
-      margin-top: 0.3rem;
+      font-size: 1rem;
+      margin-top: 0.2rem;
       border: 1px solid #ccc;
       border-radius: 4px;
     }
-    fieldset {
-      border: none;
-      padding: 0;
-    }
-    legend {
-      font-weight: bold;
-      margin-bottom: 0.5rem;
-    }
-    input[type="checkbox"], input[type="radio"] {
-      margin-right: 0.5rem;
-    }
+
     button {
       background-color: #DF2A2F;
-      color: #fff;
+      color: white;
       border: none;
-      padding: 0.75rem 1.5rem;
-      border-radius: 4px;
+      padding: 0.75rem;
       font-size: 1rem;
+      border-radius: 4px;
       cursor: pointer;
+      margin-top: 1rem;
     }
-    button:hover {
-      background-color: #c92226;
-    }
+
     #result {
-  max-width: 700px;
-  margin: 2rem auto;
-  padding: 1rem;
-  background: #f0f0f0;
-  border-left: 5px solid #DF2A2F;
-  font-size: 1rem;
-  line-height: 1.5;
-  white-space: pre-wrap;
-  height: auto;
-  overflow: visible;
       max-width: 700px;
       margin: 2rem auto;
       padding: 1rem;
@@ -79,146 +57,72 @@
       font-size: 1rem;
       line-height: 1.5;
       white-space: pre-wrap;
+      height: auto;
+      overflow: visible;
     }
   </style>
 </head>
 <body>
-  
-  <form id="tripForm">
-    <label>Nom ou pseudo :
-      <input type="text" name="username">
-    </label>
 
-    <fieldset>
-      <legend>Quel type d’assistance souhaitez-vous ?</legend>
-      <label><input type="radio" name="mode" value="complet" checked> Créer un voyage complet</label>
-      <label><input type="radio" name="mode" value="ville"> Explorer une ville en particulier</label>
-    </fieldset>
+<form id="form">
+  <h2>Exploration d'une ville au Japon</h2>
 
-    <div id="mode-complet">
-      <label>Date de départ :
-        <input type="date" name="start">
-      </label>
-      <label>Durée (jours) :
-        <input type="number" name="duration">
-      </label>
-      <label>Budget (€) :
-        <input type="number" name="budget">
-      </label>
-      <fieldset>
-        <legend>Centres d’intérêt :</legend>
-        <label><input type="checkbox" name="interests" value="culture"> Culture</label>
-        <label><input type="checkbox" name="interests" value="nature"> Nature</label>
-        <label><input type="checkbox" name="interests" value="gastronomie"> Gastronomie</label>
-        <label><input type="checkbox" name="interests" value="technologie"> Technologie</label>
-      </fieldset>
-      <fieldset>
-        <legend>Type de voyage :</legend>
-        <label><input type="radio" name="type" value="solo"> Solo</label>
-        <label><input type="radio" name="type" value="couple"> Couple</label>
-        <label><input type="radio" name="type" value="famille"> Famille</label>
-        <label><input type="radio" name="type" value="amis"> Entre amis</label>
-      </fieldset>
-      <fieldset>
-        <legend>Style de voyage préféré :</legend>
-        <label><input type="radio" name="style" value="zen"> Zen</label>
-        <label><input type="radio" name="style" value="aventure"> Aventure</label>
-        <label><input type="radio" name="style" value="culturel"> Culturel</label>
-        <label><input type="radio" name="style" value="gastronomique"> Gastronomique</label>
-        <label><input type="radio" name="style" value="luxe"> Luxe</label>
-      </fieldset>
-      <fieldset>
-        <legend>Rythme souhaité :</legend>
-        <label><input type="radio" name="rythme" value="tranquille"> Tranquille</label>
-        <label><input type="radio" name="rythme" value="équilibré"> Équilibré</label>
-        <label><input type="radio" name="rythme" value="intense"> Intense</label>
-      </fieldset>
-      <label>Villes ou régions à inclure :
-        <input type="text" name="villesSouhaitees">
-      </label>
-      <label>Y a-t-il des lieux que vous souhaitez éviter ?
-        <input type="text" name="lieuxAeviter">
-      </label>
-      <label>Est-ce votre premier voyage au Japon ?
-        <label><input type="radio" name="firstTime" value="oui"> Oui</label>
-        <label><input type="radio" name="firstTime" value="non"> Non</label>
-      </label>
-    </div>
+  <label>Quelle ville souhaitez-vous explorer ?
+    <input type="text" name="ville" required>
+  </label>
 
-    <div id="mode-ville" style="display:none;">
-      
-      <label>Période du voyage (mois ou saison + année) :
-        <input type="text" name="periodeVille" placeholder="ex. mai 2025 ou été 2025">
-      </label>
-      <label>Durée sur place (en jours) :
-        <input type="text" name="ville">
-      </label>
-      <label>Durée sur place (en jours) :
-        <input type="number" name="joursVille">
-      </label>
-    </div>
+  <label>Période du voyage (mois ou saison + année) :
+    <input type="text" name="periodeVille" placeholder="ex. mai 2025 ou été 2025">
+  </label>
 
-    <button type="submit">Générer mon itinéraire</button>
-  </form>
+  <label>Durée sur place (en jours) :
+    <input type="number" name="joursVille" min="1" required>
+  </label>
 
-  <div id="result"></div>
+  <label>Vos centres d’intérêt :
+    <input type="text" name="interests" placeholder="ex. temples, gastronomie, nature">
+  </label>
 
-  <script>
-    const form = document.getElementById('tripForm');
-    const resultBox = document.getElementById('result');
+  <button type="submit">Générer mon itinéraire</button>
+</form>
 
-    // Toggle entre modes
-    document.querySelectorAll('input[name="mode"]').forEach(input => {
-      input.addEventListener('change', () => {
-        document.getElementById("mode-complet").style.display = input.value === "complet" ? "block" : "none";
-        document.getElementById("mode-ville").style.display = input.value === "ville" ? "block" : "none";
+<div id="result"></div>
+
+<script>
+  const form = document.getElementById('form');
+  const resultBox = document.getElementById('result');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    resultBox.innerHTML = "⏳ Génération de votre itinéraire en cours...";
+
+    const data = {
+      mode: "ville",
+      ville: form.ville.value,
+      periodeVille: form.periodeVille.value,
+      joursVille: form.joursVille.value,
+      interests: form.interests.value.split(',').map(i => i.trim())
+    };
+
+    try {
+      const res = await fetch('/api/planificateur', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
       });
-    });
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const formData = new FormData(form);
-      const data = {
-        username: formData.get("username"),
-        mode: formData.get("mode"),
-        start: formData.get("start"),
-        duration: formData.get("duration"),
-        budget: formData.get("budget"),
-        interests: formData.getAll("interests"),
-        type: formData.get("type"),
-        style: formData.get("style"),
-        rythme: formData.get("rythme"),
-        villesSouhaitees: formData.get("villesSouhaitees"),
-        lieuxAeviter: formData.get("lieuxAeviter"),
-        firstTime: formData.get("firstTime"),
-        ville: formData.get("ville"),
-        joursVille: formData.get("joursVille")
-      };
+      const json = await res.json();
+      resultBox.innerText = json.result;
 
-      resultBox.innerText = "⏳ Génération de votre itinéraire en cours...";
-      try {
-        const res = await fetch('/api/planificateur', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        });
-        const json = await res.json();
-        resultBox.innerText = json.result;
       window.parent.postMessage({
         type: "setHeight",
         height: document.body.scrollHeight
       }, "*");
-      } catch (err) {
-        resultBox.innerText = "❌ Une erreur est survenue lors de la génération.";
-      }
-    });
-  
-window.onload = () => {
-  window.parent.postMessage({
-    type: "setHeight",
-    height: document.body.scrollHeight
-  }, "*");
-};
+    } catch (err) {
+      resultBox.innerText = "❌ Une erreur est survenue lors de la génération de l’itinéraire.";
+      console.error(err);
+    }
+  });
 </script>
 </body>
 </html>
