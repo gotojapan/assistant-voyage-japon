@@ -6,38 +6,9 @@
   <title>Assistant de voyage au Japon</title>
   <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
   <style>
-    label {
-      display: block;
-      margin-top: 1rem;
-    }
-
-    input[type="radio"], input[type="checkbox"] {
-      margin-right: 0.5rem;
-      margin-bottom: 0.4rem;
-      display: inline-block;
-    }
-
-    .checkbox-group label,
-    .radio-group label {
-      display: block;
-      margin-left: 1rem;
-    }
-
-    .section-title {
-      margin-top: 2rem;
-      font-size: 1.2rem;
-      color: #DF2A2F;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 0.5rem;
-    }
-
-    #download-btn {
-      display: none;
-      background: #222;
-      margin-top: 1rem;
-    }
-
     body {
+      overflow-x: hidden;
+      overflow-y: auto;
       font-family: 'Lato', sans-serif;
       margin: 2rem;
       background-color: #fff;
@@ -209,10 +180,16 @@
 </form>
 
 <div id="result"></div>
-<button id="download-btn">📄 Télécharger le PDF</button>
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Kinkakuji-temple-kyoto-japan.jpg/640px-Kinkakuji-temple-kyoto-japan.jpg" alt="Temple au Japon" style="max-width:100%; margin-top:2rem; border-radius:8px;">
+<div id="photo" style="text-align:center; display:none;">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Kinkakuji-temple-kyoto-japan.jpg/640px-Kinkakuji-temple-kyoto-japan.jpg"
+       alt="Temple au Japon"
+       style="max-width:100%; margin-top:2rem; border-radius:8px;">
+</div>
+<button id="download-btn" style="display:none;">📄 Télécharger le PDF</button>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.plugin.standard_fonts_metrics.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.plugin.split_text_to_size.min.js"></script>
 <script>
   const modeForm = document.getElementById('mode-form');
   const formComplet = document.getElementById('form-complet');
@@ -258,21 +235,30 @@
       const json = await res.json();
       resultBox.innerText = json.result;
 
-      const blob = new Blob([json.result], { type: "application/pdf" });
-      const url = URL.createObjectURL(blob);
-      const downloadBtn = document.getElementById('download-btn');
-      import('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js').then(jsPDF => {
-        const doc = new jsPDF.jsPDF();
-        const lines = json.result.split("\n");
-        let y = 10;
-        lines.forEach(line => {
-          doc.text(line, 10, y);
-          y += 8;
-        });
-        doc.save("itineraire-japon.pdf");
-      });
-      downloadBtn.download = "itineraire-japon.pdf";
-      downloadBtn.style.display = 'inline-block';
+document.getElementById("photo").style.display = "block";
+const downloadBtn = document.getElementById("download-btn");
+downloadBtn.style.display = "inline-block";
+downloadBtn.onclick = function () {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+doc.setFont("helvetica", "normal");
+doc.setFontSize(14);
+doc.setTextColor(40);
+doc.text("🇯🇵 Itinéraire de voyage au Japon", 105, 20, { align: "center" });
+doc.setLineWidth(0.5);
+doc.line(20, 25, 190, 25);
+doc.setFontSize(12);
+let y = 35;
+  const lines = json.result.split("\n");
+  
+  lines.forEach(line => {
+    const split = doc.splitTextToSize(line, 170);
+    doc.text(split, 20, y);
+    y += split.length * 7 + 3;
+    y += 8;
+  });
+  doc.save("itineraire-japon.pdf");
+};
 
       window.parent.postMessage({
         type: "setHeight",
