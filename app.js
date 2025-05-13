@@ -32,6 +32,19 @@ function getEvenements(region) {
   return '';
 }
 
+function getRestaurants(ville) {
+  try {
+    const filepath = path.join(__dirname, 'data', `restaurants_${ville.toLowerCase()}.txt`);
+    if (fs.existsSync(filepath)) {
+      const contenu = fs.readFileSync(filepath, 'utf-8');
+      return contenu.split('\n').slice(0, 3).join('\n');
+    }
+  } catch (e) {
+    console.error("Erreur lecture restaurants :", e);
+  }
+  return '';
+}
+
 function construirePrompt(data) {
   const { mode, username, start, duration, budget, interests = [], villesSouhaitees = '', lieuxAeviter = '', type = '', style = '', rythme = '', ville, periodeVille, joursVille } = data;
 
@@ -51,23 +64,46 @@ function construirePrompt(data) {
 
 `;
 
-    // Ajout d'événements si on peut détecter une région dans "villesSouhaitees"
     const regions = ['hokkaido', 'tohoku', 'kanto', 'chubu', 'kinki', 'chugoku', 'shikoku', 'kyushu_okinawa'];
     for (const reg of regions) {
       if (villesSouhaitees.toLowerCase().includes(reg)) {
         const evts = getEvenements(reg);
         if (evts) {
-          prompt += `📅 Voici quelques événements actuels dans la région de ${reg} :\n${evts}\n\n`;
+          prompt += `📅 Événements dans la région ${reg} :\n${evts}\n\n`;
         }
       }
     }
 
-    prompt += `Propose un itinéraire détaillé, jour par jour, avec des suggestions d'activités, de lieux et de spécialités locales.`;
+    prompt += `Propose un itinéraire détaillé, jour par jour, avec des suggestions d'activités, de lieux, de restaurants et de spécialités locales.`;
+
   } else if (mode === "ville") {
     prompt += ` L'utilisateur souhaite explorer la ville de ${ville} pendant ${joursVille} jours à la période suivante : ${periodeVille}.
-Ses centres d’intérêt sont : ${interests.join(', ')}.
+Ses centres d’intérêt sont : ${interests.join(', ')}.`;
 
-Propose un programme détaillé jour par jour, avec les meilleurs spots selon la saison et les événements locaux.`;
+    const villes = {
+      kyoto: 'kinki',
+      osaka: 'kinki',
+      nara: 'kinki',
+      tokyo: 'kanto',
+      sapporo: 'hokkaido',
+      fukuoka: 'kyushu_okinawa',
+      hiroshima: 'chugoku',
+      kanazawa: 'chubu'
+    };
+    const reg = villes[ville.toLowerCase()];
+    if (reg) {
+      const evts = getEvenements(reg);
+      if (evts) {
+        prompt += `\n📅 Événements à cette période dans la région de ${reg} :\n${evts}\n`;
+      }
+    }
+
+    const restos = getRestaurants(ville);
+    if (restos) {
+      prompt += `\n🍽️ Suggestions de restaurants à ${ville} :\n${restos}\n`;
+    }
+
+    prompt += `\nPropose un programme jour par jour, en intégrant lieux, activités, spécialités culinaires et une logique de saison.`;
   }
 
   return prompt;
