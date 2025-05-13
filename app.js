@@ -99,7 +99,16 @@ Ses centres d’intérêt sont : ${interests.join(', ')}.`;
 
     const restos = getRestaurants(ville);
     if (restos) {
-      prompt += `\n🍽️ Suggestions de restaurants à ${ville} :\n${restos}\n`;
+      
+    const formattedRestos = restos
+      .split('\n')
+      .map(r => {
+        const nom = r.replace(/^●\s*/, '').split('–')[0].trim();
+        const lien = `https://tabelog.com/search?sk=${encodeURIComponent(nom + ' ' + ville)}`;
+        return `${r}\n🔗 Voir sur Tabelog : ${lien}`;
+      }).join('\n');
+    prompt += `\n🍽️ Suggestions de restaurants à ${ville} :\n${formattedRestos}\n`;
+    
     }
 
     prompt += `\nPropose un programme jour par jour, en intégrant lieux, activités, spécialités culinaires et une logique de saison.`;
