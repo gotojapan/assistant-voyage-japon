@@ -40,6 +40,7 @@
     <label class="checkbox-group"><input type="checkbox" name="interests" value="gastronomie"> Gastronomie</label>
     <label class="checkbox-group"><input type="checkbox" name="interests" value="nature"> Nature</label>
     <label class="checkbox-group"><input type="checkbox" name="interests" value="musées"> Musées</label>
+    <label class="checkbox-group"><input type="checkbox" name="interests" value="artisanat"> Artisanat</label>
   <label>Villes ou régions souhaitées :</label><input type="text" name="villesSouhaitees">
   <label>Lieux à éviter :</label><input type="text" name="lieuxAeviter">
   <label>Premier voyage au Japon ?</label>
@@ -71,11 +72,12 @@
     <label class="checkbox-group"><input type="checkbox" name="interests" value="gastronomie"> Gastronomie</label>
     <label class="checkbox-group"><input type="checkbox" name="interests" value="nature"> Nature</label>
     <label class="checkbox-group"><input type="checkbox" name="interests" value="musées"> Musées</label>
+    <label class="checkbox-group"><input type="checkbox" name="interests" value="artisanat"> Artisanat</label>
   <button type="submit" class="generate">Générer mon itinéraire</button>
 </form>
 
 <div id="result"></div>
-<button id="download-btn">📄 Télécharger le PDF</button>
+<button id="download-btn" class="generate">📄 Télécharger le PDF</button>
 
 <script>
   const formComplet = document.getElementById('form-complet');
@@ -90,8 +92,8 @@
   window.addEventListener('resize', resizeIframe);
 
   document.querySelectorAll('input[name="mode"]').forEach(radio => {
-    radio.addEventListener('change', () => {
-      const sel = radio.value;
+    radio.addEventListener('change', (e) => {
+      const sel = e.target.value;
       formComplet.style.display = sel==='complet' ? 'block' : 'none';
       formVille.style.display  = sel==='ville'  ? 'block' : 'none';
       resultBox.innerHTML = '';
@@ -123,8 +125,8 @@
     })
     .then(r=>r.json()).then(json=> {
       resultBox.innerText = json.result;
-      downloadBtn.style.display = 'block';
       resizeIframe();
+      downloadBtn.style.display = 'block';
       downloadBtn.onclick = () => {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF({ unit:'mm', format:'a4' });
@@ -146,8 +148,8 @@
     });
   }
 
-  formComplet.addEventListener('submit', e => handleSubmit(e, 'complet'));
-  formVille.addEventListener('submit', e => handleSubmit(e, 'ville'));
+  document.getElementById('form-complet').addEventListener('submit', e => handleSubmit(e,'complet'));
+  document.getElementById('form-ville').addEventListener('submit', e => handleSubmit(e,'ville'));
 </script>
 
 </body>
