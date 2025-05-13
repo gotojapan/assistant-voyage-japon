@@ -2,22 +2,21 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
-const { Configuration, OpenAIApi } = require('openai');
+const { OpenAI } = require('openai');
 require('dotenv').config();
 
 const app = express();
 app.use(express.json());
 app.use(express.static('public'));
 
-const configuration = new Configuration({
+const openai = new OpenAI({
   apiKey: process.env.OPENROUTER_API_KEY,
-  basePath: 'https://openrouter.ai/api/v1',
+  baseURL: 'https://openrouter.ai/api/v1',
   defaultHeaders: {
     'HTTP-Referer': 'https://gotojapan.fr',
     'X-Title': 'Assistant Voyage Japon'
   }
 });
-const openai = new OpenAIApi(configuration);
 
 function getEvenements(region) {
   try {
@@ -112,12 +111,12 @@ Ses centres d’intérêt sont : ${interests.join(', ')}.`;
 app.post('/api/planificateur', async (req, res) => {
   try {
     const prompt = construirePrompt(req.body);
-    const completion = await openai.createChatCompletion({
+    const completion = await openai.chat.completions.create({
       model: 'openai/gpt-3.5-turbo',
       messages: [{ role: 'user', content: prompt }],
       temperature: 0.7
     });
-    res.json({ result: completion.data.choices[0].message.content });
+    res.json({ result: completion.choices[0].message.content });
   } catch (e) {
     console.error(e.message);
     res.status(500).json({ error: 'Erreur lors de la génération.' });
