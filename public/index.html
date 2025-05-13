@@ -210,7 +210,9 @@
 
 <div id="result"></div>
 <button id="download-btn">📄 Télécharger le PDF</button>
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Kinkakuji-temple-kyoto-japan.jpg/640px-Kinkakuji-temple-kyoto-japan.jpg" alt="Temple au Japon" style="max-width:100%; margin-top:2rem; border-radius:8px;">
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
   const modeForm = document.getElementById('mode-form');
   const formComplet = document.getElementById('form-complet');
@@ -259,7 +261,16 @@
       const blob = new Blob([json.result], { type: "application/pdf" });
       const url = URL.createObjectURL(blob);
       const downloadBtn = document.getElementById('download-btn');
-      downloadBtn.href = url;
+      import('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js').then(jsPDF => {
+        const doc = new jsPDF.jsPDF();
+        const lines = json.result.split("\n");
+        let y = 10;
+        lines.forEach(line => {
+          doc.text(line, 10, y);
+          y += 8;
+        });
+        doc.save("itineraire-japon.pdf");
+      });
       downloadBtn.download = "itineraire-japon.pdf";
       downloadBtn.style.display = 'inline-block';
 
