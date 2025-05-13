@@ -58,7 +58,12 @@ input[type="checkbox"] {
     }
 
     button {
-      background-color: #DF2A2F;
+  background-color: #DF2A2F !important;
+  color: white !important;
+  width: 100%;
+  font-weight: bold;
+
+      background-color: #DF2A2F !important;
       color: white;
       border: none;
       padding: 0.75rem;
@@ -191,15 +196,10 @@ input[type="checkbox"] {
   <button type="submit">Générer mon itinéraire</button>
 </form>
 
-<div id="photo" style="text-align:center;">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Kinkakuji-temple-kyoto-japan.jpg/640px-Kinkakuji-temple-kyoto-japan.jpg"
-       alt="Temple au Japon"
-       style="max-width:100%; margin:2rem auto; border-radius:8px;">
-</div>
+
 <div id="result"></div>
 <button id="download-btn" style="display:none;">📄 Télécharger le PDF</button>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
   const modeForm = document.getElementById('mode-form');
