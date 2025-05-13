@@ -1,6 +1,8 @@
 
 const express = require('express');
 const fs = require('fs');
+const axios = require('axios');
+const cheerio = require('cheerio');
 const path = require('path');
 const { OpenAI } = require('openai');
 require('dotenv').config();
@@ -44,7 +46,7 @@ function getRestaurants(ville) {
   return '';
 }
 
-function construirePrompt(data) {
+async function construirePrompt(data) {
   const { mode, username, start, duration, budget, interests = [], villesSouhaitees = '', lieuxAeviter = '', type = '', style = '', rythme = '', ville, periodeVille, joursVille } = data;
 
   let prompt = "Tu es un expert du Japon et tu crées des itinéraires de voyage personnalisés.";
@@ -99,16 +101,11 @@ Ses centres d’intérêt sont : ${interests.join(', ')}.`;
 
     const restos = getRestaurants(ville);
     if (restos) {
-      
-    const formattedRestos = restos
-      .split('\n')
-      .map(r => {
-        const nom = r.replace(/^●\s*/, '').split('–')[0].trim();
-        const lien = `https://tabelog.com/search?sk=${encodeURIComponent(nom + ' ' + ville)}`;
-        return `${r}\n🔗 Voir sur Tabelog : ${lien}`;
-      }).join('\n');
-    prompt += `\n🍽️ Suggestions de restaurants à ${ville} :\n${formattedRestos}\n`;
-    
+    const suggestions = await getTabelogSuggestions('gastronomie', ville);
+    if (suggestions) {
+      prompt += `\n🍽️ Recommandations Tabelog à ${ville} :\n${suggestions}\n`;
+    }
+      prompt += `\n🍽️ Suggestions de restaurants à ${ville} :\n${restos}\n`;
     }
 
     prompt += `\nPropose un programme jour par jour, en intégrant lieux, activités, spécialités culinaires et une logique de saison.`;
@@ -119,7 +116,7 @@ Ses centres d’intérêt sont : ${interests.join(', ')}.`;
 
 app.post('/api/planificateur', async (req, res) => {
   try {
-    const prompt = construirePrompt(req.body);
+    const prompt = await construirePrompt(req.body);
     const completion = await openai.chat.completions.create({
       model: 'openai/gpt-3.5-turbo',
       messages: [{ role: 'user', content: prompt }],
@@ -135,3 +132,26 @@ app.post('/api/planificateur', async (req, res) => {
 app.listen(process.env.PORT || 3000, () => {
   console.log('✅ Serveur lancé sur http://localhost:3000');
 });
+
+
+async function getTabelogSuggestions(query, ville) {
+  const search = encodeURIComponent(`${query} ${ville}`);
+  const url = `https://tabelog.com/search/?sk=${search}`;
+  try {
+    const { data } = await axios.get(url, {
+      headers: { 'User-Agent': 'Mozilla/5.0' }
+    });
+    const $ = cheerio.load(data);
+    const results = [];
+    $('div.list-rst__rst-name a').each((i, el) => {
+      if (i >= 5) return false;
+      const name = $(el).text().trim();
+      const link = $(el).attr('href');
+      if (name && link) results.push(`● ${name}\n🔗 ${link}`);
+    });
+    return results.join('\n');
+  } catch (e) {
+    console.error('Erreur Tabelog :', e.message);
+    return '';
+  }
+}
