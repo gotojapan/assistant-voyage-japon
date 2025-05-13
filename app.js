@@ -47,6 +47,7 @@ function getRestaurants(ville) {
 }
 
 async function construirePrompt(data) {
+  console.log('🔍 Début de génération du prompt');
   const { mode, username, start, duration, budget, interests = [], villesSouhaitees = '', lieuxAeviter = '', type = '', style = '', rythme = '', ville, periodeVille, joursVille } = data;
 
   let prompt = "Tu es un expert du Japon et tu crées des itinéraires de voyage personnalisés.";
@@ -117,6 +118,7 @@ Ses centres d’intérêt sont : ${interests.join(', ')}.`;
 app.post('/api/planificateur', async (req, res) => {
   try {
     const prompt = await construirePrompt(req.body);
+  console.log('📤 Prompt envoyé à OpenAI :\n', prompt);
     const completion = await openai.chat.completions.create({
       model: 'openai/gpt-3.5-turbo',
       messages: [{ role: 'user', content: prompt }],
