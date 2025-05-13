@@ -103,6 +103,7 @@ Ses centres d’intérêt sont : ${interests.join(', ')}.`;
     const restos = getRestaurants(ville);
     if (restos) {
     const suggestions = await getTabelogSuggestions('gastronomie', ville);
+console.log('🔗 Suggestions Tabelog :\n', suggestions);
     if (suggestions) {
       prompt += `\n🍽️ Recommandations Tabelog à ${ville} :\n${suggestions}\n`;
     }
