@@ -6,6 +6,37 @@
   <title>Assistant de voyage au Japon</title>
   <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
   <style>
+    label {
+      display: block;
+      margin-top: 1rem;
+    }
+
+    input[type="radio"], input[type="checkbox"] {
+      margin-right: 0.5rem;
+      margin-bottom: 0.4rem;
+      display: inline-block;
+    }
+
+    .checkbox-group label,
+    .radio-group label {
+      display: block;
+      margin-left: 1rem;
+    }
+
+    .section-title {
+      margin-top: 2rem;
+      font-size: 1.2rem;
+      color: #DF2A2F;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 0.5rem;
+    }
+
+    #download-btn {
+      display: none;
+      background: #222;
+      margin-top: 1rem;
+    }
+
     body {
       font-family: 'Lato', sans-serif;
       margin: 2rem;
@@ -178,6 +209,7 @@
 </form>
 
 <div id="result"></div>
+<button id="download-btn">📄 Télécharger le PDF</button>
 
 <script>
   const modeForm = document.getElementById('mode-form');
@@ -223,6 +255,13 @@
 
       const json = await res.json();
       resultBox.innerText = json.result;
+
+      const blob = new Blob([json.result], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+      const downloadBtn = document.getElementById('download-btn');
+      downloadBtn.href = url;
+      downloadBtn.download = "itineraire-japon.pdf";
+      downloadBtn.style.display = 'inline-block';
 
       window.parent.postMessage({
         type: "setHeight",
