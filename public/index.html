@@ -7,8 +7,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
   <style>
     body {
-      overflow-x: hidden;
-      overflow-y: auto;
       font-family: 'Lato', sans-serif;
       margin: 2rem;
       background-color: #fff;
@@ -28,6 +26,9 @@
     }
 
     label {
+  display: block;
+  margin-top: 1rem;
+}
       margin: 0.5rem 0;
     }
 
@@ -41,7 +42,18 @@
       border-radius: 4px;
     }
 
-    input[type="radio"], input[type="checkbox"] {
+    input[type="radio"],
+input[type="checkbox"] {
+  margin-right: 0.5rem;
+  margin-bottom: 0.4rem;
+  display: inline-block;
+}
+
+.checkbox-group label,
+.radio-group label {
+  display: block;
+  margin-left: 1rem;
+}
       margin-right: 0.5rem;
     }
 
@@ -179,17 +191,15 @@
   <button type="submit">Générer mon itinéraire</button>
 </form>
 
-<div id="result"></div>
-<div id="photo" style="text-align:center; display:none;">
+<div id="photo" style="text-align:center;">
   <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Kinkakuji-temple-kyoto-japan.jpg/640px-Kinkakuji-temple-kyoto-japan.jpg"
        alt="Temple au Japon"
-       style="max-width:100%; margin-top:2rem; border-radius:8px;">
+       style="max-width:100%; margin:2rem auto; border-radius:8px;">
 </div>
+<div id="result"></div>
 <button id="download-btn" style="display:none;">📄 Télécharger le PDF</button>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.plugin.standard_fonts_metrics.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.plugin.split_text_to_size.min.js"></script>
 <script>
   const modeForm = document.getElementById('mode-form');
   const formComplet = document.getElementById('form-complet');
@@ -235,31 +245,6 @@
       const json = await res.json();
       resultBox.innerText = json.result;
 
-document.getElementById("photo").style.display = "block";
-const downloadBtn = document.getElementById("download-btn");
-downloadBtn.style.display = "inline-block";
-downloadBtn.onclick = function () {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-doc.setFont("helvetica", "normal");
-doc.setFontSize(14);
-doc.setTextColor(40);
-doc.text("🇯🇵 Itinéraire de voyage au Japon", 105, 20, { align: "center" });
-doc.setLineWidth(0.5);
-doc.line(20, 25, 190, 25);
-doc.setFontSize(12);
-let y = 35;
-  const lines = json.result.split("\n");
-  
-  lines.forEach(line => {
-    const split = doc.splitTextToSize(line, 170);
-    doc.text(split, 20, y);
-    y += split.length * 7 + 3;
-    y += 8;
-  });
-  doc.save("itineraire-japon.pdf");
-};
-
       window.parent.postMessage({
         type: "setHeight",
         height: document.body.scrollHeight
@@ -282,18 +267,7 @@ let y = 35;
 
   window.addEventListener('load', resizeIframe);
   window.addEventListener('resize', resizeIframe);
-
-function resizeIframe() {
-  window.parent.postMessage({
-    type: "setHeight",
-    height: document.body.scrollHeight
-  }, "*");
-}
-
-window.addEventListener('load', resizeIframe);
-window.addEventListener('resize', resizeIframe);
 </script>
-
 
 </body>
 </html>
