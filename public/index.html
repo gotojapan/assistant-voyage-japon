@@ -29,7 +29,7 @@
   <label class="radio-group"><input type="radio" name="mode" value="ville"> L'exploration d'une ville en particulier</label>
 </form>
 
-<form id="form-complet" hidden>
+<form id="form-complet" style="display: none;">
   <div class="section-title">Voyage complet</div>
   <label>Prénom :</label><input type="text" name="username">
   <label>Date de départ :</label><input type="date" name="start">
@@ -62,7 +62,7 @@
   <button type="submit" class="generate">Générer mon voyage</button>
 </form>
 
-<form id="form-ville" hidden>
+<form id="form-ville" style="display: none;">
   <div class="section-title">Exploration d'une ville</div>
   <label>Ville :</label><input type="text" name="ville">
   <label>Période (mois ou saison + année) :</label><input type="text" name="periodeVille" placeholder="ex. mai 2025">
@@ -94,8 +94,8 @@
   document.querySelectorAll('input[name="mode"]').forEach(radio => {
     radio.addEventListener('change', (e) => {
       const sel = e.target.value;
-      formComplet.hidden = sel !== 'complet';
-      formVille.hidden = sel !== 'ville';
+      formComplet.style.display = sel==='complet' ? 'block' : 'none';
+      formVille.style.display  = sel==='ville'  ? 'block' : 'none';
       resultBox.innerHTML = '';
       downloadBtn.style.display = 'none';
       resizeIframe();
