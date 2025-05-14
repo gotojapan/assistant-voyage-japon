@@ -36,7 +36,7 @@ Ses centres d’intérêt sont : ${interests.join(', ')}.`;
 
     prompt += `\n🍽️ Explorer les meilleures adresses à ${ville} :\n${formattedLinks}\n`;
 
-    prompt += `\nPropose un programme jour par jour, en intégrant lieux, activités, spécialités culinaires et une logique de saison.`;
+    prompt += `\nPropose un programme jour par jour, en intégrant lieux, activités, spécialités culinaires et recommande également les liens Tabelog listés ci-dessus.`;
   }
 
   return prompt;
