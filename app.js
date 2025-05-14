@@ -28,15 +28,13 @@ async function construirePrompt(data) {
 Ses centres d’intérêt sont : ${interests.join(', ')}.`;
 
     const categories = ['ramen', 'sushi', 'izakaya', 'street food', 'michelin'];
-    const formattedLinks = categories.map(cat => {
+    const formattedBlocks = categories.map(cat => {
       const label = cat.charAt(0).toUpperCase() + cat.slice(1);
-      const url = `https://tabelog.com/search?sk=${encodeURIComponent(cat + ' ' + ville)}`;
-      return `- ${label} → ${url}`;
+      const searchUrl = `https://tabelog.com/search?sk=${encodeURIComponent(cat + ' ' + ville)}`;
+      return `\n🍽️ ${label} à ${ville} :\n- Indique 2 à 3 restaurants réputés pour ${cat} à ${ville} avec nom et quartier.\n🔗 Voir plus sur Tabelog : ${searchUrl}`;
     }).join('\n');
 
-    prompt += `\n🍽️ Explorer les meilleures adresses à ${ville} :\n${formattedLinks}\n`;
-
-    prompt += `\nPropose un programme jour par jour, en intégrant lieux, activités, spécialités culinaires et recommande également les liens Tabelog listés ci-dessus.`;
+    prompt += `\n${formattedBlocks}\n\nPropose un programme jour par jour, en intégrant lieux, activités, spécialités culinaires, et recommande aussi ces restaurants en les intégrant dans l’itinéraire généré.`;
   }
 
   return prompt;
