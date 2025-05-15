@@ -57,9 +57,13 @@ Propose un itinéraire jour par jour dans cette ville, avec suggestions précise
       temperature: 0.7
     });
 
+    if (!completion || !completion.choices || !completion.choices[0] || !completion.choices[0].message) {
+      console.error("❌ Réponse OpenRouter vide ou mal formée :", completion);
+      return res.status(500).json({ error: "Réponse OpenRouter invalide ou vide." });
+    }
+
     const response = completion.choices[0].message.content;
     console.log("✅ Réponse reçue.");
-
     res.json({ result: response });
   } catch (error) {
     console.error("❌ Erreur lors de la génération :", error.message);
