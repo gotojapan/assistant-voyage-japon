@@ -3,99 +3,95 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Assistant de voyage Japon</title>
-  <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Assistant de voyage au Japon</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Lato', sans-serif;
+      margin: 2rem;
       background-color: #fff;
-      padding: 20px;
-      color: #333;
+      color: #222;
     }
     h1 {
       color: #DF2A2F;
     }
-    form {
-      margin-bottom: 20px;
-    }
     label {
-      display: block;
+      font-weight: 500;
       margin-top: 10px;
+      display: block;
     }
-    input, select, textarea {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
+    input[type="text"], input[type="date"], select {
+      width: 300px;
+      padding: 6px;
+      margin-bottom: 1em;
+      background: #f0f0f5;
+      border: 1px solid #ccc;
     }
     .checkbox-group {
-      margin-top: 5px;
-      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 1em;
     }
-    .checkbox-group label {
-      display: block;
-      margin-left: 5px;
-    }
-    button {
+    .btn {
       background-color: #DF2A2F;
-      color: #fff;
-      padding: 10px 20px;
+      color: white;
       border: none;
-      margin-top: 10px;
-      cursor: pointer;
+      padding: 12px 20px;
       font-weight: bold;
-    }
-    button:hover {
-      opacity: 0.9;
+      margin-right: 10px;
+      cursor: pointer;
     }
     #result {
-      margin-top: 30px;
-      white-space: pre-wrap;
-      background: #f9f9f9;
-      padding: 15px;
-      border: 1px solid #ddd;
+      margin-top: 2rem;
+      padding: 1rem;
+      border-left: 6px solid #DF2A2F;
+      background: #f5f5f5;
+    }
+    #downloadPdf {
+      display: none;
+      margin-top: 1em;
     }
   </style>
 </head>
 <body>
-  <h1>Planifiez votre voyage au Japon</h1>
-  <form id="voyageForm">
-    <label>Choisissez votre type d'expérience :</label>
+  <h1>Assistant de voyage au Japon</h1>
+
+  <form id="plannerForm">
+    <label>Que souhaitez-vous planifier ?</label>
     <div class="checkbox-group">
       <label><input type="radio" name="mode" value="complet" checked> Un voyage complet sur mesure</label>
       <label><input type="radio" name="mode" value="ville"> L'exploration d'une ville en particulier</label>
     </div>
 
-    <div id="formComplet">
-      <label>Votre prénom :</label>
-      <input type="text" name="username" />
+    <div id="completFields">
+      <label>Prénom :</label>
+      <input type="text" name="prenom" required>
 
       <label>Date de départ :</label>
-      <input type="date" name="start" />
+      <input type="date" name="start" required>
 
       <label>Durée du voyage (en jours) :</label>
-      <input type="number" name="duration" />
+      <input type="text" name="duration" required>
 
-      <label>Budget (€) :</label>
-      <input type="number" name="budget" />
+      <label>Budget approximatif (€) :</label>
+      <input type="text" name="budget" required>
 
-      <label>Villes souhaitées :</label>
-      <input type="text" name="villesSouhaitees" />
+      <label>Villes à inclure :</label>
+      <input type="text" name="villesSouhaitees">
 
-      <label>Villes à éviter :</label>
-      <input type="text" name="lieuxAeviter" />
+      <label>Villes à exclure :</label>
+      <input type="text" name="lieuxAeviter">
 
       <label>Type de voyage :</label>
-      <select name="type">
-        <option value="">--Choisir--</option>
-        <option value="solo">Solo</option>
-        <option value="couple">Couple</option>
-        <option value="famille">Famille</option>
-        <option value="amis">Entre amis</option>
-      </select>
+      <div class="checkbox-group">
+        <label><input type="checkbox" name="type" value="solo"> Solo</label>
+        <label><input type="checkbox" name="type" value="couple"> Couple</label>
+        <label><input type="checkbox" name="type" value="famille"> Famille</label>
+        <label><input type="checkbox" name="type" value="amis"> Entre amis</label>
+      </div>
 
-      <label>Style de voyage :</label>
+      <label>Style de voyage souhaité :</label>
       <div class="checkbox-group">
         <label><input type="checkbox" name="style" value="authentique"> Authentique</label>
         <label><input type="checkbox" name="style" value="classique"> Classique</label>
@@ -104,19 +100,17 @@
       </div>
 
       <label>Rythme du voyage :</label>
-      <select name="rythme">
-        <option value="">--Choisir--</option>
-        <option value="tranquille">Tranquille</option>
-        <option value="modéré">Modéré</option>
-        <option value="intense">Intense</option>
-      </select>
+      <div class="checkbox-group">
+        <label><input type="checkbox" name="rythme" value="tranquille"> Tranquille</label>
+        <label><input type="checkbox" name="rythme" value="modéré"> Modéré</label>
+        <label><input type="checkbox" name="rythme" value="intense"> Intense</label>
+      </div>
 
       <label>Déjà voyagé au Japon ?</label>
-      <select name="deja">
-        <option value="">--Choisir--</option>
-        <option value="oui">Oui</option>
-        <option value="non">Non</option>
-      </select>
+      <div class="checkbox-group">
+        <label><input type="checkbox" name="deja" value="oui"> Oui</label>
+        <label><input type="checkbox" name="deja" value="non"> Non</label>
+      </div>
 
       <label>Centres d'intérêt :</label>
       <div class="checkbox-group">
@@ -127,100 +121,58 @@
       </div>
     </div>
 
-    <div id="formVille" style="display:none">
-      <label>Ville à explorer :</label>
-      <input type="text" name="ville" />
-
-      <label>Période souhaitée :</label>
-      <input type="text" name="periodeVille" />
-
-      <label>Durée sur place (en jours) :</label>
-      <input type="number" name="joursVille" />
-    </div>
-
-    <button type="submit">Générer mon voyage</button>
-    <button type="button" onclick="telechargerPDF()">Télécharger le PDF</button>
+    <button class="btn" type="submit">Générer mon voyage</button>
+    <button class="btn" id="downloadPdf" type="button">Télécharger le PDF</button>
   </form>
 
   <div id="result"></div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script>
-    const form = document.getElementById('voyageForm');
-    const resultDiv = document.getElementById('result');
+    const form = document.getElementById("plannerForm");
+    const resultDiv = document.getElementById("result");
+    const downloadBtn = document.getElementById("downloadPdf");
 
-    const modeInputs = document.querySelectorAll('input[name="mode"]');
-    const formComplet = document.getElementById('formComplet');
-    const formVille = document.getElementById('formVille');
-
-    modeInputs.forEach(input => {
-      input.addEventListener('change', () => {
-        if (input.value === 'complet') {
-          formComplet.style.display = 'block';
-          formVille.style.display = 'none';
-        } else {
-          formComplet.style.display = 'none';
-          formVille.style.display = 'block';
-        }
-      });
-    });
-
-    form.addEventListener('submit', async (e) => {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      resultDiv.innerText = '🛫 Préparation de votre itinéraire en cours...';
+      resultDiv.innerHTML = "⏳ Génération de votre itinéraire en cours...";
+      downloadBtn.style.display = "none";
+
       const formData = new FormData(form);
       const data = {};
-      formData.forEach((value, key) => {
-        if (data[key]) {
-          if (Array.isArray(data[key])) {
-            data[key].push(value);
-          } else {
-            data[key] = [data[key], value];
-          }
-        } else {
-          data[key] = value;
-        }
+      formData.forEach((val, key) => {
+        if (!data[key]) data[key] = [];
+        data[key].push(val);
+      });
+      Object.keys(data).forEach(k => {
+        if (data[k].length === 1) data[k] = data[k][0];
       });
 
-      const checkboxes = form.querySelectorAll('input[type="checkbox"]:checked');
-      checkboxes.forEach(box => {
-        if (!data[box.name]) data[box.name] = [];
-        if (!data[box.name].includes(box.value)) data[box.name].push(box.value);
+      const response = await fetch("/api/planificateur", {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
       });
 
-      const radios = form.querySelectorAll('input[type="radio"]:checked');
-      radios.forEach(r => {
-        data[r.name] = r.value;
-      });
-
-      try {
-        const response = await fetch('/api/planificateur', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        });
-
-        const json = await response.json();
-        if (json.result) {
-          resultDiv.innerText = json.result;
-        } else {
-          resultDiv.innerText = 'Une erreur est survenue lors de la génération.';
-        }
-      } catch (error) {
-        console.error(error);
-        resultDiv.innerText = 'Erreur lors de la communication avec le serveur.';
+      const json = await response.json();
+      if (json && json.texte) {
+        resultDiv.innerHTML = "<pre>" + json.texte + "</pre>";
+        downloadBtn.style.display = "inline-block";
+        window.generatedText = json.texte;
+      } else {
+        resultDiv.innerHTML = "❌ Une erreur est survenue.";
       }
     });
 
-    function telechargerPDF() {
+    downloadBtn.addEventListener("click", () => {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
-      const text = resultDiv.innerText;
-      const lines = doc.splitTextToSize(text, 180);
-      doc.setFont('helvetica', 'normal');
+      doc.setFont("helvetica");
       doc.setFontSize(12);
+      const lines = doc.splitTextToSize(window.generatedText || "", 180);
       doc.text(lines, 10, 20);
-      doc.save('itineraire-japon.pdf');
-    }
+      doc.save("itineraire-japon.pdf");
+    });
   </script>
 </body>
 </html>
