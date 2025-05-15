@@ -1,7 +1,7 @@
 {
   "name": "assistant-voyage-japon",
   "version": "1.0.0",
-  "description": "Assistant IA pour g\u00e9n\u00e9rer des itin\u00e9raires de voyage personnalis\u00e9s au Japon",
+  "description": "Assistant IA pour g\u00e9n\u00e9rer des itin\u00e9raires personnalis\u00e9s avec OpenRouter",
   "main": "app.js",
   "scripts": {
     "start": "node app.js"
@@ -12,6 +12,5 @@
     "dotenv": "^16.3.1",
     "openai": "^4.29.2"
   },
-  "author": "",
   "license": "ISC"
 }

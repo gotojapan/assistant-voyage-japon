@@ -1,11 +1,14 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const { OpenAI } = require('openai');
+const OpenAI = require('openai');
 require('dotenv').config();
 
 const app = express();
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const openai = new OpenAI({
+  apiKey: process.env.OPENROUTER_API_KEY,
+  baseURL: 'https://openrouter.ai/api/v1'
+});
 
 app.use(bodyParser.json());
 app.use(express.static('public'));
@@ -46,16 +49,16 @@ Propose un itinéraire jour par jour dans cette ville, avec suggestions précise
       `;
     }
 
-    console.log("📤 Prompt envoyé à OpenAI :\n", prompt);
+    console.log("📤 Prompt envoyé à OpenRouter :\n", prompt);
 
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4',
+      model: 'openrouter/openai/gpt-4',
       messages: [{ role: 'user', content: prompt }],
       temperature: 0.7
     });
 
     const response = completion.choices[0].message.content;
-    console.log("✅ Réponse IA reçue.");
+    console.log("✅ Réponse reçue.");
 
     res.json({ result: response });
   } catch (error) {
