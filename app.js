@@ -52,7 +52,7 @@ Propose un itinéraire jour par jour dans cette ville, avec suggestions précise
     console.log("📤 Prompt envoyé à OpenRouter :\n", prompt);
 
     const completion = await openai.chat.completions.create({
-      model: 'openrouter/openai/gpt-4',
+      model: 'openai/gpt-4',
       messages: [{ role: 'user', content: prompt }],
       temperature: 0.7
     });
