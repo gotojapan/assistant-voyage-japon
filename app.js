@@ -18,56 +18,32 @@ app.post('/api/planificateur', async (req, res) => {
     let prompt = "";
 
     if (data.mode === "complet") {
-      prompt += `Tu es un expert du Japon et tu crées des itinéraires de voyage personnalisés.
-`;
-      prompt += `L'utilisateur s'appelle ${data.username || "le voyageur"}.
-`;
-      prompt += `Il souhaite organiser un voyage complet au Japon à partir du ${data.start}, pour une durée de ${data.duration} jours avec un budget de ${data.budget} euros.
-`;
+      prompt = `
+Tu es un expert du Japon et tu crées des itinéraires de voyage personnalisés.
+L'utilisateur s'appelle ${data.username || "le voyageur"}.
+Il souhaite organiser un voyage complet au Japon à partir du ${data.start}, pour une durée de ${data.duration} jours avec un budget de ${data.budget} euros.
+${data.villesSouhaitees ? `Il souhaite inclure les villes suivantes : ${data.villesSouhaitees}.` : ""}
+${data.lieuxAeviter ? `Il souhaite éviter : ${data.lieuxAeviter}.` : ""}
+${data.type ? `Type de voyage : ${data.type}.` : ""}
+${data.style ? `Style de voyage souhaité : ${Array.isArray(data.style) ? data.style.join(', ') : data.style}.` : ""}
+${data.rythme ? `Rythme de voyage : ${data.rythme}.` : ""}
+${data.deja ? `A-t-il déjà voyagé au Japon ? ${data.deja}.` : ""}
+${data.interests ? `Centres d’intérêt : ${Array.isArray(data.interests) ? data.interests.join(', ') : data.interests}.` : ""}
 
-      if (data.villesSouhaitees) prompt += `Il souhaite inclure les villes suivantes : ${data.villesSouhaitees}.
-`;
-      if (data.lieuxAeviter) prompt += `Il souhaite éviter : ${data.lieuxAeviter}.
-`;
-
-      if (data.type) prompt += `Type de voyage : ${data.type}.
-`;
-      if (data.style) prompt += `Style de voyage souhaité : ${Array.isArray(data.style) ? data.style.join(', ') : data.style}.
-`;
-      if (data.rythme) prompt += `Rythme de voyage : ${data.rythme}.
-`;
-      if (data.deja) prompt += `A-t-il déjà voyagé au Japon ? ${data.deja}.
-`;
-
-      if (data.interests) {
-        const interests = Array.isArray(data.interests) ? data.interests : [data.interests];
-        prompt += `Centres d’intérêt : ${interests.join(', ')}.
-`;
-      }
-
-      prompt += "
-Propose un itinéraire jour par jour très personnalisé (lieux, activités, expériences culinaires, recommandations).";
+Propose un itinéraire jour par jour très personnalisé (lieux, activités, expériences culinaires, recommandations).
+      `;
     }
 
     else if (data.mode === "ville") {
-      prompt += `Tu es un expert du Japon. L'utilisateur souhaite explorer la ville de ${data.ville} pendant ${data.joursVille} jours à la période suivante : ${data.periodeVille}.
-`;
+      prompt = `
+Tu es un expert du Japon. L'utilisateur souhaite explorer la ville de ${data.ville} pendant ${data.joursVille} jours à la période suivante : ${data.periodeVille}.
+${data.type ? `Type de voyage : ${data.type}.` : ""}
+${data.style ? `Style souhaité : ${Array.isArray(data.style) ? data.style.join(', ') : data.style}.` : ""}
+${data.rythme ? `Rythme : ${data.rythme}.` : ""}
+${data.interests ? `Centres d’intérêt : ${Array.isArray(data.interests) ? data.interests.join(', ') : data.interests}.` : ""}
 
-      if (data.type) prompt += `Type de voyage : ${data.type}.
-`;
-      if (data.style) prompt += `Style souhaité : ${Array.isArray(data.style) ? data.style.join(', ') : data.style}.
-`;
-      if (data.rythme) prompt += `Rythme : ${data.rythme}.
-`;
-
-      if (data.interests) {
-        const interests = Array.isArray(data.interests) ? data.interests : [data.interests];
-        prompt += `Centres d’intérêt : ${interests.join(', ')}.
-`;
-      }
-
-      prompt += "
-Propose un itinéraire jour par jour dans cette ville, avec suggestions précises (lieux, quartiers, restaurants, événements).";
+Propose un itinéraire jour par jour dans cette ville, avec suggestions précises (lieux, quartiers, restaurants, événements).
+      `;
     }
 
     console.log("📤 Prompt envoyé à OpenAI :\n", prompt);
