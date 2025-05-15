@@ -19,6 +19,26 @@ app.post('/api/planificateur', async (req, res) => {
     console.log("🔍 Requête reçue avec données :", data);
 
     let prompt = "";
+    let tabelogBlock = "";
+
+    const includesGastronomie = data.interests && (
+      (Array.isArray(data.interests) && data.interests.includes("gastronomie")) ||
+      (typeof data.interests === "string" && data.interests.toLowerCase().includes("gastronomie"))
+    );
+
+    const cityName = data.mode === "ville" ? data.ville : (data.villesSouhaitees || "tokyo");
+    if (includesGastronomie && cityName) {
+      tabelogBlock = `
+🍽️ Explorer les meilleures adresses à ${cityName} :
+- Ramen → https://tabelog.com/search?sk=ramen%20${cityName}
+- Sushi → https://tabelog.com/search?sk=sushi%20${cityName}
+- Izakaya → https://tabelog.com/search?sk=izakaya%20${cityName}
+- Street food → https://tabelog.com/search?sk=street%20food%20${cityName}
+- Michelin → https://tabelog.com/search?sk=michelin%20${cityName}
+
+Merci d’intégrer quelques suggestions de restaurants dans l’itinéraire.
+      `;
+    }
 
     if (data.mode === "complet") {
       prompt = `
@@ -34,6 +54,7 @@ ${data.deja ? `A-t-il déjà voyagé au Japon ? ${data.deja}.` : ""}
 ${data.interests ? `Centres d’intérêt : ${Array.isArray(data.interests) ? data.interests.join(', ') : data.interests}.` : ""}
 
 Propose un itinéraire jour par jour très personnalisé (lieux, activités, expériences culinaires, recommandations).
+${tabelogBlock}
       `;
     }
 
@@ -46,6 +67,7 @@ ${data.rythme ? `Rythme : ${data.rythme}.` : ""}
 ${data.interests ? `Centres d’intérêt : ${Array.isArray(data.interests) ? data.interests.join(', ') : data.interests}.` : ""}
 
 Propose un itinéraire jour par jour dans cette ville, avec suggestions précises (lieux, quartiers, restaurants, événements).
+${tabelogBlock}
       `;
     }
 
