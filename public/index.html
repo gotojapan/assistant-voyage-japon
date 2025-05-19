@@ -130,7 +130,6 @@
   </form>
 
   <div id="result"></div>
-
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const radios = document.querySelectorAll('input[name="mode"]');
@@ -180,11 +179,14 @@
             body: JSON.stringify(data)
           });
           const result = await response.json();
+          console.log("🧾 Résultat brut reçu :", result);
+
           if (result && result.texte) {
             resultDiv.textContent = '🧳 Itinéraire généré :\n\n' + result.texte;
-            document.getElementById("downloadPdf").style.display = "inline-block";
+            const btn = document.getElementById("downloadPdf");
+            if (btn) btn.style.display = "inline-block";
           } else {
-            resultDiv.textContent = '⚠️ Une erreur est survenue.';
+            resultDiv.textContent = '⚠️ Format inattendu :\n' + JSON.stringify(result, null, 2);
           }
         } catch (err) {
           resultDiv.textContent = '❌ Erreur de requête : ' + err.message;
