@@ -1,141 +1,79 @@
+require("dotenv").config();
+const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const OpenAI = require("openai");
+const PDFDocument = require("pdfkit");
 
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const fs = require('fs');
-const PDFDocument = require('pdfkit');
-const { OpenAI } = require('openai');
-
-require('dotenv').config();
 const app = express();
-const port = process.env.PORT || 3000;
-
 app.use(cors());
 app.use(bodyParser.json());
-app.use(express.static('public'));
 
 const openai = new OpenAI({
   apiKey: process.env.OPENROUTER_API_KEY,
-  baseURL: 'https://openrouter.ai/api/v1',
-  defaultHeaders: {
-    'HTTP-Referer': 'https://assistant-voyage-japon.onrender.com',
-    'X-Title': 'Assistant de voyage Japon',
-  },
+  baseURL: "https://openrouter.ai/api/v1"
 });
 
-app.post('/api/planificateur', async (req, res) => {
+app.post("/api/planificateur", async (req, res) => {
   const data = req.body;
-  console.log('📤 Données reçues :', data);
+  console.log("\u{1F4DD} Données reçues :", data);
 
-  let prompt = '';
-  if (data.mode === 'complet') {
-    prompt += `Tu es un expert du Japon et tu crées des itinéraires de voyage personnalisés.
-`;
-    prompt += `L'utilisateur s'appelle ${data.prenom || 'le voyageur'}.
-`;
-    prompt += `Il souhaite organiser un voyage complet au Japon à partir du ${data.date}, pour une durée de ${data.duree} jours avec un budget de ${data.budget} euros.
+  let prompt = "";
 
-`;
-    if (data.villesSouhaitees) prompt += `Il souhaite inclure : ${data.villesSouhaitees}.
-`;
-    if (data.lieuxAeviter) prompt += `Il souhaite éviter : ${data.lieuxAeviter}.
-`;
+  if (data.mode === "complet") {
+    prompt += `Tu es un expert du Japon et tu crées des itinéraires de voyage personnalisés.\n`;
+    prompt += `L'utilisateur s'appelle ${data.username}.\n`;
+    prompt += `Il souhaite organiser un voyage complet au Japon à partir du ${data.start}, pour une durée de ${data.duration} jours avec un budget de ${data.budget} euros.\n`;
+    if (data.lieuxAeviter) prompt += `Il souhaite éviter : ${data.lieuxAeviter}.\n`;
+    if (data.villesSouhaitees) prompt += `Il souhaite inclure : ${data.villesSouhaitees}.\n`;
   } else {
-    prompt += `Tu es un expert du Japon. L'utilisateur souhaite explorer la ville de ${data.ville} pendant ${data.joursVille} jours à la période suivante : ${data.periodeVille}.
-`;
+    prompt += `Tu es un expert du Japon. L'utilisateur souhaite explorer la ville de ${data.ville} pendant ${data.dureeVille} jours à la période suivante : ${data.periodeVille}.\n`;
   }
 
-  if (data.type) prompt += `Type de voyage : ${data.type}.
-`;
-  if (data.style) prompt += `Style souhaité : ${Array.isArray(data.style) ? data.style.join(', ') : data.style}.
-`;
-  if (data.rythme) prompt += `Rythme : ${Array.isArray(data.rythme) ? data.rythme.join(', ') : data.rythme}.
-`;
-  if (data.deja) prompt += `A-t-il déjà voyagé au Japon ? ${data.deja}.
-`;
-  if (data.interests) prompt += `Centres d’intérêt : ${Array.isArray(data.interests) ? data.interests.join(', ') : data.interests}.
-`;
+  if (data.type) prompt += `Type de voyage : ${data.type}.\n`;
+  if (data.style) prompt += `Style souhaité : ${data.style}.\n`;
+  if (data.rythme) prompt += `Rythme : ${data.rythme}.\n`;
+  if (data.deja) prompt += `A-t-il déjà voyagé au Japon ? ${data.deja}.\n`;
+  if (data.interests && data.interests.length > 0) prompt += `Centres d’intérêt : ${data.interests.join(", ")}.\n`;
+  if (data.remarques) prompt += `Remarques particulières : ${data.remarques}.\n`;
 
-  if (data.mode === 'complet') {
-    prompt += `
-Propose un itinéraire jour par jour très personnalisé (lieux, activités, expériences culinaires, recommandations).
-`;
-  } else {
-    prompt += `
-Propose un itinéraire jour par jour dans cette ville, avec suggestions précises (lieux, quartiers, restaurants, événements).
-`;
+  prompt += `\nPropose un itinéraire jour par jour ${data.mode === "ville" ? "dans cette ville" : "très personnalisé"} (lieux, activités, expériences culinaires, recommandations).\n`;
+
+  if (data.mode === "ville") {
+    prompt += `\n🍽️ Explorer les meilleures adresses à ${data.ville} :\n`;
+    prompt += `- Ramen → https://tabelog.com/search?sk=ramen%20${data.ville}\n`;
+    prompt += `- Sushi → https://tabelog.com/search?sk=sushi%20${data.ville}\n`;
+    prompt += `- Izakaya → https://tabelog.com/search?sk=izakaya%20${data.ville}\n`;
+    prompt += `- Street food → https://tabelog.com/search?sk=street%20food%20${data.ville}\n`;
+    prompt += `- Michelin → https://tabelog.com/search?sk=michelin%20${data.ville}\n`;
   }
 
-  if (data.ville || data.villesSouhaitees) {
-    const ville = data.ville || data.villesSouhaitees || 'tokyo';
-    prompt += `
-🍽️ Explorer les meilleures adresses à ${ville.toLowerCase()} :
-`;
-    prompt += `- Ramen → https://tabelog.com/search?sk=ramen%20${ville}
-`;
-    prompt += `- Sushi → https://tabelog.com/search?sk=sushi%20${ville}
-`;
-    prompt += `- Izakaya → https://tabelog.com/search?sk=izakaya%20${ville}
-`;
-    prompt += `- Street food → https://tabelog.com/search?sk=street%20food%20${ville}
-`;
-    prompt += `- Michelin → https://tabelog.com/search?sk=michelin%20${ville}
-`;
-    prompt += `
-Merci d’intégrer quelques suggestions de restaurants dans l’itinéraire.
-`;
-  }
+  prompt += `\nMerci d’intégrer quelques suggestions de restaurants dans l’itinéraire, avec un lien cliquable sous la forme : (plus d’info : URL).\n`;
 
   try {
     const completion = await openai.chat.completions.create({
-      model: 'openrouter/gpt-4',
-      messages: [{ role: 'user', content: prompt }],
-      temperature: 0.7,
+      model: "openai/gpt-4-turbo",
+      messages: [
+        {
+          role: "user",
+          content: prompt
+        }
+      ]
     });
 
     const result = completion.choices[0]?.message?.content;
-    if (!result) throw new Error('Réponse vide');
+    if (!result) {
+      return res.status(500).json({ error: "Réponse vide." });
+    }
 
-    console.log('✅ Réponse reçue.');
+    console.log("\u{1F4DE} Réponse reçue.");
     res.json({ result });
   } catch (error) {
-    console.error('❌ Erreur lors de la génération :', error);
-    res.status(500).json({ error: 'Erreur lors de la génération de l’itinéraire.' });
+    console.error("\u{274C} Erreur lors de la génération :", error);
+    res.status(500).json({ error: "Erreur lors de la génération de l’itinéraire." });
   }
 });
 
-app.post('/api/pdf', (req, res) => {
-  const { content } = req.body;
-  const doc = new PDFDocument();
-  const filename = `itineraire-japon.pdf`;
-  res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-  res.setHeader('Content-Type', 'application/pdf');
-  doc.pipe(res);
-
-  const urlRegex = /(https?:\/\/[^\s]+)/g;
-  const lines = content.split('\n');
-
-  doc.font('Helvetica').fontSize(12);
-
-  lines.forEach(line => {
-    if (urlRegex.test(line)) {
-      const parts = line.split(urlRegex);
-      parts.forEach(part => {
-        if (urlRegex.test(part)) {
-          doc.fillColor('blue').text('➤ Plus d’info', { link: part, underline: true });
-        } else {
-          doc.fillColor('black').text(part, { continued: true });
-        }
-      });
-      doc.text('');
-    } else {
-      doc.fillColor('black').text(line);
-    }
-  });
-
-  doc.end();
-});
-
-app.listen(port, () => {
-  console.log(`✅ Serveur lancé sur http://localhost:${port}`);
+app.listen(10000, () => {
+  console.log("✅ Serveur lancé sur http://localhost:10000");
 });
