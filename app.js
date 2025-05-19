@@ -93,5 +93,31 @@ ${tabelogBlock}
   }
 });
 
+
+
+// ROUTE DE GÉNÉRATION PDF
+const PDFDocument = require('pdfkit');
+const { Readable } = require('stream');
+
+app.post('/api/pdf', (req, res) => {
+  const texte = req.body.texte;
+  if (!texte) {
+    return res.status(400).json({ error: "Texte manquant pour la génération du PDF." });
+  }
+
+  const doc = new PDFDocument({ size: 'A4', margin: 50 });
+  const stream = Readable.from(Buffer.from([]));
+
+  res.setHeader('Content-Type', 'application/pdf');
+  res.setHeader('Content-Disposition', 'attachment; filename="itineraire-japon.pdf"');
+
+  doc.pipe(res);
+  doc.font('Times-Roman').fontSize(12).text(texte, {
+    align: 'left'
+  });
+  doc.end();
+});
+
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`✅ Serveur lancé sur http://localhost:${PORT}`));
