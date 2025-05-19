@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -10,7 +9,7 @@
     h2 { color: #DF2A2F; text-align: center; margin-bottom: 1.5rem; }
     form { max-width: 700px; margin: 0 auto; display: flex; flex-direction: column; }
     label { display: block; margin: 1rem 0 0.5rem; }
-    input[type="text"], input[type="number"], input[type="date"] {
+    input[type="text"], input[type="number"], input[type="date"], textarea {
       width: 100%; padding: 0.6rem; font-size: 1rem;
       border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;
     }
@@ -37,7 +36,7 @@
 
   <form id="form-complet" class="hidden">
     <label>Prénom :</label><input type="text" name="username">
-    <label>Date de départ :</label><input type="date" name="start">
+    <label>Date d'arrivée Japon :</label><input type="date" name="start">
     <label>Durée du séjour (jours) :</label><input type="number" name="duration" min="1">
     <label>Budget approximatif (€) :</label><input type="number" name="budget" min="0">
     <label>Villes à inclure :</label><input type="text" name="villesSouhaitees">
@@ -81,6 +80,9 @@
       <label><input type="checkbox" name="interests" value="artisanat"> Artisanat</label>
     </fieldset>
 
+    <label>Remarques particulières :</label>
+    <textarea name="remarques" rows="3" placeholder="ex : je souhaite intégrer un matsuri ou découvrir des artisans locaux"></textarea>
+
     <button type="submit">Générer mon itinéraire</button>
   </form>
 
@@ -121,85 +123,78 @@
       <label><input type="checkbox" name="interests" value="artisanat"> Artisanat</label>
     </fieldset>
 
+    <label>Remarques particulières :</label>
+    <textarea name="remarques" rows="3" placeholder="ex : je souhaite intégrer un matsuri ou découvrir des artisans locaux"></textarea>
+
     <button type="submit">Générer mon itinéraire</button>
   </form>
 
   <div id="result"></div>
 
   <script>
-    const radios = document.querySelectorAll('input[name="mode"]');
-    const formComplet = document.getElementById('form-complet');
-    const formVille = document.getElementById('form-ville');
-    const resultDiv = document.getElementById('result');
+    document.addEventListener('DOMContentLoaded', () => {
+      const radios = document.querySelectorAll('input[name="mode"]');
+      const formComplet = document.getElementById('form-complet');
+      const formVille = document.getElementById('form-ville');
+      const resultDiv = document.getElementById('result');
 
-    radios.forEach(radio => {
-      radio.addEventListener('change', () => {
-        const selected = document.querySelector('input[name="mode"]:checked').value;
-        formComplet.classList.add("hidden");
-        formVille.classList.add("hidden");
-        if (selected === "complet") formComplet.classList.remove("hidden");
-        if (selected === "ville") formVille.classList.remove("hidden");
-        resultDiv.innerHTML = "";
+      radios.forEach(radio => {
+        radio.addEventListener('change', () => {
+          const selected = document.querySelector('input[name="mode"]:checked').value;
+          formComplet.classList.add("hidden");
+          formVille.classList.add("hidden");
+          if (selected === "complet") formComplet.classList.remove("hidden");
+          if (selected === "ville") formVille.classList.remove("hidden");
+          resultDiv.innerHTML = "";
+        });
       });
-    });
-  
-    function handleSubmit(form, mode) {
-      form.addEventListener("submit", function(e) {
-        e.preventDefault();
+
+      function extractFormData(form) {
         const formData = new FormData(form);
-        const data = { mode };
+        const data = {};
         formData.forEach((value, key) => {
-          if (key in data && Array.isArray(data[key])) {
-            data[key].push(value);
-          } else if (key in data) {
-            data[key] = [data[key], value];
-          } else {
-            if (key === "interests" || key === "style") {
-              data[key] = data[key] || [];
+          if (data[key]) {
+            if (Array.isArray(data[key])) {
               data[key].push(value);
             } else {
-              data[key] = value;
+              data[key] = [data[key], value];
             }
+          } else {
+            data[key] = value;
           }
         });
-        resultDiv.innerText = "⏳ Génération en cours...";
-        fetch("/api/planificateur", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data)
-        })
-        .then(r => r.json())
-        .then(json => {
-          resultDiv.innerText = json.result;
-          document.getElementById("download-btn").style.display = "inline-block";
-        })
-        .catch(() => {
-          resultDiv.innerText = "❌ Erreur de génération.";
-        });
-      });
-    }
+        return data;
+      }
 
-    handleSubmit(document.getElementById('form-complet'), "complet");
-    handleSubmit(document.getElementById('form-ville'), "ville");
-</script>
-<button id="download-btn" style="display:none; margin: 1rem auto; background:#222;">📄 Télécharger le PDF</button>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script>
-  document.getElementById("download-btn").addEventListener("click", () => {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    const text = document.getElementById("result").innerText;
-    const lines = doc.splitTextToSize(text, 180);
-    doc.setFont("Helvetica", "normal");
-    doc.setFontSize(12);
-    let y = 20;
-    lines.forEach(line => {
-      if (y > 280) { doc.addPage(); y = 20; }
-      doc.text(line, 15, y);
-      y += 7;
+      async function handleSubmit(e, mode) {
+        e.preventDefault();
+        const form = e.target;
+        const data = extractFormData(form);
+        data.mode = mode;
+
+        resultDiv.textContent = '⏳ Génération en cours...';
+        try {
+          const response = await fetch('/api/planificateur', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+          const result = await response.json();
+          if (result && result.texte) {
+            resultDiv.textContent = '🧳 Itinéraire généré :\n\n' + result.texte;
+            document.getElementById("downloadPdf").style.display = "inline-block";
+          } else {
+            resultDiv.textContent = '⚠️ Une erreur est survenue.';
+          }
+        } catch (err) {
+          resultDiv.textContent = '❌ Erreur de requête : ' + err.message;
+        }
+      }
+
+      formComplet.addEventListener('submit', (e) => handleSubmit(e, 'complet'));
+      formVille.addEventListener('submit', (e) => handleSubmit(e, 'ville'));
     });
-    doc.save("itineraire-japon.pdf");
-  });
+  </script>
 
 </body>
 </html>
