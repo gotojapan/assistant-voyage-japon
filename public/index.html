@@ -181,8 +181,8 @@
           const result = await response.json();
           console.log("🧾 Résultat brut reçu :", result);
 
-          if (result && result.texte) {
-            resultDiv.textContent = '🧳 Itinéraire généré :\n\n' + result.texte;
+          if (result && result.result) {
+            resultDiv.textContent = '🧳 Itinéraire généré :\n\n' + result.result;
             const btn = document.getElementById("downloadPdf");
             if (btn) btn.style.display = "inline-block";
           } else {
