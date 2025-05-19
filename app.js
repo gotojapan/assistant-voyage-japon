@@ -1,4 +1,5 @@
-// app.js complet et corrigé pour assistant de voyage au Japon
+
+// app.js corrigé et fonctionnel
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -8,7 +9,6 @@ const fs = require('fs');
 const PDFDocument = require('pdfkit');
 const OpenAI = require('openai');
 
-// Configuration
 dotenv.config();
 const app = express();
 app.use(cors());
@@ -19,42 +19,18 @@ const openai = new OpenAI({
   baseURL: 'https://openrouter.ai/api/v1'
 });
 
-// Endpoint principal
 app.post("/api/planificateur", async (req, res) => {
   try {
     const {
-      username,
-      start,
-      duration,
-      budget,
-      villesSouhaitees,
-      lieuxAeviter,
-      type,
-      style,
-      rythme,
-      deja,
-      interests,
-      remarques,
-      mode,
-      ville,
-      periodeVille,
-      joursVille
+      username, start, duration, budget, villesSouhaitees, lieuxAeviter,
+      type, style, rythme, deja, interests, remarques,
+      mode, ville, periodeVille, joursVille
     } = req.body;
 
     let prompt = '';
 
     if (mode === 'ville') {
       prompt += `Tu es un expert du Japon. L'utilisateur souhaite explorer la ville de ${ville} pendant ${joursVille} jours à la période suivante : ${periodeVille}.
-`;
-      if (type) prompt += `Type de voyage : ${type}.
-`;
-      if (style) prompt += `Style souhaité : ${style}.
-`;
-      if (rythme) prompt += `Rythme : ${rythme}.
-`;
-      if (deja) prompt += `Déjà voyagé au Japon ? ${deja}.
-`;
-      if (interests?.length) prompt += `Centres d’intérêt : ${interests.join(', ')}.
 `;
     } else {
       prompt += `Tu es un expert du Japon et tu crées des itinéraires de voyage personnalisés.
@@ -68,66 +44,65 @@ app.post("/api/planificateur", async (req, res) => {
 `;
       if (lieuxAeviter) prompt += `Il souhaite éviter : ${lieuxAeviter}.
 `;
-      if (type) prompt += `Type de voyage : ${type}.
-`;
-      if (style) prompt += `Style de voyage souhaité : ${style}.
-`;
-      if (rythme) prompt += `Rythme de voyage : ${rythme}.
-`;
-      if (deja) prompt += `A-t-il déjà voyagé au Japon ? ${deja}.
-`;
-      if (interests?.length) prompt += `Centres d’intérêt : ${interests.join(', ')}.
-`;
     }
 
+    if (type) prompt += `Type de voyage : ${type}.
+`;
+    if (style) prompt += `Style de voyage souhaité : ${style}.
+`;
+    if (rythme) prompt += `Rythme de voyage : ${rythme}.
+`;
+    if (deja) prompt += `A-t-il déjà voyagé au Japon ? ${deja}.
+`;
+    if (interests?.length) prompt += `Centres d’intérêt : ${interests.join(', ')}.
+`;
     if (interests?.includes("gastronomie")) {
       const city = mode === 'ville' ? ville.toLowerCase() : 'tokyo';
-      prompt += `\n🍽️ Explorer les meilleures adresses à ${city} :\n`;
-      prompt += `- Ramen → plus d'infos : https://tabelog.com/search?sk=ramen%20${city}\n`;
-      prompt += `- Sushi → plus d'infos : https://tabelog.com/search?sk=sushi%20${city}\n`;
-      prompt += `- Izakaya → plus d'infos : https://tabelog.com/search?sk=izakaya%20${city}\n`;
-      prompt += `- Street food → plus d'infos : https://tabelog.com/search?sk=street%20food%20${city}\n`;
-      prompt += `- Michelin → plus d'infos : https://tabelog.com/search?sk=michelin%20${city}\n`;
-      prompt += `\nMerci d’intégrer quelques suggestions de restaurants dans l’itinéraire.\n`;
+      prompt += `
+🍽️ Explorer les meilleures adresses à ${city} :
+`;
+      prompt += `- Ramen → [plus d'infos](https://tabelog.com/search?sk=ramen%20${city})
+`;
+      prompt += `- Sushi → [plus d'infos](https://tabelog.com/search?sk=sushi%20${city})
+`;
+      prompt += `- Izakaya → [plus d'infos](https://tabelog.com/search?sk=izakaya%20${city})
+`;
+      prompt += `- Street food → [plus d'infos](https://tabelog.com/search?sk=street%20food%20${city})
+`;
+      prompt += `- Michelin → [plus d'infos](https://tabelog.com/search?sk=michelin%20${city})
+`;
     }
 
     if (remarques) {
-      prompt += `\n⚠️ Remarques supplémentaires : ${remarques}.\n`;
+      prompt += `
+⚠️ Remarques supplémentaires : ${remarques}.
+`;
     }
 
-    prompt += `\nPropose un itinéraire jour par jour ${mode === 'ville' ? 'dans cette ville' : 'très personnalisé'} (lieux, activités, expériences culinaires, recommandations).`;
-
-    console.log("📤 Prompt envoyé à OpenRouter :\n", prompt);
+    prompt += `
+Propose un itinéraire jour par jour ${mode === 'ville' ? 'dans cette ville' : 'très personnalisé'} (lieux, activités, expériences culinaires, recommandations).
+`;
 
     const completion = await openai.chat.completions.create({
       model: "mistralai/mixtral-8x7b",
-      messages: [
-        {
-          role: "user",
-          content: prompt
-        }
-      ]
+      messages: [{ role: "user", content: prompt }]
     });
 
     const result = completion.choices?.[0]?.message?.content;
-    if (!result) {
-      console.log("❌ Réponse vide :", completion);
-      return res.status(500).json({ error: "Réponse vide de la part du modèle." });
-    }
+    if (!result) return res.status(500).json({ error: "Réponse vide du modèle" });
 
-    console.log("✅ Réponse reçue.");
     res.json({ result });
 
   } catch (err) {
-    console.error("❌ Erreur lors de la génération :", err);
+    console.error("Erreur :", err);
     res.status(500).json({ error: "Erreur lors de la génération." });
   }
 });
 
-// Génération du PDF
 app.post("/api/pdf", async (req, res) => {
   try {
     const { texte } = req.body;
+    const PDFDocument = require('pdfkit');
     const doc = new PDFDocument();
     const filename = "itineraire-japon.pdf";
     res.setHeader('Content-disposition', 'attachment; filename="' + filename + '"');
@@ -141,8 +116,6 @@ app.post("/api/pdf", async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 10000;
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`✅ Serveur lancé sur http://0.0.0.0:${PORT}`);
+app.listen(process.env.PORT || 10000, '0.0.0.0', () => {
+  console.log("✅ Serveur lancé sur http://localhost:10000");
 });
-
