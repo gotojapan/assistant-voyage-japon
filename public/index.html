@@ -182,7 +182,34 @@
           console.log("🧾 Résultat brut reçu :", result);
 
           if (result && result.result) {
+            
             resultDiv.textContent = '🧳 Itinéraire généré :\n\n' + result.result;
+
+            // Créer bouton PDF
+            const pdfBtn = document.createElement('button');
+            pdfBtn.textContent = "📄 Télécharger en PDF";
+            pdfBtn.style.marginTop = "15px";
+            pdfBtn.className = "btn-pdf";
+            pdfBtn.onclick = async () => {
+              try {
+                const pdfResponse = await fetch('/api/pdf', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ texte: result.result })
+                });
+                const blob = await pdfResponse.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = "itineraire-japon.pdf";
+                a.click();
+                window.URL.revokeObjectURL(url);
+              } catch (e) {
+                alert("Erreur lors du téléchargement du PDF : " + e.message);
+              }
+            };
+            resultDiv.appendChild(pdfBtn);
+
             const btn = document.getElementById("downloadPdf");
             if (btn) btn.style.display = "inline-block";
           } else {
