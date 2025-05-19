@@ -1,3 +1,6 @@
+
+// app.js complet et corrigé pour assistant de voyage au Japon
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -6,6 +9,7 @@ const fs = require('fs');
 const PDFDocument = require('pdfkit');
 const OpenAI = require('openai');
 
+// Configuration
 dotenv.config();
 const app = express();
 app.use(cors());
@@ -16,15 +20,30 @@ const openai = new OpenAI({
   baseURL: 'https://openrouter.ai/api/v1'
 });
 
+// Endpoint principal
 app.post("/api/planificateur", async (req, res) => {
   try {
     const {
-      username, start, duration, budget, villesSouhaitees,
-      lieuxAeviter, type, style, rythme, deja, interests,
-      remarques, mode, ville, periodeVille, joursVille
+      username,
+      start,
+      duration,
+      budget,
+      villesSouhaitees,
+      lieuxAeviter,
+      type,
+      style,
+      rythme,
+      deja,
+      interests,
+      remarques,
+      mode,
+      ville,
+      periodeVille,
+      joursVille
     } = req.body;
 
     let prompt = '';
+
     if (mode === 'ville') {
       prompt += `Tu es un expert du Japon. L'utilisateur souhaite explorer la ville de ${ville} pendant ${joursVille} jours à la période suivante : ${periodeVille}.
 `;
@@ -44,6 +63,7 @@ app.post("/api/planificateur", async (req, res) => {
       prompt += `L'utilisateur s'appelle ${username}.
 `;
       prompt += `Il souhaite organiser un voyage complet au Japon à partir du ${start}, pour une durée de ${duration} jours avec un budget de ${budget} euros.
+
 `;
       if (villesSouhaitees) prompt += `Il souhaite visiter : ${villesSouhaitees}.
 `;
@@ -77,17 +97,20 @@ app.post("/api/planificateur", async (req, res) => {
       prompt += `- Michelin → https://tabelog.com/search?sk=michelin%20${city}
 `;
       prompt += `
-Merci d’intégrer quelques suggestions de restaurants dans l’itinéraire.
+Merci d’intégrer quelques suggestions de restaurants dans l’itinéraire (sous forme de "Plus d’info").
 `;
     }
-    if (remarques) prompt += `
+
+    if (remarques) {
+      prompt += `
 ⚠️ Remarques supplémentaires : ${remarques}.
 `;
+    }
+
     prompt += `
 Propose un itinéraire jour par jour ${mode === 'ville' ? 'dans cette ville' : 'très personnalisé'} (lieux, activités, expériences culinaires, recommandations).`;
 
-    console.log("📤 Prompt envoyé à OpenRouter :
-", prompt);
+    console.log("📤 Prompt envoyé à OpenRouter :\n", prompt);
 
     const completion = await openai.chat.completions.create({
       model: "mistralai/mixtral-8x7b",
@@ -95,8 +118,12 @@ Propose un itinéraire jour par jour ${mode === 'ville' ? 'dans cette ville' : '
     });
 
     const result = completion.choices?.[0]?.message?.content;
-    if (!result) return res.status(500).json({ error: "Réponse vide de la part du modèle." });
+    if (!result) {
+      console.log("❌ Réponse vide :", completion);
+      return res.status(500).json({ error: "Réponse vide de la part du modèle." });
+    }
 
+    console.log("✅ Réponse reçue.");
     res.json({ result });
   } catch (err) {
     console.error("❌ Erreur lors de la génération :", err);
@@ -104,6 +131,7 @@ Propose un itinéraire jour par jour ${mode === 'ville' ? 'dans cette ville' : '
   }
 });
 
+// Génération du PDF
 app.post("/api/pdf", async (req, res) => {
   try {
     const { texte } = req.body;
