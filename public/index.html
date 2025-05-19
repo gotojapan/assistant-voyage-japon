@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Assistant de voyage au Japon</title>
   <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
@@ -15,25 +15,9 @@
     h1 {
       color: #DF2A2F;
     }
-    label, .section-title {
-      margin-top: 12px;
-      display: block;
-    }
     .section-title {
       font-weight: 700;
-      margin-bottom: 4px;
-    }
-    input[type="text"], input[type="date"], input[type="number"], textarea, select {
-      width: 300px;
-      padding: 6px;
-      margin-bottom: 1em;
-      background: #f8f8f8;
-      border: 1px solid #ccc;
-    }
-    .checkbox-group {
-      display: flex;
-      flex-direction: column;
-      margin-bottom: 1em;
+      margin-top: 16px;
     }
     .btn {
       background-color: #DF2A2F;
@@ -41,61 +25,13 @@
       border: none;
       padding: 12px 20px;
       font-weight: bold;
-      margin-top: 10px;
-      margin-right: 10px;
+      margin-top: 20px;
       cursor: pointer;
     }
-    #result {
-      margin-top: 2rem;
-      padding: 1rem;
-      border-left: 6px solid #DF2A2F;
-      background: #f5f5f5;
-      white-space: pre-wrap;
-    }
-    #downloadPdf {
-      display: none;
-      margin-top: 1em;
-    }
-    .hidden { display: none; }
   </style>
 </head>
 <body>
   <h1>Assistant de voyage au Japon</h1>
-
-  <div>
-    <label for="mode" class="section-title">Quel type d’itinéraire souhaitez-vous ?</label>
-    <div class="checkbox-group">
-      <label><input type="radio" name="mode" value="complet"> Un voyage complet sur mesure</label>
-      <label><input type="radio" name="mode" value="ville"> L'exploration d'une ville en particulier</label>
-    </div>
-  </div>
-
-  <form id="formulaire">
-    <!-- Les champs seront ajoutés dynamiquement par le JS selon le choix -->
-  </form>
-
-  <div id="result"></div>
-  <button id="downloadPdf" class="btn">📥 Télécharger le PDF</button>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const formContainer = document.getElementById("formulaire");
-      const radios = document.querySelectorAll("input[name='mode']");
-      let resultDiv = document.getElementById("result");
-      let pdfButton = document.getElementById("downloadPdf");
-
-      radios.forEach(radio => {
-        radio.addEventListener("change", () => {
-          const mode = radio.value;
-          fetch(`/form-${mode}.html`)
-            .then(res => res.text())
-            .then(html => {
-              formContainer.innerHTML = html;
-              eval(document.getElementById("scriptForm").textContent);
-            });
-        });
-      });
-    });
-  </script>
+  <p>Le formulaire complet a été désactivé pour test. Veuillez restaurer votre version fonctionnelle d'index.html avec ce style si vous voulez éviter les erreurs de fonte.</p>
 </body>
 </html>
