@@ -40,20 +40,30 @@ app.post('/api/planificateur', async (req, res) => {
 
 app.post('/api/pdf', async (req, res) => {
   const texte = req.body.texte || '';
-  const htmlTemplate = fs.readFileSync(path.join(__dirname, 'templates/template.html'), 'utf-8');
-  const cssContent = fs.readFileSync(path.join(__dirname, 'templates/style.css'), 'utf-8');
-
-  const content = htmlTemplate.replace('{{{content}}}', texte).replace('</head>', `<style>${cssContent}</style></head>`);
-  const file = { content };
+  const templatePath = path.join(__dirname, 'templates', 'template.html');
+  const cssPath = path.join(__dirname, 'templates', 'style.css');
 
   try {
+    const htmlTemplate = fs.readFileSync(templatePath, 'utf-8');
+    const cssContent = fs.readFileSync(cssPath, 'utf-8');
+    const content = htmlTemplate.replace('{{{content}}}', texte).replace('</head>', `<style>${cssContent}</style></head>`);
+    const file = { content };
+
     const pdfBuffer = await generatePdf(file, { format: "A4" });
+
+    if (!pdfBuffer || !Buffer.isBuffer(pdfBuffer)) {
+      console.error("❌ PDF buffer non généré ou invalide");
+      return res.status(500).send("Erreur lors de la génération du PDF");
+    }
+
+    console.log("✅ PDF généré, taille :", pdfBuffer.length);
+
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename=itineraire-japon.pdf');
     res.send(pdfBuffer);
   } catch (err) {
-    console.error("Erreur PDF:", err);
-    res.status(500).send("Erreur PDF");
+    console.error("❌ Erreur PDF :", err);
+    res.status(500).send("Erreur lors de la création du PDF");
   }
 });
 
