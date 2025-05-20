@@ -1,12 +1,12 @@
 require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
-const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const path = require('path');
 const fetch = require('node-fetch');
-
+const puppeteer = require('puppeteer');
 const app = express();
+
 const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
@@ -38,66 +38,44 @@ app.post('/api/planificateur', async (req, res) => {
   }
 });
 
-function convertMarkdownToPDF(doc, markdownText) {
-  const lines = markdownText.split('\n');
-  const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
-
-  lines.forEach((line) => {
-    const matches = [...line.matchAll(linkRegex)];
-    if (matches.length === 0) {
-      doc.fillColor('black').text(line);
-    } else {
-      let lastIndex = 0;
-      matches.forEach((match, i) => {
-        const [fullMatch, text, url] = match;
-        const index = match.index;
-
-        // Ajouter le texte avant le lien
-        if (index > lastIndex) {
-          doc.fillColor('black').text(line.slice(lastIndex, index), { continued: true });
-        }
-
-        // Ajouter lien cliquable avec texte "En savoir plus"
-        doc.fillColor('blue')
-           .text('En savoir plus', { link: url, underline: true, continued: false });
-
-        lastIndex = index + fullMatch.length;
-      });
-
-      // Ajouter le reste de la ligne après le dernier lien
-      if (lastIndex < line.length) {
-        doc.fillColor('black').text(line.slice(lastIndex));
-      }
-
-      // Forcer saut de ligne à la fin du traitement de la ligne
-      doc.moveDown(0.5);
-    }
-  });
-}
-
 app.post('/api/pdf', async (req, res) => {
-  const texte = req.body.texte || 'Itinéraire vide.';
-  const doc = new PDFDocument({ margin: 50 });
-  const filename = 'itineraire-japon.pdf';
+  const texte = req.body.texte || '';
+  const templatePath = path.join(__dirname, 'templates', 'template.html');
+  const cssPath = path.join(__dirname, 'templates', 'style.css');
+  const logoPath = path.join(__dirname, 'templates', 'logo_carre_DETOUR.png');
 
-  res.setHeader('Content-disposition', 'attachment; filename="' + filename + '"');
-  res.setHeader('Content-type', 'application/pdf');
+  const template = fs.readFileSync(templatePath, 'utf-8');
+  const htmlContent = template.replace('{{{content}}}', texte);
 
-  doc.pipe(res);
+  const htmlWithAssets = `
+    <html>
+      <head>
+        <style>${fs.readFileSync(cssPath, 'utf-8')}</style>
+      </head>
+      <body>
+        ${htmlContent}
+      </body>
+    </html>
+  `;
 
-  const logoPath = path.join(__dirname, 'public', 'logo_carre_DETOUR.png');
-  if (fs.existsSync(logoPath)) {
-    doc.image(logoPath, { width: 80, align: 'left' });
-    doc.moveDown();
+  try {
+    const browser = await puppeteer.launch({
+      headless: 'new',
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
+    const page = await browser.newPage();
+    await page.setContent(htmlWithAssets, { waitUntil: 'networkidle0' });
+
+    const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true });
+    await browser.close();
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename=itineraire-japon.pdf');
+    res.send(pdfBuffer);
+  } catch (err) {
+    console.error("Erreur génération PDF:", err);
+    res.status(500).send("Erreur génération PDF");
   }
-
-  doc.font('Helvetica').fontSize(12);
-  convertMarkdownToPDF(doc, texte);
-
-  doc.moveDown(2);
-  doc.fontSize(10).fillColor('gray').text('— Itinéraire généré par GO TO JAPAN —', { align: 'center' });
-
-  doc.end();
 });
 
 function generatePrompt(data) {
