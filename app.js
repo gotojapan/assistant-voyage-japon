@@ -45,32 +45,32 @@ function convertMarkdownToPDF(doc, markdownText) {
   lines.forEach((line) => {
     const matches = [...line.matchAll(linkRegex)];
     if (matches.length === 0) {
-      doc.text(line);
+      doc.fillColor('black').text(line);
     } else {
       let lastIndex = 0;
-      matches.forEach((match) => {
+      matches.forEach((match, i) => {
         const [fullMatch, text, url] = match;
         const index = match.index;
 
         // Ajouter le texte avant le lien
         if (index > lastIndex) {
-          doc.text(line.slice(lastIndex, index), { continued: true });
+          doc.fillColor('black').text(line.slice(lastIndex, index), { continued: true });
         }
 
         // Ajouter lien cliquable avec texte "En savoir plus"
         doc.fillColor('blue')
-           .text('En savoir plus', { link: url, underline: true, continued: true })
-           .fillColor('black');
+           .text('En savoir plus', { link: url, underline: true, continued: false });
 
         lastIndex = index + fullMatch.length;
       });
 
-      // Ajouter le reste de la ligne
+      // Ajouter le reste de la ligne après le dernier lien
       if (lastIndex < line.length) {
-        doc.text(line.slice(lastIndex));
-      } else {
-        doc.text(''); // saut de ligne
+        doc.fillColor('black').text(line.slice(lastIndex));
       }
+
+      // Forcer saut de ligne à la fin du traitement de la ligne
+      doc.moveDown(0.5);
     }
   });
 }
