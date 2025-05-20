@@ -38,9 +38,46 @@ app.post('/api/planificateur', async (req, res) => {
   }
 });
 
+function convertMarkdownToPDF(doc, markdownText) {
+  const lines = markdownText.split('\n');
+  const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+
+  lines.forEach((line) => {
+    const matches = [...line.matchAll(linkRegex)];
+    if (matches.length === 0) {
+      doc.text(line);
+    } else {
+      let lastIndex = 0;
+      matches.forEach((match) => {
+        const [fullMatch, text, url] = match;
+        const index = match.index;
+
+        // Ajouter le texte avant le lien
+        if (index > lastIndex) {
+          doc.text(line.slice(lastIndex, index), { continued: true });
+        }
+
+        // Ajouter lien cliquable avec texte "En savoir plus"
+        doc.fillColor('blue')
+           .text('En savoir plus', { link: url, underline: true, continued: true })
+           .fillColor('black');
+
+        lastIndex = index + fullMatch.length;
+      });
+
+      // Ajouter le reste de la ligne
+      if (lastIndex < line.length) {
+        doc.text(line.slice(lastIndex));
+      } else {
+        doc.text(''); // saut de ligne
+      }
+    }
+  });
+}
+
 app.post('/api/pdf', async (req, res) => {
   const texte = req.body.texte || 'Itinéraire vide.';
-  const doc = new PDFDocument();
+  const doc = new PDFDocument({ margin: 50 });
   const filename = 'itineraire-japon.pdf';
 
   res.setHeader('Content-disposition', 'attachment; filename="' + filename + '"');
@@ -54,7 +91,9 @@ app.post('/api/pdf', async (req, res) => {
     doc.moveDown();
   }
 
-  doc.fontSize(12).text(texte, { align: 'left' });
+  doc.font('Helvetica').fontSize(12);
+  convertMarkdownToPDF(doc, texte);
+
   doc.moveDown(2);
   doc.fontSize(10).fillColor('gray').text('— Itinéraire généré par GO TO JAPAN —', { align: 'center' });
 
@@ -72,7 +111,7 @@ Centres d’intérêt : ${formatList(data.interests)}
 Villes souhaitées : ${data.villesSouhaitees}
 Villes à éviter : ${data.lieuxAeviter}
 Remarques : ${data.remarques}
-Inclue des suggestions de restaurants avec "👉 En savoir plus" à chaque étape.`;
+Inclue des suggestions de restaurants avec "👉 [En savoir plus](url)" à chaque étape.`;
   } else {
     return `Je souhaite explorer la ville de ${data.ville} pendant ${data.joursVille} jours (${data.periodeVille}).
 Type de voyage : ${data.type}
@@ -80,7 +119,7 @@ Style : ${formatList(data.style)}
 Rythme : ${data.rythme}
 Centres d’intérêt : ${formatList(data.interests)}
 Remarques : ${data.remarques}
-Donne un itinéraire jour par jour avec activités + suggestions de restaurants ("👉 En savoir plus").`;
+Donne un itinéraire jour par jour avec activités + suggestions de restaurants ("👉 [En savoir plus](url)").`;
   }
 }
 
