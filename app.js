@@ -4,9 +4,9 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 const path = require('path');
 const fetch = require('node-fetch');
-const puppeteer = require('puppeteer');
-const app = express();
+const { generatePdf } = require("html-pdf-node");
 
+const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
@@ -40,41 +40,20 @@ app.post('/api/planificateur', async (req, res) => {
 
 app.post('/api/pdf', async (req, res) => {
   const texte = req.body.texte || '';
-  const templatePath = path.join(__dirname, 'templates', 'template.html');
-  const cssPath = path.join(__dirname, 'templates', 'style.css');
-  const logoPath = path.join(__dirname, 'templates', 'logo_carre_DETOUR.png');
+  const htmlTemplate = fs.readFileSync(path.join(__dirname, 'templates/template.html'), 'utf-8');
+  const cssContent = fs.readFileSync(path.join(__dirname, 'templates/style.css'), 'utf-8');
 
-  const template = fs.readFileSync(templatePath, 'utf-8');
-  const htmlContent = template.replace('{{{content}}}', texte);
-
-  const htmlWithAssets = `
-    <html>
-      <head>
-        <style>${fs.readFileSync(cssPath, 'utf-8')}</style>
-      </head>
-      <body>
-        ${htmlContent}
-      </body>
-    </html>
-  `;
+  const content = htmlTemplate.replace('{{{content}}}', texte).replace('</head>', `<style>${cssContent}</style></head>`);
+  const file = { content };
 
   try {
-    const browser = await puppeteer.launch({
-      headless: 'new',
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
-    });
-    const page = await browser.newPage();
-    await page.setContent(htmlWithAssets, { waitUntil: 'networkidle0' });
-
-    const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true });
-    await browser.close();
-
+    const pdfBuffer = await generatePdf(file, { format: "A4" });
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename=itineraire-japon.pdf');
     res.send(pdfBuffer);
   } catch (err) {
-    console.error("Erreur génération PDF:", err);
-    res.status(500).send("Erreur génération PDF");
+    console.error("Erreur PDF:", err);
+    res.status(500).send("Erreur PDF");
   }
 });
 
