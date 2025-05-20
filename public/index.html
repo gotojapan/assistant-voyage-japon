@@ -137,6 +137,12 @@ function convertMarkdownLinksToHTML(text) {
   return text.replace(linkRegex, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
 }
 
+
+function formatWelcomeMessage(name) {
+  const safeName = name && name.trim() !== "" ? name : "voyageur";
+  return `<p><strong>Bonjour ${safeName}-san 👋</strong><br>Voici votre itinéraire personnalisé pour le Japon. Laissez-vous guider étape par étape...</p><br>`;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
       const radios = document.querySelectorAll('input[name="mode"]');
       const formComplet = document.getElementById('form-complet');
@@ -189,7 +195,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
           if (result && result.result) {
             
-            resultDiv.innerHTML = '<strong>🧳 Itinéraire généré :</strong><br><br>' + convertMarkdownLinksToHTML(result.result);
+            
+    const prenom = data.username || 'voyageur';
+    const welcome = formatWelcomeMessage(prenom);
+    resultDiv.innerHTML = welcome + convertMarkdownLinksToHTML(result.result);
+    
 
             // Créer bouton PDF
             const pdfBtn = document.createElement('button');
