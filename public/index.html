@@ -183,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = extractFormData(form);
         data.mode = mode;
 
-        resultDiv.textContent = '⏳ Génération en cours...';
+        resultDiv.textContent = '⛩️ Préparation de votre voyage personnalisé...';
         try {
           const response = await fetch('https://assistant-voyage-japon.onrender.com/api/planificateur', {
             method: 'POST',
