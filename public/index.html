@@ -131,7 +131,13 @@
 
   <div id="result"></div>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    
+function convertMarkdownLinksToHTML(text) {
+  const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+  return text.replace(linkRegex, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
       const radios = document.querySelectorAll('input[name="mode"]');
       const formComplet = document.getElementById('form-complet');
       const formVille = document.getElementById('form-ville');
@@ -183,7 +189,7 @@
 
           if (result && result.result) {
             
-            resultDiv.textContent = '🧳 Itinéraire généré :\n\n' + result.result;
+            resultDiv.innerHTML = '<strong>🧳 Itinéraire généré :</strong><br><br>' + convertMarkdownLinksToHTML(result.result);
 
             // Créer bouton PDF
             const pdfBtn = document.createElement('button');
