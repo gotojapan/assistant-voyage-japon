@@ -4,13 +4,17 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const puppeteer = require('puppeteer');
 const fetch = require('node-fetch');
+const fs = require('fs');
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(bodyParser.json());
+app.use(express.static('public'));
 
+// ROUTE : Génération texte via OpenRouter
 app.post('/api/planificateur', async (req, res) => {
   const userInput = req.body;
   const prompt = generatePrompt(userInput);
@@ -37,33 +41,29 @@ app.post('/api/planificateur', async (req, res) => {
   }
 });
 
+// ROUTE : Génération PDF stylé à partir du template
 app.post('/api/pdf', async (req, res) => {
   const texte = req.body.texte || 'Itinéraire vide.';
-  const htmlContent = `
-    <html>
-      <head>
-        <style>
-          body { font-family: Arial, sans-serif; padding: 40px; line-height: 1.6; }
-          h1 { color: #D22; }
-          a { color: blue; text-decoration: underline; }
-        </style>
-      </head>
-      <body>
-        <h1>Votre itinéraire personnalisé</h1>
-        <p>${texte.replace(/\n/g, '<br>')}</p>
-      </body>
-    </html>
-  `;
 
   try {
+    const templatePath = path.join(__dirname, 'templates', 'template.html');
+    let html = fs.readFileSync(templatePath, 'utf8');
+    html = html.replace('{{{content}}}', texte);
+
     const browser = await puppeteer.launch({
       headless: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
 
     const page = await browser.newPage();
-    await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
-    const pdfBuffer = await page.pdf({ format: 'A4' });
+    await page.setContent(html, { waitUntil: 'networkidle0' });
+
+    const pdfBuffer = await page.pdf({
+      format: 'A4',
+      printBackground: true,
+      margin: { top: '20mm', bottom: '20mm', left: '15mm', right: '15mm' }
+    });
+
     await browser.close();
 
     res.setHeader('Content-Type', 'application/pdf');
@@ -75,6 +75,7 @@ app.post('/api/pdf', async (req, res) => {
   }
 });
 
+// PROMPT dynamique selon le type de formulaire
 function generatePrompt(data) {
   if (data.mode === "complet") {
     return `Génère un itinéraire de ${data.duration} jours au Japon à partir du ${data.start} avec un budget de ${data.budget}€.
