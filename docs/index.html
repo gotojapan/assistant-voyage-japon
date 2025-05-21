@@ -196,15 +196,15 @@
             const welcome = formatWelcomeMessage(prenom);
             resultDiv.innerHTML = welcome + convertMarkdownLinksToHTML(result.result);
 
-            const pdfBtn = document.createElement('button');
-            pdfBtn.textContent = "📄 Télécharger en PDF";
-            pdfBtn.style.marginTop = "15px";
-            pdfBtn.className = "btn-pdf";
-            pdfBtn.onclick = async () => {
+            
+const pdfBtn = document.createElement('button');
+pdfBtn.textContent = "📄 Télécharger en PDF";
+pdfBtn.style.marginTop = "15px";
+pdfBtn.className = "btn-pdf";
+pdfBtn.onclick = async () => {
   const originalText = pdfBtn.textContent;
   pdfBtn.textContent = "⏳ Préparation du PDF...";
   pdfBtn.disabled = true;
-
   try {
     const pdfResponse = await fetch('https://assistant-voyage-japon.onrender.com/api/pdf', {
       method: 'POST',
@@ -225,7 +225,7 @@
     pdfBtn.disabled = false;
   }
 };
-            resultDiv.appendChild(pdfBtn);
+
           } else {
             resultDiv.textContent = '⚠️ Format inattendu :\n' + JSON.stringify(result, null, 2);
           }
