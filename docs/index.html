@@ -124,7 +124,7 @@
     </fieldset>
 
     <label>Remarques particulières :</label>
-    <textarea name="remarques" rows="3" placeholder="ex : je souhaite intégrer un matsuri ou découvrir des artisans locaux"></textarea>
+    <textarea name="remarques" rows="3" placeholder="ex : je souhaite découvrir des artisans locaux"></textarea>
 
     <button type="submit">Itinéraire personnalisé</button>
   </form>
@@ -226,6 +226,7 @@ pdfBtn.onclick = async () => {
   }
 };
 
+resultDiv.appendChild(pdfBtn);
           } else {
             resultDiv.textContent = '⚠️ Format inattendu :\n' + JSON.stringify(result, null, 2);
           }
