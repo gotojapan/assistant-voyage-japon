@@ -6,6 +6,7 @@ const puppeteer = require('puppeteer');
 const fetch = require('node-fetch');
 const fs = require('fs');
 const path = require('path');
+const { marked } = require('marked');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -41,14 +42,17 @@ app.post('/api/planificateur', async (req, res) => {
   }
 });
 
-// ROUTE : Génération PDF stylé à partir du template
+// ROUTE : Génération PDF stylé à partir du template avec conversion Markdown → HTML
 app.post('/api/pdf', async (req, res) => {
   const texte = req.body.texte || 'Itinéraire vide.';
 
   try {
     const templatePath = path.join(__dirname, 'templates', 'template.html');
     let html = fs.readFileSync(templatePath, 'utf8');
-    html = html.replace('{{{content}}}', texte);
+
+    // Convertir le Markdown en HTML
+    const convertedHTML = marked.parse(texte);
+    html = html.replace('{{{content}}}', convertedHTML);
 
     const browser = await puppeteer.launch({
       headless: true,
@@ -106,5 +110,5 @@ function formatList(item) {
 }
 
 app.listen(PORT, () => {
-  console.log(`🚀 Serveur complet avec PDF lancé sur le port ${PORT}`);
+  console.log(`🚀 Serveur complet avec PDF et rendu Markdown lancé sur le port ${PORT}`);
 });
