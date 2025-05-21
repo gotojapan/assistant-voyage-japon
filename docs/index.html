@@ -2,31 +2,60 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Assistant Voyage Japon</title>
+  <title>Assistant de planification de voyage au Japon</title>
   <style>
-    body { font-family: sans-serif; padding: 40px; max-width: 700px; margin: auto; line-height: 1.6; }
-    label { display: block; margin-top: 10px; }
-    input, textarea, select { width: 100%; padding: 8px; margin-top: 4px; }
-    button { margin-top: 20px; padding: 10px 20px; font-size: 16px; }
-    #result { margin-top: 30px; white-space: pre-wrap; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fff;
+      color: #222;
+      padding: 40px;
+      max-width: 800px;
+      margin: auto;
+      line-height: 1.6;
+    }
+    h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      font-size: 14px;
+    }
+    button {
+      margin-top: 25px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #result {
+      margin-top: 40px;
+      white-space: pre-wrap;
+    }
   </style>
 </head>
 <body>
   <h1>Planificateur de voyage au Japon 🇯🇵</h1>
 
-  <label for="username">Votre prénom :</label>
-  <input type="text" id="username" placeholder="Ex : Philippe" required />
+  <label>Votre prénom :</label>
+  <input id="username" placeholder="Ex : Philippe" />
 
-  <label for="duration">Durée du voyage (jours) :</label>
-  <input type="number" id="duration" value="10" />
+  <label>Durée du voyage (jours) :</label>
+  <input id="duration" type="number" value="10" />
 
-  <label for="start">Date de départ :</label>
-  <input type="date" id="start" />
+  <label>Date de départ :</label>
+  <input id="start" type="date" />
 
-  <label for="budget">Budget (€) :</label>
-  <input type="number" id="budget" value="3000" />
+  <label>Budget (€) :</label>
+  <input id="budget" type="number" value="3000" />
 
-  <label for="type">Type de voyage :</label>
+  <label>Type de voyage :</label>
   <select id="type">
     <option>Découverte</option>
     <option>Culture</option>
@@ -34,33 +63,33 @@
     <option>Gastronomie</option>
   </select>
 
-  <label for="interests">Centres d’intérêt :</label>
-  <input type="text" id="interests" placeholder="Temples, gastronomie, randonnées..." />
+  <label>Style :</label>
+  <input id="style" placeholder="Classique, hors des sentiers battus..." />
 
-  <label for="style">Style :</label>
-  <input type="text" id="style" placeholder="Classique, hors des sentiers battus..." />
-
-  <label for="rythme">Rythme :</label>
+  <label>Rythme :</label>
   <select id="rythme">
     <option>Calme</option>
     <option>Modéré</option>
     <option>Soutenu</option>
   </select>
 
-  <label for="deja">Déjà allé au Japon ?</label>
+  <label>Déjà allé au Japon ?</label>
   <select id="deja">
     <option>Non</option>
     <option>Oui</option>
   </select>
 
-  <label for="villesSouhaitees">Villes souhaitées :</label>
-  <input type="text" id="villesSouhaitees" />
+  <label>Centres d’intérêt :</label>
+  <input id="interests" placeholder="Temples, gastronomie, randonnées..." />
 
-  <label for="lieuxAeviter">Lieux à éviter :</label>
-  <input type="text" id="lieuxAeviter" />
+  <label>Villes souhaitées :</label>
+  <input id="villesSouhaitees" />
 
-  <label for="remarques">Remarques supplémentaires :</label>
-  <textarea id="remarques" rows="4"></textarea>
+  <label>Lieux à éviter :</label>
+  <input id="lieuxAeviter" />
+
+  <label>Remarques supplémentaires :</label>
+  <textarea id="remarques" rows="3"></textarea>
 
   <button onclick="generer()">Générer mon itinéraire</button>
   <button onclick="telechargerPDF()">📄 Télécharger en PDF</button>
