@@ -11,7 +11,7 @@ const { marked } = require('marked');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+app.use(cors({ origin: 'https://gotojapan.github.io' }));
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
