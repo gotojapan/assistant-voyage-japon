@@ -12,7 +12,6 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(bodyParser.json());
 
-// Itinéraire via OpenRouter
 app.post('/api/planificateur', async (req, res) => {
   const userInput = req.body;
   const prompt = generatePrompt(userInput);
@@ -39,7 +38,6 @@ app.post('/api/planificateur', async (req, res) => {
   }
 });
 
-// PDF via chrome-aws-lambda
 app.post('/api/pdf', async (req, res) => {
   const texte = req.body.texte || 'Itinéraire vide.';
   const htmlContent = `
