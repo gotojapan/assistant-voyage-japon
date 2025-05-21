@@ -61,7 +61,7 @@ app.post('/api/pdf', async (req, res) => {
   try {
     const browser = await puppeteer.launch({
       args: chrome.args,
-      executablePath: await chrome.executablePath || '/usr/bin/chromium-browser',
+      executablePath: await chrome.executablePath,
       headless: chrome.headless,
     });
 
