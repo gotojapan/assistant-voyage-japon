@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Itinéraire Japon</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="header">
+    <div class="logo-title">
+      <img src="logo_carre_DETOUR.png" alt="GO TO JAPAN Logo" class="logo">
+      <div>
+        <h1>Votre voyage personnalisé au Japon</h1>
+        <p class="subtitle">Un itinéraire sur mesure conçu avec soin</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="content">
+    {{{content}}}
+  </main>
+
+  <footer class="footer">
+    — Itinéraire généré par <strong>GO TO JAPAN</strong> —
+  </footer>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const blocks = document.querySelectorAll(".journee p");
+  blocks.forEach(p => {
+    const txt = p.textContent.toLowerCase();
+    if (txt.includes("vol") || txt.includes("aéroport")) p.innerHTML = "✈️ " + p.innerHTML;
+    else if (txt.includes("déjeuner") || txt.includes("dîner")) p.innerHTML = "🍱 " + p.innerHTML;
+    else if (txt.includes("hôtel") || txt.includes("ryokan") || txt.includes("nuit")) p.innerHTML = "🏨 " + p.innerHTML;
+    else if (txt.includes("visite") || txt.includes("temple") || txt.includes("shrine")) p.innerHTML = "⛩️ " + p.innerHTML;
+    else if (txt.includes("atelier") || txt.includes("rencontre")) p.innerHTML = "🎎 " + p.innerHTML;
+    else if (txt.includes("balade") || txt.includes("marche") || txt.includes("randonnée")) p.innerHTML = "🚶 " + p.innerHTML;
+  });
+});
+</script>
+
+</body>
+</html>
