@@ -42,17 +42,31 @@ app.post('/api/planificateur', async (req, res) => {
   }
 });
 
-// ROUTE : Génération PDF stylé à partir du template avec conversion Markdown → HTML
+// ROUTE : Génération PDF stylé avec post-traitement HTML
 app.post('/api/pdf', async (req, res) => {
-  const texte = req.body.texte || 'Itinéraire vide.';
+  const markdown = req.body.texte || 'Itinéraire vide.';
 
   try {
     const templatePath = path.join(__dirname, 'templates', 'template.html');
-    let html = fs.readFileSync(templatePath, 'utf8');
+    let htmlTemplate = fs.readFileSync(templatePath, 'utf8');
 
-    // Convertir le Markdown en HTML
-    const convertedHTML = marked.parse(texte);
-    html = html.replace('{{{content}}}', convertedHTML);
+    // Convertir Markdown → HTML
+    let htmlContent = marked.parse(markdown);
+
+    // Post-traitement HTML simple
+    htmlContent = htmlContent
+      .replace(/Jour (\d+)[\s:-]*/g, '<h3 class="journee">Jour $1</h3>')
+      .replace(/\n/g, '<br>')
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/🍁/g, '<span class="picto">🍁</span>')
+      .replace(/🍱/g, '<span class="picto">🍱</span>')
+      .replace(/👉 \[En savoir plus\]\((.*?)\)/g, '<a class="lien" href="$1" target="_blank">👉 En savoir plus</a>');
+
+    // Injecter dans le template
+    htmlTemplate = htmlTemplate.replace('{{{content}}}', htmlContent);
+
+    // Forcer chemin absolu du logo
+    htmlTemplate = htmlTemplate.replace(/src=["']logo_carre_DETOUR.png["']/g, 'src="https://gotojapan.github.io/assistant-voyage-japon/public/logo_carre_DETOUR.png"');
 
     const browser = await puppeteer.launch({
       headless: true,
@@ -60,7 +74,7 @@ app.post('/api/pdf', async (req, res) => {
     });
 
     const page = await browser.newPage();
-    await page.setContent(html, { waitUntil: 'networkidle0' });
+    await page.setContent(htmlTemplate, { waitUntil: 'networkidle0' });
 
     const pdfBuffer = await page.pdf({
       format: 'A4',
@@ -79,7 +93,7 @@ app.post('/api/pdf', async (req, res) => {
   }
 });
 
-// PROMPT dynamique selon le type de formulaire
+// Générer le prompt complet
 function generatePrompt(data) {
   if (data.mode === "complet") {
     return `Génère un itinéraire de ${data.duration} jours au Japon à partir du ${data.start} avec un budget de ${data.budget}€.
@@ -110,5 +124,5 @@ function formatList(item) {
 }
 
 app.listen(PORT, () => {
-  console.log(`🚀 Serveur complet avec PDF et rendu Markdown lancé sur le port ${PORT}`);
+  console.log(`🚀 Serveur complet avec PDF, Markdown et styles enrichis lancé sur le port ${PORT}`);
 });
