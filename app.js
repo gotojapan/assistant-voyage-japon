@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(bodyParser.json());
 
-// Route : génération d'itinéraire via OpenRouter
+// Itinéraire via OpenRouter
 app.post('/api/planificateur', async (req, res) => {
   const userInput = req.body;
   const prompt = generatePrompt(userInput);
@@ -39,7 +39,7 @@ app.post('/api/planificateur', async (req, res) => {
   }
 });
 
-// Route : génération de PDF depuis texte HTML
+// PDF via chrome-aws-lambda
 app.post('/api/pdf', async (req, res) => {
   const texte = req.body.texte || 'Itinéraire vide.';
   const htmlContent = `
@@ -61,7 +61,7 @@ app.post('/api/pdf', async (req, res) => {
   try {
     const browser = await puppeteer.launch({
       args: chrome.args,
-      executablePath: await chrome.executablePath,
+      executablePath: await chrome.executablePath || '/usr/bin/chromium-browser',
       headless: chrome.headless,
     });
 
@@ -74,12 +74,11 @@ app.post('/api/pdf', async (req, res) => {
     res.setHeader('Content-Disposition', 'attachment; filename=itineraire-japon.pdf');
     res.send(pdfBuffer);
   } catch (err) {
-    console.error("❌ Erreur génération PDF :", err);
+    console.error("❌ Erreur PDF :", err);
     res.status(500).send("Erreur PDF");
   }
 });
 
-// Génération du prompt selon formulaire
 function generatePrompt(data) {
   if (data.mode === "complet") {
     return `Génère un itinéraire de ${data.duration} jours au Japon à partir du ${data.start} avec un budget de ${data.budget}€.
@@ -89,7 +88,7 @@ Rythme : ${data.rythme}
 Déjà allé au Japon ? ${data.deja}
 Centres d’intérêt : ${formatList(data.interests)}
 Villes souhaitées : ${data.villesSouhaitees}
-Villes à éviter : ${data.lieuxAeviter}
+Lieux à éviter : ${data.lieuxAeviter}
 Remarques : ${data.remarques}
 Inclue des suggestions de restaurants avec "👉 [En savoir plus](https://...)" à chaque étape.`;
   } else {
@@ -110,5 +109,5 @@ function formatList(item) {
 }
 
 app.listen(PORT, () => {
-  console.log(`🚀 Serveur complet lancé sur le port ${PORT}`);
+  console.log(`🚀 Serveur complet avec PDF lancé sur le port ${PORT}`);
 });
