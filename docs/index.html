@@ -2,160 +2,244 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Assistant de planification de voyage au Japon</title>
+  <title>Assistant de voyage au Japon</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #fff;
-      color: #222;
-      padding: 40px;
-      max-width: 800px;
-      margin: auto;
-      line-height: 1.6;
+    body { font-family: 'Lato', sans-serif; margin: 2rem; background: #fff; color: #111; }
+    h2 { color: #DF2A2F; text-align: center; margin-bottom: 1.5rem; }
+    form { max-width: 700px; margin: 0 auto; display: flex; flex-direction: column; }
+    label { display: block; margin: 1rem 0 0.5rem; }
+    input[type="text"], input[type="number"], input[type="date"], textarea {
+      width: 100%; padding: 0.6rem; font-size: 1rem;
+      border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;
     }
-    h1 {
-      font-size: 28px;
-      margin-bottom: 10px;
+    input[type="checkbox"], input[type="radio"] {
+      margin-right: 0.5rem; vertical-align: middle;
     }
-    label {
-      display: block;
-      margin-top: 15px;
-      font-weight: bold;
+    fieldset { border: none; padding: 0; margin: 1rem 0; }
+    legend { font-weight: bold; margin-bottom: 0.5rem; color: #DF2A2F; }
+    button { background-color: #DF2A2F; color: white; font-weight: bold; font-size: 1rem;
+      padding: 0.8rem; border: none; border-radius: 4px; cursor: pointer; margin-top: 1.5rem;
     }
-    input, select, textarea {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-      font-size: 14px;
-    }
-    button {
-      margin-top: 25px;
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    #result {
-      margin-top: 40px;
-      white-space: pre-wrap;
-    }
+    .hidden { display: none; }
+    #result { max-width: 700px; margin: 2rem auto; padding: 1rem; background: #f7f7f7; border-left: 5px solid #DF2A2F; white-space: pre-wrap; line-height: 1.5; }
   </style>
 </head>
 <body>
-  <h1>Planificateur de voyage au Japon 🇯🇵</h1>
+  <h2>Assistant de voyage au Japon</h2>
 
-  <label>Votre prénom :</label>
-  <input id="username" placeholder="Ex : Philippe" />
+  <form id="mode-form">
+    <p>Quel type d’itinéraire souhaitez-vous recevoir ?</p>
+    <label><input type="radio" name="mode" value="complet"> Un voyage complet sur mesure</label>
+    <label><input type="radio" name="mode" value="ville"> L’exploration d’une ville en particulier</label>
+  </form>
 
-  <label>Durée du voyage (jours) :</label>
-  <input id="duration" type="number" value="10" />
+  <form id="form-complet" class="hidden">
+    <label>Prénom :</label><input type="text" name="username">
+    <label>Date d'arrivée Japon :</label><input type="date" name="start">
+    <label>Durée du séjour (jours) :</label><input type="number" name="duration" min="1">
+    <label>Budget approximatif (€) :</label><input type="number" name="budget" min="0">
+    <label>Villes à inclure :</label><input type="text" name="villesSouhaitees">
+    <label>Villes à exclure :</label><input type="text" name="lieuxAeviter">
 
-  <label>Date de départ :</label>
-  <input id="start" type="date" />
+    <fieldset>
+      <legend>Type de voyage :</legend>
+      <label><input type="radio" name="type" value="solo"> Solo</label>
+      <label><input type="radio" name="type" value="couple"> Couple</label>
+      <label><input type="radio" name="type" value="famille"> Famille</label>
+      <label><input type="radio" name="type" value="amis"> Entre amis</label>
+    </fieldset>
 
-  <label>Budget (€) :</label>
-  <input id="budget" type="number" value="3000" />
+    <fieldset>
+      <legend>Style de voyage souhaité :</legend>
+      <label><input type="checkbox" name="style" value="authentique"> Authentique</label>
+      <label><input type="checkbox" name="style" value="classique"> Classique</label>
+      <label><input type="checkbox" name="style" value="hors des sentiers battus"> Hors des sentiers battus</label>
+      <label><input type="checkbox" name="style" value="luxe"> Luxe</label>
+    </fieldset>
 
-  <label>Type de voyage :</label>
-  <select id="type">
-    <option>Découverte</option>
-    <option>Culture</option>
-    <option>Nature</option>
-    <option>Gastronomie</option>
-  </select>
+    <fieldset>
+      <legend>Rythme de voyage :</legend>
+      <label><input type="radio" name="rythme" value="tranquille"> Tranquille</label>
+      <label><input type="radio" name="rythme" value="modéré"> Modéré</label>
+      <label><input type="radio" name="rythme" value="intense"> Intense</label>
+    </fieldset>
 
-  <label>Style :</label>
-  <input id="style" placeholder="Classique, hors des sentiers battus..." />
+    <fieldset>
+      <legend>Déjà voyagé au Japon ?</legend>
+      <label><input type="radio" name="deja" value="oui"> Oui</label>
+      <label><input type="radio" name="deja" value="non"> Non</label>
+    </fieldset>
 
-  <label>Rythme :</label>
-  <select id="rythme">
-    <option>Calme</option>
-    <option>Modéré</option>
-    <option>Soutenu</option>
-  </select>
+    <fieldset>
+      <legend>Centres d’intérêt :</legend>
+      <label><input type="checkbox" name="interests" value="temples"> Temples</label>
+      <label><input type="checkbox" name="interests" value="gastronomie"> Gastronomie</label>
+      <label><input type="checkbox" name="interests" value="nature"> Nature</label>
+      <label><input type="checkbox" name="interests" value="musées"> Musées</label>
+      <label><input type="checkbox" name="interests" value="artisanat"> Artisanat</label>
+    </fieldset>
 
-  <label>Déjà allé au Japon ?</label>
-  <select id="deja">
-    <option>Non</option>
-    <option>Oui</option>
-  </select>
+    <label>Remarques particulières :</label>
+    <textarea name="remarques" rows="3" placeholder="ex : je souhaite intégrer un matsuri ou découvrir des artisans locaux"></textarea>
 
-  <label>Centres d’intérêt :</label>
-  <input id="interests" placeholder="Temples, gastronomie, randonnées..." />
+    <button type="submit">Générer mon itinéraire</button>
+  </form>
 
-  <label>Villes souhaitées :</label>
-  <input id="villesSouhaitees" />
+  <form id="form-ville" class="hidden">
+    <label>Ville à explorer :</label><input type="text" name="ville">
+    <label>Période souhaitée :</label><input type="text" name="periodeVille">
+    <label>Durée (jours) :</label><input type="number" name="joursVille" min="1">
 
-  <label>Lieux à éviter :</label>
-  <input id="lieuxAeviter" />
+    <fieldset>
+      <legend>Type de voyage :</legend>
+      <label><input type="radio" name="type" value="solo"> Solo</label>
+      <label><input type="radio" name="type" value="couple"> Couple</label>
+      <label><input type="radio" name="type" value="famille"> Famille</label>
+      <label><input type="radio" name="type" value="amis"> Entre amis</label>
+    </fieldset>
 
-  <label>Remarques supplémentaires :</label>
-  <textarea id="remarques" rows="3"></textarea>
+    <fieldset>
+      <legend>Style de voyage souhaité :</legend>
+      <label><input type="checkbox" name="style" value="authentique"> Authentique</label>
+      <label><input type="checkbox" name="style" value="classique"> Classique</label>
+      <label><input type="checkbox" name="style" value="hors des sentiers battus"> Hors des sentiers battus</label>
+      <label><input type="checkbox" name="style" value="luxe"> Luxe</label>
+    </fieldset>
 
-  <button onclick="generer()">Générer mon itinéraire</button>
-  <button onclick="telechargerPDF()">📄 Télécharger en PDF</button>
+    <fieldset>
+      <legend>Rythme de voyage :</legend>
+      <label><input type="radio" name="rythme" value="tranquille"> Tranquille</label>
+      <label><input type="radio" name="rythme" value="modéré"> Modéré</label>
+      <label><input type="radio" name="rythme" value="intense"> Intense</label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Centres d’intérêt :</legend>
+      <label><input type="checkbox" name="interests" value="temples"> Temples</label>
+      <label><input type="checkbox" name="interests" value="gastronomie"> Gastronomie</label>
+      <label><input type="checkbox" name="interests" value="nature"> Nature</label>
+      <label><input type="checkbox" name="interests" value="musées"> Musées</label>
+      <label><input type="checkbox" name="interests" value="artisanat"> Artisanat</label>
+    </fieldset>
+
+    <label>Remarques particulières :</label>
+    <textarea name="remarques" rows="3" placeholder="ex : je souhaite intégrer un matsuri ou découvrir des artisans locaux"></textarea>
+
+    <button type="submit">Générer mon itinéraire</button>
+  </form>
 
   <div id="result"></div>
-
   <script>
-    let currentResult = '';
+    
+function convertMarkdownLinksToHTML(text) {
+  const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+  return text.replace(linkRegex, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+}
 
-    async function generer() {
+
+function formatWelcomeMessage(name) {
+  const safeName = name && name.trim() !== "" ? name : "voyageur";
+  return `<p><strong>Bonjour ${safeName}-san 👋</strong><br>Voici votre itinéraire personnalisé pour le Japon. Laissez-vous guider étape par étape...</p><br>`;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+      const radios = document.querySelectorAll('input[name="mode"]');
+      const formComplet = document.getElementById('form-complet');
+      const formVille = document.getElementById('form-ville');
       const resultDiv = document.getElementById('result');
-      resultDiv.textContent = '⛩️ Préparation de votre voyage personnalisé...';
 
-      const data = {
-        mode: "complet",
-        username: document.getElementById('username').value,
-        duration: document.getElementById('duration').value,
-        start: document.getElementById('start').value,
-        budget: document.getElementById('budget').value,
-        type: document.getElementById('type').value,
-        interests: document.getElementById('interests').value,
-        style: document.getElementById('style').value,
-        rythme: document.getElementById('rythme').value,
-        deja: document.getElementById('deja').value,
-        villesSouhaitees: document.getElementById('villesSouhaitees').value,
-        lieuxAeviter: document.getElementById('lieuxAeviter').value,
-        remarques: document.getElementById('remarques').value,
-      };
-
-      try {
-        const response = await fetch('https://assistant-voyage-japon.onrender.com/api/planificateur', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
+      radios.forEach(radio => {
+        radio.addEventListener('change', () => {
+          const selected = document.querySelector('input[name="mode"]:checked').value;
+          formComplet.classList.add("hidden");
+          formVille.classList.add("hidden");
+          if (selected === "complet") formComplet.classList.remove("hidden");
+          if (selected === "ville") formVille.classList.remove("hidden");
+          resultDiv.innerHTML = "";
         });
+      });
 
-        const result = await response.json();
-        const nom = data.username || 'voyageur';
-        currentResult = result.result;
-
-        resultDiv.innerHTML = `<p><strong>Bonjour ${nom}-san 👋</strong><br>Voici votre itinéraire personnalisé :</p><br>` +
-          result.result.replace(/\n/g, '<br>');
-      } catch (error) {
-        resultDiv.textContent = '❌ Erreur de requête : ' + error.message;
-      }
-    }
-
-    async function telechargerPDF() {
-      if (!currentResult) return alert("Générez d'abord un itinéraire !");
-      try {
-        const response = await fetch('https://assistant-voyage-japon.onrender.com/api/pdf', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ texte: currentResult })
+      function extractFormData(form) {
+        const formData = new FormData(form);
+        const data = {};
+        formData.forEach((value, key) => {
+          if (data[key]) {
+            if (Array.isArray(data[key])) {
+              data[key].push(value);
+            } else {
+              data[key] = [data[key], value];
+            }
+          } else {
+            data[key] = value;
+          }
         });
-
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'itineraire-japon.pdf';
-        a.click();
-      } catch (error) {
-        alert("Erreur lors du téléchargement du PDF");
+        return data;
       }
-    }
+
+      async function handleSubmit(e, mode) {
+        e.preventDefault();
+        const form = e.target;
+        const data = extractFormData(form);
+        data.mode = mode;
+
+        resultDiv.textContent = '⏳ Génération en cours...';
+        try {
+          const response = await fetch('https://assistant-voyage-japon.onrender.com/api/planificateur', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+          const result = await response.json();
+          console.log("🧾 Résultat brut reçu :", result);
+
+          if (result && result.result) {
+            
+            
+    const prenom = data.username || 'voyageur';
+    const welcome = formatWelcomeMessage(prenom);
+    resultDiv.innerHTML = welcome + convertMarkdownLinksToHTML(result.result);
+    
+
+            // Créer bouton PDF
+            const pdfBtn = document.createElement('button');
+            pdfBtn.textContent = "📄 Télécharger en PDF";
+            pdfBtn.style.marginTop = "15px";
+            pdfBtn.className = "btn-pdf";
+            pdfBtn.onclick = async () => {
+              try {
+                const pdfResponse = await fetch('https://assistant-voyage-japon.onrender.com/api/pdf', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ texte: result.result })
+                });
+                const blob = await pdfResponse.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = "itineraire-japon.pdf";
+                a.click();
+                window.URL.revokeObjectURL(url);
+              } catch (e) {
+                alert("Erreur lors du téléchargement du PDF : " + e.message);
+              }
+            };
+            resultDiv.appendChild(pdfBtn);
+
+            const btn = document.getElementById("downloadPdf");
+            if (btn) btn.style.display = "inline-block";
+          } else {
+            resultDiv.textContent = '⚠️ Format inattendu :\n' + JSON.stringify(result, null, 2);
+          }
+        } catch (err) {
+          resultDiv.textContent = '❌ Erreur de requête : ' + err.message;
+        }
+      }
+
+      formComplet.addEventListener('submit', (e) => handleSubmit(e, 'complet'));
+      formVille.addEventListener('submit', (e) => handleSubmit(e, 'ville'));
+    });
   </script>
+
 </body>
 </html>
