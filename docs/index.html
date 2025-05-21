@@ -201,23 +201,30 @@
             pdfBtn.style.marginTop = "15px";
             pdfBtn.className = "btn-pdf";
             pdfBtn.onclick = async () => {
-              try {
-                const pdfResponse = await fetch('https://assistant-voyage-japon.onrender.com/api/pdf', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ texte: result.result })
-                });
-                const blob = await pdfResponse.blob();
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = "itineraire-japon.pdf";
-                a.click();
-                window.URL.revokeObjectURL(url);
-              } catch (e) {
-                alert("Erreur lors du téléchargement du PDF : " + e.message);
-              }
-            };
+  const originalText = pdfBtn.textContent;
+  pdfBtn.textContent = "⏳ Préparation du PDF...";
+  pdfBtn.disabled = true;
+
+  try {
+    const pdfResponse = await fetch('https://assistant-voyage-japon.onrender.com/api/pdf', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ texte: result.result })
+    });
+    const blob = await pdfResponse.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = "itineraire-japon.pdf";
+    a.click();
+    window.URL.revokeObjectURL(url);
+  } catch (e) {
+    alert("Erreur lors du téléchargement du PDF : " + e.message);
+  } finally {
+    pdfBtn.textContent = originalText;
+    pdfBtn.disabled = false;
+  }
+};
             resultDiv.appendChild(pdfBtn);
           } else {
             resultDiv.textContent = '⚠️ Format inattendu :\n' + JSON.stringify(result, null, 2);
