@@ -42,7 +42,7 @@ app.post('/api/planificateur', async (req, res) => {
   }
 });
 
-// ROUTE : Génération PDF stylé avec post-traitement HTML
+// ROUTE : Génération PDF stylé et structuré
 app.post('/api/pdf', async (req, res) => {
   const markdown = req.body.texte || 'Itinéraire vide.';
 
@@ -53,20 +53,30 @@ app.post('/api/pdf', async (req, res) => {
     // Convertir Markdown → HTML
     let htmlContent = marked.parse(markdown);
 
-    // Post-traitement HTML simple
-    htmlContent = htmlContent
-      .replace(/Jour (\d+)[\s:-]*/g, '<h3 class="journee">Jour $1</h3>')
-      .replace(/\n/g, '<br>')
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .replace(/🍁/g, '<span class="picto">🍁</span>')
-      .replace(/🍱/g, '<span class="picto">🍱</span>')
-      .replace(/👉 \[En savoir plus\]\((.*?)\)/g, '<a class="lien" href="$1" target="_blank">👉 En savoir plus</a>');
+    // Styliser les titres "Jour X" → <h2 class="journee">
+    htmlContent = htmlContent.replace(/<p>Jour\s*(\d+)[\s:-]*(.*?)<\/p>/gi, (_match, num, title) => {
+      const cleanTitle = title ? ` – ${title.trim()}` : '';
+      return `<h2 class="journee">Jour ${num}${cleanTitle}</h2>`;
+    });
 
-    // Injecter dans le template
+    // Styliser les sous-sections "Matin", "Midi", etc.
+    htmlContent = htmlContent.replace(/<p>(🍁|🍱)?\s*(Matin|Midi|Après-midi|Soir)\s*:?\s*<\/p>/gi, (_match, icon, section) => {
+      return `<h3 class="moment">${icon || ''} ${section}</h3>`;
+    });
+
+    // Transformer les liens "👉 [En savoir plus](...)" → vrais liens cliquables
+    htmlContent = htmlContent.replace(/👉\s*<a href="([^"]+)"[^>]*>(.*?)<\/a>/gi, (_match, url, text) => {
+      return `<p class="link-block">👉 <a href="${url}" class="lien" target="_blank">${text}</a></p>`;
+    });
+
+    // Injecter le HTML stylisé dans le template
     htmlTemplate = htmlTemplate.replace('{{{content}}}', htmlContent);
 
-    // Forcer chemin absolu du logo
-    htmlTemplate = htmlTemplate.replace(/src=["']logo_carre_DETOUR.png["']/g, 'src="https://gotojapan.github.io/assistant-voyage-japon/public/logo_carre_DETOUR.png"');
+    // Forcer le chemin du logo
+    htmlTemplate = htmlTemplate.replace(
+      /src=["']logo_carre_DETOUR.png["']/g,
+      'src="https://gotojapan.github.io/assistant-voyage-japon/public/logo_carre_DETOUR.png"'
+    );
 
     const browser = await puppeteer.launch({
       headless: true,
@@ -93,7 +103,6 @@ app.post('/api/pdf', async (req, res) => {
   }
 });
 
-// Générer le prompt complet
 function generatePrompt(data) {
   if (data.mode === "complet") {
     return `Génère un itinéraire de ${data.duration} jours au Japon à partir du ${data.start} avec un budget de ${data.budget}€.
@@ -124,5 +133,5 @@ function formatList(item) {
 }
 
 app.listen(PORT, () => {
-  console.log(`🚀 Serveur complet avec PDF, Markdown et styles enrichis lancé sur le port ${PORT}`);
+  console.log(`🚀 Serveur final avec PDF stylisé lancé sur le port ${PORT}`);
 });
