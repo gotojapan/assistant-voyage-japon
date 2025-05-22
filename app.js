@@ -1,3 +1,5 @@
+// ✅ app.js complet et corrigé pour PDF stylisé avec blocs .jour et emojis
+
 require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -17,7 +19,7 @@ app.use(express.static('public'));
 
 marked.setOptions({ breaks: true });
 
-// ROUTE : Génération texte via OpenRouter
+// Génération texte OpenRouter
 app.post('/api/planificateur', async (req, res) => {
   const userInput = req.body;
   const prompt = generatePrompt(userInput);
@@ -39,12 +41,12 @@ app.post('/api/planificateur', async (req, res) => {
     const result = data.choices?.[0]?.message?.content || "Une erreur est survenue.";
     res.json({ result });
   } catch (err) {
-    console.error("❌ Erreur OpenRouter :", err);
+    console.error("\u274c Erreur OpenRouter :", err);
     res.status(500).json({ error: err.toString() });
   }
 });
 
-// ROUTE : Génération PDF stylé
+// Génération PDF stylisé
 app.post('/api/pdf', async (req, res) => {
   const markdown = req.body.texte || 'Itinéraire vide.';
 
@@ -52,56 +54,52 @@ app.post('/api/pdf', async (req, res) => {
     const templatePath = path.join(__dirname, 'templates', 'template.html');
     let htmlTemplate = fs.readFileSync(templatePath, 'utf8');
 
-    // Markdown → HTML brut
+    // Conversion Markdown > HTML
     let html = marked.parse(markdown);
 
-    // Transformation intelligente du HTML
-    html = html
-      .replace(/<p>\s*Jour\s*(\d+)(.*?)<\/p>/gi, (_m, n, title) => {
-        return `<div class="jour"><h2>🗓️ Jour ${n}${title ? ` : ${title.trim()}` : ''}</h2>`;
-      })
-      .replace(/<p>\s*(🍁|🍱|🏯)?\s*(Matin|Midi|Après-midi|Soir)\s*:?\s*<\/p>/gi,
-                (_m, icon, part) => `<h3>${icon || '🕒'} ${part}</h3>`)
-      .replace(/👉\s*<a href="([^"]+)"[^>]*>(.*?)<\/a>/gi,
-                (_m, url, text) => `<p>👉 <a href="${url}" class="lien" target="_blank">${text}</a></p>`)
-      .replace(/<\/h2>\s*<p>/gi, '</h2><p>') // compact
-      .replace(/\n/g, '<br>') // sécurité manuelle
-      + '</div>'; // close the last block
+    // Blocs par jour
+    html = html.replace(/<strong>Jour (\d+)(.*?)<\/strong>/gi, (_m, num, titre) => {
+      return `</div><div class="jour"><h2>\uD83D\uDCC5 Jour ${num}${titre}</h2>`;
+    });
 
-    htmlTemplate = htmlTemplate.replace('{{{content}}}', html);
+    // Sections Matin, Midi, Soir
+    html = html.replace(/<em>\s*(Matin|Midi|Après-midi|Soir)\s*:?.*<\/em>/gi, (_m, part) => {
+      return `<h3>\uD83D\uDD52 ${part}</h3>`;
+    });
 
-    // Forcer chemin absolu du logo
+    // Liens → ancrage propre
+    html = html.replace(/\uD83D\uDC49\s*<a href=\"(.*?)\".*?>(.*?)<\/a>/gi, (_m, url, txt) => {
+      return `<p>\uD83D\uDC49 <a href="${url}" target="_blank">${txt}</a></p>`;
+    });
+
+    // Injecter dans le template
+    htmlTemplate = htmlTemplate.replace('{{{content}}}', `<div class="jour">${html}</div>`);
+
+    // Corriger chemin logo si besoin
     htmlTemplate = htmlTemplate.replace(
       /src=["']logo_carre_DETOUR.png["']/g,
       'src="https://gotojapan.github.io/assistant-voyage-japon/public/logo_carre_DETOUR.png"'
     );
 
-    const browser = await puppeteer.launch({
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
-    });
-
+    const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
     const page = await browser.newPage();
     await page.setContent(htmlTemplate, { waitUntil: 'networkidle0' });
 
     const pdfBuffer = await page.pdf({
-      format: 'A4',
-      printBackground: true,
+      format: 'A4', printBackground: true,
       margin: { top: '20mm', bottom: '20mm', left: '15mm', right: '15mm' }
     });
 
     await browser.close();
-
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename=itineraire-japon.pdf');
     res.send(pdfBuffer);
   } catch (err) {
-    console.error("❌ Erreur PDF :", err);
+    console.error("\u274c Erreur PDF :", err);
     res.status(500).send("Erreur PDF");
   }
 });
 
-// 🔧 Générateur de prompt
 function generatePrompt(data) {
   if (data.mode === "complet") {
     return `Génère un itinéraire de ${data.duration} jours au Japon à partir du ${data.start} avec un budget de ${data.budget}€.
@@ -113,7 +111,7 @@ Centres d’intérêt : ${formatList(data.interests)}
 Villes souhaitées : ${data.villesSouhaitees}
 Lieux à éviter : ${data.lieuxAeviter}
 Remarques : ${data.remarques}
-Inclue des suggestions de restaurants avec "👉 [En savoir plus](https://...)" à chaque étape.`;
+Inclue des suggestions de restaurants avec \"\ud83d\udc49 [En savoir plus](https://...)\" à chaque étape.`;
   } else {
     return `Je souhaite explorer la ville de ${data.ville} pendant ${data.joursVille} jours (${data.periodeVille}).
 Type de voyage : ${data.type}
@@ -121,7 +119,7 @@ Style : ${formatList(data.style)}
 Rythme : ${data.rythme}
 Centres d’intérêt : ${formatList(data.interests)}
 Remarques : ${data.remarques}
-Donne un itinéraire jour par jour avec activités + suggestions de restaurants ("👉 [En savoir plus](https://...)").`;
+Donne un itinéraire jour par jour avec activités + suggestions de restaurants (\"\ud83d\udc49 [En savoir plus](https://...)\").`;
   }
 }
 
@@ -132,5 +130,5 @@ function formatList(item) {
 }
 
 app.listen(PORT, () => {
-  console.log(`🚀 Serveur final avec PDF stylisé lancé sur le port ${PORT}`);
+  console.log(`\uD83D\uDE80 Serveur final avec PDF stylisé lancé sur le port ${PORT}`);
 });
