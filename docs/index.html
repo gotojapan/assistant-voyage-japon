@@ -4,7 +4,26 @@
   <meta charset="UTF-8">
   <title>Assistant de voyage au Japon</title>
   <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <style>
+    body { font-family: 'Lato', sans-serif; margin: 2rem; background: #fff; color: #111; }
+    h2 { color: #DF2A2F; text-align: center; margin-bottom: 1.5rem; }
+    form { max-width: 700px; margin: 0 auto; display: flex; flex-direction: column; }
+    label { display: block; margin: 1rem 0 0.5rem; }
+    input[type="text"], input[type="number"], input[type="date"], textarea {
+      width: 100%; padding: 0.6rem; font-size: 1rem;
+      border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;
+    }
+    input[type="checkbox"], input[type="radio"] {
+      margin-right: 0.5rem; vertical-align: middle;
+    }
+    fieldset { border: none; padding: 0; margin: 1rem 0; }
+    legend { font-weight: bold; margin-bottom: 0.5rem; color: #DF2A2F; }
+    button { background-color: #DF2A2F; color: white; font-weight: bold; font-size: 1rem;
+      padding: 0.8rem; border: none; border-radius: 4px; cursor: pointer; margin-top: 1.5rem;
+    }
+    .hidden { display: none; }
+    #result { max-width: 700px; margin: 2rem auto; padding: 1rem; background: #f7f7f7; border-left: 5px solid #DF2A2F; white-space: pre-wrap; line-height: 1.5; }
+  </style>
 </head>
 <body>
   <h2>Assistant de voyage au Japon</h2>
@@ -66,7 +85,7 @@
     </fieldset>
 
     <label>Remarques particulières :</label>
-    <textarea name="remarques" rows="3" placeholder="ex : je souhaite intégrer un matsuri ou découvrir des artisans locaux"></textarea>
+    <textarea name="remarques" rows="3"></textarea>
 
     <fieldset>
       <legend>Souhaitez-vous une conclusion à la fin de l’itinéraire ?</legend>
@@ -119,7 +138,7 @@
     </fieldset>
 
     <label>Remarques particulières :</label>
-    <textarea name="remarques" rows="3" placeholder="ex : je souhaite découvrir des artisans locaux"></textarea>
+    <textarea name="remarques" rows="3"></textarea>
 
     <fieldset>
       <legend>Souhaitez-vous une conclusion à la fin de l’itinéraire ?</legend>
@@ -129,3 +148,104 @@
 
     <button type="submit">Itinéraire personnalisé</button>
   </form>
+
+  <div id="result"></div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const radios = document.querySelectorAll('input[name="mode"]');
+      const formComplet = document.getElementById('form-complet');
+      const formVille = document.getElementById('form-ville');
+      const resultDiv = document.getElementById('result');
+
+      radios.forEach(radio => {
+        radio.addEventListener('change', () => {
+          const selected = document.querySelector('input[name="mode"]:checked').value;
+          formComplet.classList.add("hidden");
+          formVille.classList.add("hidden");
+          if (selected === "complet") formComplet.classList.remove("hidden");
+          if (selected === "ville") formVille.classList.remove("hidden");
+          resultDiv.innerHTML = "";
+        });
+      });
+
+      function extractFormData(form) {
+        const formData = new FormData(form);
+        const data = {};
+        formData.forEach((value, key) => {
+          if (data[key]) {
+            if (Array.isArray(data[key])) {
+              data[key].push(value);
+            } else {
+              data[key] = [data[key], value];
+            }
+          } else {
+            data[key] = value;
+          }
+        });
+        return data;
+      }
+
+      async function handleSubmit(e, mode) {
+        e.preventDefault();
+        const form = e.target;
+        const data = extractFormData(form);
+        data.mode = mode;
+
+        resultDiv.textContent = '⛩️ Préparation de votre voyage personnalisé...';
+        try {
+          const response = await fetch('https://assistant-voyage-japon.onrender.com/api/planificateur', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+          const result = await response.json();
+
+          if (result && result.result) {
+            const prenom = data.username || 'voyageur';
+            const welcome = `<p><strong>Bonjour ${prenom}-san 👋</strong><br>Voici votre itinéraire personnalisé pour le Japon. Laissez-vous guider étape par étape...</p><br>`;
+            const html = result.result.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+            resultDiv.innerHTML = welcome + html;
+
+            const pdfBtn = document.createElement('button');
+            pdfBtn.textContent = "📄 Télécharger en PDF";
+            pdfBtn.className = "btn-pdf";
+            pdfBtn.onclick = async () => {
+              const originalText = pdfBtn.textContent;
+              pdfBtn.textContent = "⏳ Préparation du PDF...";
+              pdfBtn.disabled = true;
+              try {
+                const pdfResponse = await fetch('https://assistant-voyage-japon.onrender.com/api/pdf', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ texte: result.result })
+                });
+                const blob = await pdfResponse.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = "itineraire-japon.pdf";
+                a.click();
+                window.URL.revokeObjectURL(url);
+              } catch (e) {
+                alert("Erreur lors du téléchargement du PDF : " + e.message);
+              } finally {
+                pdfBtn.textContent = originalText;
+                pdfBtn.disabled = false;
+              }
+            };
+            resultDiv.appendChild(pdfBtn);
+          } else {
+            resultDiv.textContent = '⚠️ Format inattendu :\n' + JSON.stringify(result, null, 2);
+          }
+        } catch (err) {
+          resultDiv.textContent = '❌ Erreur de requête : ' + err.message;
+        }
+      }
+
+      document.getElementById("form-complet").addEventListener('submit', e => handleSubmit(e, 'complet'));
+      document.getElementById("form-ville").addEventListener('submit', e => handleSubmit(e, 'ville'));
+    });
+  </script>
+</body>
+</html>
