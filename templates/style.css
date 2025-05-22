@@ -1,39 +1,60 @@
 body {
-  font-family: 'Arial', sans-serif;
-  color: #111;
-  margin: 40px;
+  font-family: 'Lato', 'Noto Color Emoji', sans-serif;
+  color: #222;
+  background: #fff;
+  padding: 40px;
   line-height: 1.6;
-  background-color: #fff;
+  font-size: 14px;
 }
+
 .logo {
-  width: 80px;
+  width: 100px;
+  margin-bottom: 20px;
 }
-header {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  border-bottom: 2px solid #DF2A2F;
-  padding-bottom: 10px;
+
+h1 {
+  color: #D22;
+  font-size: 24px;
+  text-align: center;
   margin-bottom: 30px;
 }
-h1 {
-  color: #DF2A2F;
+
+h2.journee {
+  font-size: 20px;
+  color: #D22;
+  margin-bottom: 15px;
+  border-left: 4px solid #D22;
+  padding-left: 10px;
 }
-h2 {
-  color: #DF2A2F;
-  border-bottom: 1px solid #ccc;
-  padding-bottom: 5px;
+
+h3.moment {
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 20px;
+  margin-bottom: 6px;
+  color: #444;
 }
-main {
-  white-space: pre-wrap;
+
+.jour {
+  background: #f4f4f4;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
-a {
-  color: #0055cc;
+
+.link-block {
+  margin: 10px 0;
+}
+
+a.lien {
+  color: #0055aa;
   text-decoration: underline;
 }
-footer {
-  margin-top: 40px;
+
+.footer {
   text-align: center;
-  color: gray;
-  font-size: 0.9em;
+  font-size: 12px;
+  margin-top: 40px;
+  color: #777;
 }
