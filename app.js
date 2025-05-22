@@ -35,7 +35,14 @@ app.post('/api/planificateur', async (req, res) => {
     });
 
     const data = await completion.json();
-    const result = data.choices?.[0]?.message?.content || "Une erreur est survenue.";
+    let result = data.choices?.[0]?.message?.content || "Une erreur est survenue.";
+
+    // Ajouter emojis dans les moments de la journée
+    result = result.replace(/###\s*Matin/g, '### 🍵 Matin');
+    result = result.replace(/###\s*Midi/g, '### 🍽️ Midi');
+    result = result.replace(/###\s*Après-midi/g, '### ☀️ Après-midi');
+    result = result.replace(/###\s*Soir/g, '### 🌙 Soir');
+
     res.json({ result });
   } catch (err) {
     console.error("❌ Erreur OpenRouter :", err);
@@ -60,10 +67,11 @@ app.post('/api/pdf', async (req, res) => {
     });
     htmlContent = `<div class="jour">` + htmlContent + `</div>`;
 
-    // Styliser les moments de la journée (Matin, Midi, etc.)
-    htmlContent = htmlContent.replace(/<h3>(Matin|Midi|Après-midi|Soir)<\/h3>/gi, (_m, label) => {
-      return `<h3 class="moment">🍱 ${label}</h3>`;
-    });
+    // Styliser les moments de la journée (Matin, Midi, etc.) avec emoji
+    htmlContent = htmlContent.replace(/<h3>\s*Matin\s*<\/h3>/gi, '<h3 class="moment">🍵 Matin</h3>');
+    htmlContent = htmlContent.replace(/<h3>\s*Midi\s*<\/h3>/gi, '<h3 class="moment">🍽️ Midi</h3>');
+    htmlContent = htmlContent.replace(/<h3>\s*Après-midi\s*<\/h3>/gi, '<h3 class="moment">☀️ Après-midi</h3>');
+    htmlContent = htmlContent.replace(/<h3>\s*Soir\s*<\/h3>/gi, '<h3 class="moment">🌙 Soir</h3>');
 
     // Styliser les liens cliquables "👉"
     htmlContent = htmlContent.replace(/👉\s*<a href="([^"]+)"[^>]*>(.*?)<\/a>/gi, (_m, url, txt) => {
