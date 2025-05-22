@@ -3,84 +3,71 @@
 <head>
   <meta charset="UTF-8">
   <title>Votre itinéraire personnalisé</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lato&family=Noto+Color+Emoji&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Lato&family=Noto+Color+Emoji&display=swap');
-
     body {
       font-family: 'Lato', 'Noto Color Emoji', sans-serif;
       padding: 40px;
-      line-height: 1.6;
-      background: #ffffff;
+      background: #fefefe;
       color: #111;
+      line-height: 1.7;
     }
-
     .logo {
-      max-width: 100px;
-      margin-bottom: 20px;
+      width: 100px;
       display: block;
+      margin: 0 auto 20px;
     }
-
     h1 {
-      color: #DF2A2F;
-      font-size: 24px;
       text-align: center;
+      color: #D22;
+      font-size: 24px;
       margin-bottom: 30px;
     }
-
     h2.journee {
       font-size: 20px;
-      color: #DF2A2F;
+      color: #D22;
       margin-bottom: 10px;
     }
-
-    .jour {
-      margin-bottom: 30px;
-      padding: 20px;
-      background: #f9f9f9;
-      border-left: 4px solid #DF2A2F;
-      border-radius: 8px;
-    }
-
-    .moment {
-      font-size: 16px;
-      font-weight: bold;
+    h3.moment {
       margin-top: 15px;
+      font-size: 16px;
       color: #444;
     }
-
-    .link-block {
+    .jour {
+      background: #f7f7f7;
+      border-left: 5px solid #D22;
+      padding: 20px;
+      margin-bottom: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.05);
+    }
+    p {
       margin: 8px 0;
     }
-
-    .link-block a {
-      color: #DF2A2F;
-      text-decoration: underline;
+    .link-block {
+      margin-top: 5px;
+    }
+    a.lien {
+      color: #D22;
       font-weight: bold;
+      text-decoration: underline;
     }
-
-    p {
-      margin: 6px 0;
-    }
-
     .footer {
       text-align: center;
       font-size: 12px;
-      margin-top: 50px;
-      color: #999;
+      margin-top: 40px;
     }
   </style>
 </head>
 <body>
-  <img src="https://gotojapan.github.io/assistant-voyage-japon/logo_carre_DETOUR.png" alt="GO TO JAPAN Logo" class="logo" />
+  <img src="https://gotojapan.github.io/assistant-voyage-japon/logo_carre_DETOUR.png" alt="GO TO JAPAN Logo" class="logo">
   <h1>Votre itinéraire personnalisé</h1>
 
-  <div class="contenu">
-    {{{content}}}
-  </div>
+  <!-- Contenu HTML injecté -->
+  {{{content}}}
 
   <p class="footer">
     Itinéraire généré avec soin par l’assistant <strong>GO TO JAPAN</strong> ✨
   </p>
 </body>
 </html>
-
