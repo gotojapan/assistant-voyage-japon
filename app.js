@@ -60,8 +60,8 @@ app.post('/api/pdf', async (req, res) => {
     htmlContent = `<div class="jour">` + htmlContent + `</div>`;
 
     // Styliser les moments de la journée (Matin, Midi, etc.)
-    htmlContent = htmlContent.replace(/<h3>(.*?)<\/h3>/gi, (_m, text) => {
-      return `<h3 class="moment">${text}</h3>`;
+    htmlContent = htmlContent.replace(/<h3>(Matin|Midi|Après-midi|Soir)<\/h3>/gi, (_m, label) => {
+      return `<h3 class="moment">🍱 ${label}</h3>`;
     });
 
     // Styliser les liens cliquables "👉"
@@ -71,12 +71,6 @@ app.post('/api/pdf', async (req, res) => {
 
     // Injecter le contenu dans le template
     htmlTemplate = htmlTemplate.replace('{{{content}}}', htmlContent);
-
-    // Forcer le lien complet du logo
-    htmlTemplate = htmlTemplate.replace(
-      /src=["']logo_carre_DETOUR.png["']/g,
-      'src="https://gotojapan.github.io/assistant-voyage-japon/logo_carre_DETOUR.png"'
-    );
 
     const browser = await puppeteer.launch({
       headless: true,
