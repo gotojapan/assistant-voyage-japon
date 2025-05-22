@@ -15,6 +15,8 @@ app.use(cors({ origin: 'https://gotojapan.github.io' }));
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
+marked.setOptions({ breaks: true });
+
 // ROUTE : Génération texte via OpenRouter
 app.post('/api/planificateur', async (req, res) => {
   const userInput = req.body;
@@ -42,7 +44,7 @@ app.post('/api/planificateur', async (req, res) => {
   }
 });
 
-// ROUTE : Génération PDF stylé et structuré
+// ROUTE : Génération PDF stylé
 app.post('/api/pdf', async (req, res) => {
   const markdown = req.body.texte || 'Itinéraire vide.';
 
@@ -50,29 +52,25 @@ app.post('/api/pdf', async (req, res) => {
     const templatePath = path.join(__dirname, 'templates', 'template.html');
     let htmlTemplate = fs.readFileSync(templatePath, 'utf8');
 
-    // Convertir Markdown → HTML
-    let htmlContent = marked.parse(markdown);
+    // Markdown → HTML brut
+    let html = marked.parse(markdown);
 
-    // Styliser les titres "Jour X" → <h2 class="journee">
-    htmlContent = htmlContent.replace(/<p>Jour\s*(\d+)[\s:-]*(.*?)<\/p>/gi, (_match, num, title) => {
-      const cleanTitle = title ? ` – ${title.trim()}` : '';
-      return `<h2 class="journee">Jour ${num}${cleanTitle}</h2>`;
-    });
+    // Transformation intelligente du HTML
+    html = html
+      .replace(/<p>\s*Jour\s*(\d+)(.*?)<\/p>/gi, (_m, n, title) => {
+        return `<div class="jour"><h2>🗓️ Jour ${n}${title ? ` : ${title.trim()}` : ''}</h2>`;
+      })
+      .replace(/<p>\s*(🍁|🍱|🏯)?\s*(Matin|Midi|Après-midi|Soir)\s*:?\s*<\/p>/gi,
+                (_m, icon, part) => `<h3>${icon || '🕒'} ${part}</h3>`)
+      .replace(/👉\s*<a href="([^"]+)"[^>]*>(.*?)<\/a>/gi,
+                (_m, url, text) => `<p>👉 <a href="${url}" class="lien" target="_blank">${text}</a></p>`)
+      .replace(/<\/h2>\s*<p>/gi, '</h2><p>') // compact
+      .replace(/\n/g, '<br>') // sécurité manuelle
+      + '</div>'; // close the last block
 
-    // Styliser les sous-sections "Matin", "Midi", etc.
-    htmlContent = htmlContent.replace(/<p>(🍁|🍱)?\s*(Matin|Midi|Après-midi|Soir)\s*:?\s*<\/p>/gi, (_match, icon, section) => {
-      return `<h3 class="moment">${icon || ''} ${section}</h3>`;
-    });
+    htmlTemplate = htmlTemplate.replace('{{{content}}}', html);
 
-    // Transformer les liens "👉 [En savoir plus](...)" → vrais liens cliquables
-    htmlContent = htmlContent.replace(/👉\s*<a href="([^"]+)"[^>]*>(.*?)<\/a>/gi, (_match, url, text) => {
-      return `<p class="link-block">👉 <a href="${url}" class="lien" target="_blank">${text}</a></p>`;
-    });
-
-    // Injecter le HTML stylisé dans le template
-    htmlTemplate = htmlTemplate.replace('{{{content}}}', htmlContent);
-
-    // Forcer le chemin du logo
+    // Forcer chemin absolu du logo
     htmlTemplate = htmlTemplate.replace(
       /src=["']logo_carre_DETOUR.png["']/g,
       'src="https://gotojapan.github.io/assistant-voyage-japon/public/logo_carre_DETOUR.png"'
@@ -103,6 +101,7 @@ app.post('/api/pdf', async (req, res) => {
   }
 });
 
+// 🔧 Générateur de prompt
 function generatePrompt(data) {
   if (data.mode === "complet") {
     return `Génère un itinéraire de ${data.duration} jours au Japon à partir du ${data.start} avec un budget de ${data.budget}€.
