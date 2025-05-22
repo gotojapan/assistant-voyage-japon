@@ -1,8 +1,11 @@
+
 function formatList(item) {
   if (!item) return '';
   if (Array.isArray(item)) return item.join(', ');
   return item;
 }
+
+const safe = (val) => val || 'Non précisé';
 
 function enrichPrompt(data) {
   const blocs = [];
@@ -35,7 +38,7 @@ function enrichPrompt(data) {
   if (interests.includes('gastronomie')) {
     blocs.push("Inclue des expériences culinaires uniques : izakaya, cours de cuisine, marchés locaux ou restaurants étoilés.");
   }
-  if (interests.includes('manga') || interests.includes('culture pop')) {
+  if (interests.includes('manga')) {
     blocs.push("Ajoute des lieux liés à la pop culture japonaise : musées manga, cafés à thème, quartiers spécialisés comme Akihabara.");
   }
   if (interests.includes('spiritualité')) {
@@ -69,14 +72,14 @@ Rythme : ${data.rythme}
 Déjà allé au Japon ? ${data.deja}
 Centres d’intérêt : ${formatList(data.interests)}
 Villes souhaitées : ${data.villesSouhaitees}
-Lieux à éviter : ${data.lieuxAeviter}
-Remarques : ${data.remarques}`
+Lieux à éviter : ${safe(data.lieuxAeviter)}
+Remarques : ${safe(data.remarques)}`
     : `Je souhaite explorer la ville de ${data.ville} pendant ${data.joursVille} jours (${data.periodeVille}).
 Type de voyage : ${data.type}
 Style : ${formatList(data.style)}
 Rythme : ${data.rythme}
 Centres d’intérêt : ${formatList(data.interests)}
-Remarques : ${data.remarques}`;
+Remarques : ${safe(data.remarques)}`;
 
   const enrichissements = enrichPrompt(data);
 
@@ -89,11 +92,7 @@ Structure impérative :
 - Pas de bullet points, pas de tableaux, pas de code
 `;
 
-  return `${intro}
-
-${enrichissements}
-
-${structure}`;
+  return `${intro}\n\n${enrichissements}\n\n${structure}`;
 }
 
 module.exports = { generatePrompt };
