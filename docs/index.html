@@ -52,6 +52,8 @@
 
     <fieldset>
       <legend>Style de voyage souhaité :</legend>
+      <label><input type="checkbox" name="style" value="inspirationnel"> Inspirationnel</label>
+      <label><input type="checkbox" name="style" value="professionnel"> Professionnel</label>
       <label><input type="checkbox" name="style" value="authentique"> Authentique</label>
       <label><input type="checkbox" name="style" value="classique"> Classique</label>
       <label><input type="checkbox" name="style" value="hors des sentiers battus"> Hors des sentiers battus</label>
@@ -78,6 +80,8 @@
       <label><input type="checkbox" name="interests" value="nature"> Nature</label>
       <label><input type="checkbox" name="interests" value="musées"> Musées</label>
       <label><input type="checkbox" name="interests" value="artisanat"> Artisanat</label>
+      <label><input type="checkbox" name="interests" value="manga"> Manga & Culture pop</label>
+      <label><input type="checkbox" name="interests" value="spiritualité"> Spiritualité & méditation</label>
     </fieldset>
 
     <label>Remarques particulières :</label>
@@ -101,6 +105,8 @@
 
     <fieldset>
       <legend>Style de voyage souhaité :</legend>
+      <label><input type="checkbox" name="style" value="inspirationnel"> Inspirationnel</label>
+      <label><input type="checkbox" name="style" value="professionnel"> Professionnel</label>
       <label><input type="checkbox" name="style" value="authentique"> Authentique</label>
       <label><input type="checkbox" name="style" value="classique"> Classique</label>
       <label><input type="checkbox" name="style" value="hors des sentiers battus"> Hors des sentiers battus</label>
@@ -121,10 +127,18 @@
       <label><input type="checkbox" name="interests" value="nature"> Nature</label>
       <label><input type="checkbox" name="interests" value="musées"> Musées</label>
       <label><input type="checkbox" name="interests" value="artisanat"> Artisanat</label>
+      <label><input type="checkbox" name="interests" value="manga"> Manga & Culture pop</label>
+      <label><input type="checkbox" name="interests" value="spiritualité"> Spiritualité & méditation</label>
     </fieldset>
 
     <label>Remarques particulières :</label>
     <textarea name="remarques" rows="3" placeholder="ex : je souhaite découvrir des artisans locaux"></textarea>
+
+    <fieldset>
+  <legend>Souhaitez-vous une conclusion à la fin de l’itinéraire ?</legend>
+  <label><input type="radio" name="conclusion" value="oui"> Oui</label>
+  <label><input type="radio" name="conclusion" value="non" checked> Non</label>
+  </fieldset>
 
     <button type="submit">Itinéraire personnalisé</button>
   </form>
