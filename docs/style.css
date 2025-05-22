@@ -1,0 +1,52 @@
+
+body {
+  font-family: 'Lato', 'Noto Color Emoji', sans-serif;
+  padding: 40px;
+  line-height: 1.6;
+  background: #ffffff;
+  color: #111;
+}
+.logo {
+  max-width: 120px;
+  margin-bottom: 20px;
+}
+h1 {
+  color: #DF2A2F;
+  font-size: 24px;
+  text-align: center;
+  margin-bottom: 30px;
+}
+h2.journee {
+  font-size: 20px;
+  color: #DF2A2F;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  padding-left: 10px;
+  border-left: 4px solid #DF2A2F;
+}
+h3.moment {
+  font-size: 16px;
+  color: #444;
+  margin-top: 15px;
+  margin-bottom: 5px;
+}
+.link-block {
+  margin: 10px 0;
+}
+.link-block a {
+  color: #DF2A2F;
+  text-decoration: underline;
+  font-weight: bold;
+}
+.jour {
+  margin-bottom: 40px;
+  padding: 20px;
+  background: #f7f7f7;
+  border-radius: 8px;
+  border-left: 4px solid #DF2A2F;
+}
+.footer {
+  text-align: center;
+  font-size: 12px;
+  margin-top: 40px;
+}
