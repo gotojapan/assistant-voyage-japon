@@ -16,9 +16,11 @@ app.use(bodyParser.json());
 app.use(express.static('public'));
 
 // ROUTE : Génération texte via OpenRouter
+const { generatePrompt } = require('./generatePrompt'); // à placer en haut du fichier (hors route)
+
 app.post('/api/planificateur', async (req, res) => {
   const userInput = req.body;
-  const { generatePrompt } = require('./generatePrompt');
+  const prompt = generatePrompt(userInput); // ⬅️ tu avais oublié cette ligne !
 
   try {
     const completion = await fetch("https://openrouter.ai/api/v1/chat/completions", {
