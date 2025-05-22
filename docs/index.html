@@ -133,5 +133,31 @@
   </div>
 
   <div id="result"></div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const formComplet = document.getElementById('form-complet');
+      const formVille = document.getElementById('form-ville');
+      const modeRadios = document.querySelectorAll('input[name="mode"]');
+
+      // Masquer tous les formulaires au départ
+      formComplet.classList.add("hidden");
+      formVille.classList.add("hidden");
+
+      // Afficher dynamiquement le bon formulaire selon le choix
+      modeRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
+          const selected = document.querySelector('input[name="mode"]:checked').value;
+          if (selected === "complet") {
+            formComplet.classList.remove("hidden");
+            formVille.classList.add("hidden");
+          } else if (selected === "ville") {
+            formVille.classList.remove("hidden");
+            formComplet.classList.add("hidden");
+          }
+        });
+      });
+    });
+  </script>
 </body>
 </html>
