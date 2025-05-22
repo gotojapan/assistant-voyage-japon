@@ -7,6 +7,7 @@ const fetch = require('node-fetch');
 const fs = require('fs');
 const path = require('path');
 const { marked } = require('marked');
+const { generatePrompt } = require('./generatePrompt'); // Import propre ici
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -16,11 +17,9 @@ app.use(bodyParser.json());
 app.use(express.static('public'));
 
 // ROUTE : Génération texte via OpenRouter
-const { generatePrompt } = require('./generatePrompt'); // à placer en haut du fichier (hors route)
-
 app.post('/api/planificateur', async (req, res) => {
   const userInput = req.body;
-  const prompt = generatePrompt(userInput); // ⬅️ tu avais oublié cette ligne !
+  const prompt = generatePrompt(userInput); // ⬅️ prompt généré à partir du module externe
 
   try {
     const completion = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -98,48 +97,6 @@ app.post('/api/pdf', async (req, res) => {
     res.status(500).send("Erreur PDF");
   }
 });
-
-// PROMPT dynamique structuré
-function generatePrompt(data) {
-  if (data.mode === "complet") {
-    return `Génère un itinéraire de ${data.duration} jours au Japon à partir du ${data.start} avec un budget de ${data.budget}€.
-Type de voyage : ${data.type}
-Style : ${formatList(data.style)}
-Rythme : ${data.rythme}
-Déjà allé au Japon ? ${data.deja}
-Centres d’intérêt : ${formatList(data.interests)}
-Villes souhaitées : ${data.villesSouhaitees}
-Lieux à éviter : ${data.lieuxAeviter}
-Remarques : ${data.remarques}
-
-Structure impérative :
-- Utilise des titres de niveau 2 : ## Jour X : titre
-- Utilise des sous-titres de niveau 3 : ### Matin, ### Midi, ### Après-midi, ### Soir
-- Chaque moment doit être suivi de texte descriptif
-- À la fin de chaque restaurant ou activité, ajoute 👉 [En savoir plus](https://...)
-- Pas de bullet points, pas de tableaux, pas de code`;
-  } else {
-    return `Je souhaite explorer la ville de ${data.ville} pendant ${data.joursVille} jours (${data.periodeVille}).
-Type de voyage : ${data.type}
-Style : ${formatList(data.style)}
-Rythme : ${data.rythme}
-Centres d’intérêt : ${formatList(data.interests)}
-Remarques : ${data.remarques}
-
-Structure impérative :
-- Utilise des titres de niveau 2 : ## Jour X : titre
-- Utilise des sous-titres de niveau 3 : ### Matin, ### Midi, ### Après-midi, ### Soir
-- Chaque moment doit être suivi de texte descriptif
-- À la fin de chaque restaurant ou activité, ajoute 👉 [En savoir plus](https://...)
-- Pas de bullet points, pas de tableaux, pas de code`;
-  }
-}
-
-function formatList(item) {
-  if (!item) return '';
-  if (Array.isArray(item)) return item.join(', ');
-  return item;
-}
 
 app.listen(PORT, () => {
   console.log(`🚀 Serveur final avec PDF stylisé lancé sur le port ${PORT}`);
