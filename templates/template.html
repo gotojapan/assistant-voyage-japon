@@ -4,19 +4,66 @@
   <meta charset="UTF-8">
   <title>Votre itinéraire personnalisé</title>
   <link href="https://fonts.googleapis.com/css2?family=Lato&family=Noto+Color+Emoji&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: 'Lato', 'Noto Color Emoji', sans-serif;
+      padding: 40px;
+      line-height: 1.6;
+      background: #ffffff;
+      color: #111;
+    }
+    .logo {
+      max-width: 100px;
+      margin-bottom: 30px;
+    }
+    h1 {
+      color: #DF2A2F;
+      font-size: 24px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    h2.journee {
+      background: #f7f7f7;
+      padding: 10px 15px;
+      border-left: 5px solid #DF2A2F;
+      border-radius: 4px;
+      margin-top: 40px;
+      font-size: 20px;
+      color: #111;
+    }
+    h3.moment {
+      color: #DF2A2F;
+      margin-top: 25px;
+      font-size: 16px;
+    }
+    p {
+      margin: 8px 0;
+    }
+    .link-block {
+      margin-top: 10px;
+      margin-bottom: 20px;
+    }
+    a.lien {
+      color: #DF2A2F;
+      text-decoration: underline;
+      font-weight: bold;
+    }
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      margin-top: 60px;
+      color: #888;
+    }
+  </style>
 </head>
 <body>
   <img src="https://gotojapan.github.io/assistant-voyage-japon/logo_carre_DETOUR.png" alt="GO TO JAPAN Logo" class="logo">
   <h1>Votre itinéraire personnalisé</h1>
 
-  <div class="contenu">
-    {{{content}}}
-  </div>
+  {{{content}}}
 
   <p class="footer">
     Itinéraire généré avec soin par l’assistant <strong>GO TO JAPAN</strong> ✨
   </p>
 </body>
 </html>
-
