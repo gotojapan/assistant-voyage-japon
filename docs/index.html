@@ -151,28 +151,28 @@
 
   <div id="result"></div>
 
-  // Ajouté pour conseil dynamique
-function getIntroHtmlFromDate(dateStr) {
-  if (!dateStr) return '';
-  const mois = new Date(dateStr).getMonth();
-  const moisNom = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"][mois];
+  <script>
+  function getIntroHtmlFromDate(dateStr) {
+    if (!dateStr) return '';
+    const mois = new Date(dateStr).getMonth();
+    const moisNom = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"][mois];
 
-  const meteo = {
-    0: { t: "0-10°C", icon: "❄️", tips: "Prévoir vêtements chauds et imperméables." },
-    1: { t: "3-12°C", icon: "🌬️", tips: "Encore froid. Restez couvert." },
-    2: { t: "6-15°C", icon: "🌱", tips: "Premiers signes du printemps." },
-    3: { t: "10-20°C", icon: "🌸", tips: "Saison des cerisiers en fleurs." },
-    4: { t: "15-25°C", icon: "🌤️", tips: "Températures douces et floraisons." },
-    5: { t: "18-27°C", icon: "🌦️", tips: "Début de la saison des pluies." },
-    6: { t: "23-32°C", icon: "🌞", tips: "Chaleur et humidité marquées." },
-    7: { t: "25-33°C", icon: "☀️", tips: "Très chaud, bien s'hydrater." },
-    8: { t: "22-30°C", icon: "🍂", tips: "Fin de l'été, premiers typhons." },
-    9: { t: "17-25°C", icon: "🍁", tips: "Temps agréable, début de l'automne." },
-    10: { t: "10-20°C", icon: "🍂", tips: "Feuilles rouges, frais le matin." },
-    11: { t: "5-12°C", icon: "🎄", tips: "Froid sec, fêtes lumineuses." },
-  }[mois];
+    const meteo = {
+      0: { t: "0-10°C", icon: "❄️", tips: "Prévoir vêtements chauds et imperméables." },
+      1: { t: "3-12°C", icon: "🌬️", tips: "Encore froid. Restez couvert." },
+      2: { t: "6-15°C", icon: "🌱", tips: "Premiers signes du printemps." },
+      3: { t: "10-20°C", icon: "🌸", tips: "Saison des cerisiers en fleurs." },
+      4: { t: "15-25°C", icon: "🌤️", tips: "Températures douces et floraisons." },
+      5: { t: "18-27°C", icon: "🌦️", tips: "Début de la saison des pluies." },
+      6: { t: "23-32°C", icon: "🌞", tips: "Chaleur et humidité marquées." },
+      7: { t: "25-33°C", icon: "☀️", tips: "Très chaud, bien s'hydrater." },
+      8: { t: "22-30°C", icon: "🍂", tips: "Fin de l'été, premiers typhons." },
+      9: { t: "17-25°C", icon: "🍁", tips: "Temps agréable, début de l'automne." },
+      10: { t: "10-20°C", icon: "🍂", tips: "Feuilles rouges, frais le matin." },
+      11: { t: "5-12°C", icon: "🎄", tips: "Froid sec, fêtes lumineuses." },
+    }[mois];
 
-  return `
+    return `
 <div class="intro-cards">
   <div class="card">
     <h3>${meteo.icon} Météo en ${moisNom}</h3>
@@ -220,7 +220,8 @@ function getIntroHtmlFromDate(dateStr) {
 .card ul { margin: 0.5rem 0 0 1.2rem; padding-left: 0; }
 </style>
   `;
-}
+  }
+</script>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
