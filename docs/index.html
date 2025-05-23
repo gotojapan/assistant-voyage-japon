@@ -215,15 +215,14 @@
 .intro-cards {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.2rem;
   justify-content: center;
-  margin-bottom: 2rem;
+  gap: 1rem;
+  max-width: 960px;
+  margin: 2rem auto;
 }
 
 .card {
-  width: 100%;
-  max-width: 300px;
-  flex: 0 1 300px;
+  width: 280px;
   background: #f9f9f9;
   border-left: 4px solid #DF2A2F;
   padding: 1rem;
@@ -231,16 +230,19 @@
   box-shadow: 0 1px 2px rgba(0,0,0,0.05);
   box-sizing: border-box;
 }
+
 .card h3 {
   margin: 0 0 0.5rem 0;
   font-size: 1.1rem;
   color: #DF2A2F;
 }
+
 .card ul {
   margin: 0;
   padding-left: 1.2rem;
   line-height: 1.5;
 }
+
 .card ul li {
   margin-bottom: 0.3rem;
 }
