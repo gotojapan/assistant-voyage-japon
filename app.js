@@ -106,6 +106,59 @@ app.post('/api/pdf', async (req, res) => {
   }
 });
 
+// Fonction bloc météo + conseils pour PDF (sans <style>)
+function generateIntroHtmlForPdf(dateStr) {
+  if (!dateStr) return '';
+  const mois = new Date(dateStr).getMonth();
+  const moisNom = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"][mois];
+
+  const meteo = {
+    0: { t: "0-10°C", icon: "❄️", tips: "Prévoir vêtements chauds et imperméables." },
+    1: { t: "3-12°C", icon: "🌬️", tips: "Encore froid. Restez couvert." },
+    2: { t: "6-15°C", icon: "🌱", tips: "Premiers signes du printemps." },
+    3: { t: "10-20°C", icon: "🌸", tips: "Saison des cerisiers en fleurs." },
+    4: { t: "15-25°C", icon: "🌤️", tips: "Températures douces et floraisons." },
+    5: { t: "18-27°C", icon: "🌦️", tips: "Début de la saison des pluies." },
+    6: { t: "23-32°C", icon: "🌞", tips: "Chaleur et humidité marquées." },
+    7: { t: "25-33°C", icon: "☀️", tips: "Très chaud, bien s'hydrater." },
+    8: { t: "22-30°C", icon: "🍂", tips: "Fin de l'été, premiers typhons." },
+    9: { t: "17-25°C", icon: "🍁", tips: "Temps agréable, début de l'automne." },
+    10: { t: "10-20°C", icon: "🍂", tips: "Feuilles rouges, frais le matin." },
+    11: { t: "5-12°C", icon: "🎄", tips: "Froid sec, fêtes lumineuses." },
+  }[mois];
+
+  return `
+  <div style="display: flex; gap: 12px; margin-bottom: 24px;">
+    <div style="flex:1; border-left: 4px solid #DF2A2F; padding: 12px; background: #f5f5f5; border-radius: 6px;">
+      <h3 style="margin: 0 0 8px; font-size: 16px; color: #DF2A2F">${meteo.icon} Météo en ${moisNom}</h3>
+      <ul style="margin: 0; padding-left: 18px;">
+        <li>Températures moyennes : ${meteo.t}</li>
+        <li>${meteo.tips}</li>
+        <li>Vêtements : couches légères + pull / veste</li>
+      </ul>
+    </div>
+    <div style="flex:1; border-left: 4px solid #DF2A2F; padding: 12px; background: #f5f5f5; border-radius: 6px;">
+      <h3 style="margin: 0 0 8px; font-size: 16px; color: #DF2A2F">🚆 Transport</h3>
+      <ul style="margin: 0; padding-left: 18px;">
+        <li><strong>Japan Rail Pass</strong> : à acheter avant le départ</li>
+        <li><strong>Pass régionaux</strong> : Hakone / Kamakura / Kansai</li>
+        <li><strong>IC Cards</strong> : Suica, Pasmo, Icoca</li>
+      </ul>
+    </div>
+    <div style="flex:1; border-left: 4px solid #DF2A2F; padding: 12px; background: #f5f5f5; border-radius: 6px;">
+      <h3 style="margin: 0 0 8px; font-size: 16px; color: #DF2A2F">💡 Conseils pratiques</h3>
+      <ul style="margin: 0; padding-left: 18px;">
+        <li>💴 Devise : yen (prévoir du liquide)</li>
+        <li>📶 Pocket WiFi ou carte SIM</li>
+        <li>🔌 100V Type A / B</li>
+        <li>🗣️ Appli de traduction recommandée</li>
+        <li>🧦 Étiquette : pas de pourboire, déchaussage</li>
+      </ul>
+    </div>
+  </div>
+  `;
+}
+
 app.listen(PORT, () => {
   console.log(`🚀 Serveur final avec PDF stylisé lancé sur le port ${PORT}`);
 });
