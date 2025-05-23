@@ -1,11 +1,31 @@
 
 function formatList(item) {
-  if (!item) return '';
-  if (Array.isArray(item)) return item.join(', ');
-  return item;
+  if (!item) return 'Non précisé';
+  let arr = [];
+
+  if (typeof item === 'string') {
+    // séparation manuelle si l'utilisateur a tapé du texte avec virgules
+    arr = item.split(',').map(e => e.trim().toLowerCase());
+  } else if (Array.isArray(item)) {
+    arr = item.map(e => e.trim().toLowerCase());
+  }
+
+  // suppression des doublons et normalisation légère
+  const unique = [...new Set(arr)].filter(e => e && e.length > 1);
+
+  // capitalisation simple pour affichage dans le prompt
+  return unique.map(e => e.charAt(0).toUpperCase() + e.slice(1)).join(', ');
 }
 
-const safe = (val) => val || 'Non précisé';
+function sanitizeInput(str) {
+  if (!str || typeof str !== 'string') return 'Non précisé';
+  return str
+    .trim()
+    .replace(/\s+/g, ' ')
+    .replace(/[<>]/g, '')
+    .replace(/["']/g, '')
+    .slice(0, 300);
+}
 
 function enrichPrompt(data) {
   const blocs = [];
@@ -106,6 +126,12 @@ Structure impérative :
 - Structure chaque journée avec un titre de niveau 2 : ## Jour X – titre descriptif (avec un emoji si possible)
 - Structure chaque moment de la journée avec un sous-titre de niveau 3 : ### Matin, ### Midi, ### Après-midi, ### Soir (chacun peut être introduit par un emoji)
 - Chaque moment doit être suivi de texte descriptif, vivant et culturel (par exemple : ce qu’on y fait, voit, ressent, comprend)
+- Pour les moments "Midi" et "Soir", suggère un lieu de restauration typique ou adapté (restaurant local, izakaya, expérience culinaire…).
+- Propose un lien si disponible au format 👉 [Voir le restaurant](https://...)
+- Lorsque cela est pertinent, suggère un hébergement typique (ryokan, hôtel, guesthouse…) avec un court descriptif.
+- Adapte le style d’hébergement au type de voyage (famille, couple, professionnel, luxe…).
+- Fournis un lien utile si disponible au format 👉 [Voir l’hébergement](https://...)
+- Ne propose le nom d’un hébergement que s’il correspond à un lieu réel et connu.
 - Pour chaque lieu ou activité importante, ajoute une phrase de contexte (ce qu’on y découvre) suivie d’un lien réel vers une source fiable (Google Maps, Japan Guide, ou site officiel) au format 👉 [En savoir plus](https://exemple.com)
 - Ne mets jamais de lien vide ou fictif (pas de https://...)
 - S’il y a un événement de saison (sakura, momiji, festival...), fais-le apparaître naturellement
