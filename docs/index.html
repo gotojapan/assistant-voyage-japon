@@ -215,18 +215,21 @@
 .intro-cards {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 2rem;
+  gap: 1.2rem;
   justify-content: center;
+  margin-bottom: 2rem;
 }
+
 .card {
-  flex: 1 1 280px; /* min-width fluide */
-  max-width: 340px;
+  width: 100%;
+  max-width: 300px;
+  flex: 0 1 300px;
   background: #f9f9f9;
   border-left: 4px solid #DF2A2F;
   padding: 1rem;
   border-radius: 8px;
   box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  box-sizing: border-box;
 }
 .card h3 {
   margin: 0 0 0.5rem 0;
