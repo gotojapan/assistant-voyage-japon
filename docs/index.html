@@ -375,5 +375,18 @@
   to { transform: rotate(360deg); }
 }
 </style>
+
+  <script>
+  function notifyParentOfHeight() {
+    const height = document.body.scrollHeight;
+    parent.postMessage({ type: "resize-iframe", height }, "*");
+  }
+
+  // Initial et après chaque changement (ex: après génération)
+  window.addEventListener("load", notifyParentOfHeight);
+  const observer = new MutationObserver(notifyParentOfHeight);
+  observer.observe(document.body, { childList: true, subtree: true });
+</script>
+
 </body>
 </html>
