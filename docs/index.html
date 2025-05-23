@@ -23,7 +23,39 @@
     }
     .hidden { display: none; }
     #result { max-width: 700px; margin: 2rem auto; padding: 1rem; background: #f7f7f7; border-left: 5px solid #DF2A2F; white-space: pre-wrap; line-height: 1.5; }
+ 
+   .intro-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  max-width: 960px;
+  margin: 2rem auto;
+}
+.card {
+  width: 280px;
+  background: #f9f9f9;
+  border-left: 4px solid #DF2A2F;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  box-sizing: border-box;
+}
+.card h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+  color: #DF2A2F;
+}
+.card ul {
+  margin: 0;
+  padding-left: 1.2rem;
+  line-height: 1.5;
+}
+.card ul li {
+  margin-bottom: 0.3rem;
+}
   </style>
+
 </head>
 <body>
   <h2>Assistant de voyage au Japon</h2>
@@ -210,43 +242,6 @@
     </ul>
   </div>
 </div>
-
-<style>
-.intro-cards {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1rem;
-  max-width: 960px;
-  margin: 2rem auto;
-}
-
-.card {
-  width: 280px;
-  background: #f9f9f9;
-  border-left: 4px solid #DF2A2F;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-  box-sizing: border-box;
-}
-
-.card h3 {
-  margin: 0 0 0.5rem 0;
-  font-size: 1.1rem;
-  color: #DF2A2F;
-}
-
-.card ul {
-  margin: 0;
-  padding-left: 1.2rem;
-  line-height: 1.5;
-}
-
-.card ul li {
-  margin-bottom: 0.3rem;
-}
-</style>
   `;
   }
 </script>
