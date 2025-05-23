@@ -106,16 +106,16 @@ Le voyageur souhaite découvrir le Japon selon les critères suivants :
 - Rythme : ${safe(data.rythme)}
 - Déjà allé au Japon ? ${safe(data.deja)}
 - Centres d’intérêt : ${formatList(data.interests)}
-- Villes à inclure : ${safe(data.villesSouhaitees)}
-- Villes à éviter : ${safe(data.lieuxAeviter)}
-- Remarques spécifiques : ${safe(data.remarques)}`
+- Villes à inclure : ${sanitizeInput(data.villesSouhaitees)}
+- Villes à éviter : ${sanitizeInput(data.lieuxAeviter)}
+- Remarques spécifiques : ${sanitizeInput(data.remarques)}`
     : `Tu es un expert local qui crée un mini-itinéraire personnalisé à ${data.ville} pendant ${data.joursVille} jours (${data.periodeVille}).
 Le voyageur cherche une expérience adaptée à :
 - Type de voyage : ${safe(data.type)}
 - Style : ${formatList(data.style)}
 - Rythme : ${safe(data.rythme)}
 - Centres d’intérêt : ${formatList(data.interests)}
-- Remarques : ${safe(data.remarques)}`;
+- Remarques : ${sanitizeInput(data.remarques)}`;
 
   const enrichissements = enrichPrompt(data);
 
