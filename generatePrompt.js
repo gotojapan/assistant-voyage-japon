@@ -135,6 +135,9 @@ Structure impérative :
 - Pour chaque lieu ou activité importante, ajoute une phrase de contexte (ce qu’on y découvre) suivie d’un lien réel vers une source fiable (Google Maps, Japan Guide, ou site officiel) au format 👉 [En savoir plus](https://exemple.com)
 - Ne mets jamais de lien vide ou fictif (pas de https://...)
 - S’il y a un événement de saison (sakura, momiji, festival...), fais-le apparaître naturellement
+- Si la période du voyage coïncide avec un événement ou festival local (matsuri, feu d’artifice, floraison, marché d’hiver…), ajoute-le naturellement dans l’itinéraire.
+- Donne son nom, le lieu, et en quoi il enrichit l’expérience (ambiance, culture, foule, rituels…).
+- Ajoute un lien utile si possible au format 👉 [Voir l’événement](https://...)
 - Mets en lumière une expérience unique ou peu connue chaque jour
 - Pas de bullet points, pas de tableaux, pas de code
 `;
