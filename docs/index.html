@@ -311,7 +311,10 @@
                 const pdfResponse = await fetch('https://assistant-voyage-japon.onrender.com/api/pdf', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ texte: result.result })
+                  body: JSON.stringify({
+                  texte: result.result,
+                  date: data.start || data.periodeVille
+                  })
                 });
                 const blob = await pdfResponse.blob();
                 const url = window.URL.createObjectURL(blob);
