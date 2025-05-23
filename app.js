@@ -22,20 +22,17 @@ app.post('/api/planificateur', async (req, res) => {
   const prompt = generatePrompt(userInput); // ⬅️ prompt généré à partir du module externe
 
   try {
-    const completion = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-      texte: result.result,
-      date: data.start || data.periodeVille
-    })
-        model: "openai/gpt-4",
-        messages: [{ role: "user", content: prompt }]
-      })
-    });
+  const completion = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+  method: "POST",
+  headers: {
+    "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    model: "openai/gpt-4",
+    messages: [{ role: "user", content: prompt }]
+  })
+  });
 
     const data = await completion.json();
     let result = data.choices?.[0]?.message?.content || "Une erreur est survenue.";
