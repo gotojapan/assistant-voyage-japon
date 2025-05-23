@@ -1,0 +1,97 @@
+[
+  {
+    "nom": "清水寺 (Kiyomizu-dera)",
+    "quartier": "Higashiyama",
+    "description": "Temple classé UNESCO avec sa terrasse en bois emblématique surplombant la ville.",
+    "type": "temple bouddhiste",
+    "tags": [
+      "temples",
+      "classique",
+      "inspirationnel",
+      "spiritualité",
+      "automne"
+    ],
+    "adresse": "京都市東山区清水1丁目294",
+    "url": "https://www.japan-guide.com/e/e3901.html",
+    "google_maps": "https://goo.gl/maps/kxvj4d5RA1wZ4yeF8",
+    "patrimoine_unesco": true,
+    "saigoku": true,
+    "goshameguri": false
+  },
+  {
+    "nom": "金閣寺 (Kinkaku-ji)",
+    "quartier": "Kita",
+    "description": "Pavillon d'or emblématique de Kyoto, entièrement recouvert de feuilles d’or.",
+    "type": "temple bouddhiste",
+    "tags": [
+      "temples",
+      "classique",
+      "inspirationnel",
+      "patrimoine",
+      "photo"
+    ],
+    "adresse": "京都市北区金閣寺町1",
+    "url": "https://www.japan-guide.com/e/e3908.html",
+    "google_maps": "https://goo.gl/maps/fuqPeivhciP8S7tGA",
+    "patrimoine_unesco": true,
+    "saigoku": false,
+    "goshameguri": false
+  },
+  {
+    "nom": "銀閣寺 (Ginkaku-ji)",
+    "quartier": "Sakyo",
+    "description": "Pavillon d’argent avec jardins zen et accès à la promenade du philosophe.",
+    "type": "temple bouddhiste",
+    "tags": [
+      "temples",
+      "authentique",
+      "spiritualité",
+      "jardin",
+      "tranquille"
+    ],
+    "adresse": "京都市左京区銀閣寺町2",
+    "url": "https://www.japan-guide.com/e/e3907.html",
+    "google_maps": "https://goo.gl/maps/1Yc5jtsF9F62",
+    "patrimoine_unesco": true,
+    "saigoku": false,
+    "goshameguri": false
+  },
+  {
+    "nom": "伏見稲荷大社 (Fushimi Inari Taisha)",
+    "quartier": "Fushimi",
+    "description": "Sanctuaire shinto le plus célèbre de Kyoto, connu pour ses milliers de torii rouges.",
+    "type": "sanctuaire shinto",
+    "tags": [
+      "spiritualité",
+      "iconique",
+      "populaire",
+      "photo",
+      "classique"
+    ],
+    "adresse": "京都市伏見区深草薮之内町68",
+    "url": "https://www.japan-guide.com/e/e3915.html",
+    "google_maps": "https://goo.gl/maps/8CAXyVVErVDF7ZAEA",
+    "patrimoine_unesco": false,
+    "saigoku": false,
+    "goshameguri": false
+  },
+  {
+    "nom": "上賀茂神社 (Kamigamo Jinja)",
+    "quartier": "Kita",
+    "description": "L’un des plus anciens sanctuaires de Kyoto, associé au festival Aoi Matsuri.",
+    "type": "sanctuaire shinto",
+    "tags": [
+      "goshameguri",
+      "shinto",
+      "patrimoine",
+      "nature",
+      "tranquille"
+    ],
+    "adresse": "京都市北区上賀茂本山339",
+    "url": "https://www.japan-guide.com/e/e3926.html",
+    "google_maps": "https://goo.gl/maps/jDPArK68nWhXQWp77",
+    "patrimoine_unesco": true,
+    "saigoku": false,
+    "goshameguri": true
+  }
+]
