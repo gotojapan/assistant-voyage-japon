@@ -101,19 +101,19 @@ function generatePrompt(data) {
   const intro = data.mode === "complet"
     ? `Tu es un expert du Japon et tu rédiges un itinéraire personnalisé de ${data.duration} jours à partir du ${data.start}, avec un budget d’environ ${data.budget}€.
 Le voyageur souhaite découvrir le Japon selon les critères suivants :
-- Type de voyage : ${safe(data.type)}
+- Type de voyage : ${sanitizeInput(data.type)}
 - Style : ${formatList(data.style)}
-- Rythme : ${safe(data.rythme)}
-- Déjà allé au Japon ? ${safe(data.deja)}
+- Rythme : ${sanitizeInput(data.rythme)}
+- Déjà allé au Japon ? ${sanitizeInput(data.deja)}
 - Centres d’intérêt : ${formatList(data.interests)}
 - Villes à inclure : ${sanitizeInput(data.villesSouhaitees)}
 - Villes à éviter : ${sanitizeInput(data.lieuxAeviter)}
 - Remarques spécifiques : ${sanitizeInput(data.remarques)}`
     : `Tu es un expert local qui crée un mini-itinéraire personnalisé à ${data.ville} pendant ${data.joursVille} jours (${data.periodeVille}).
 Le voyageur cherche une expérience adaptée à :
-- Type de voyage : ${safe(data.type)}
+- Type de voyage : ${sanitizeInput(data.type)}
 - Style : ${formatList(data.style)}
-- Rythme : ${safe(data.rythme)}
+- Rythme : ${sanitizeInput(data.rythme)}
 - Centres d’intérêt : ${formatList(data.interests)}
 - Remarques : ${sanitizeInput(data.remarques)}`;
 
