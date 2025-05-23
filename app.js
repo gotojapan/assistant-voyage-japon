@@ -29,6 +29,9 @@ app.post('/api/planificateur', async (req, res) => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
+      texte: result.result,
+      date: data.start || data.periodeVille
+    })
         model: "openai/gpt-4",
         messages: [{ role: "user", content: prompt }]
       })
