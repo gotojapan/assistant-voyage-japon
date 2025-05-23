@@ -85,10 +85,11 @@ Remarques : ${safe(data.remarques)}`;
 
   const structure = `
 Structure impérative :
-- Utilise des titres de niveau 2 : ## Jour X : titre
-- Utilise des sous-titres de niveau 3 : ### Matin, ### Midi, ### Après-midi, ### Soir
+- Structure chaque journée avec un titre de niveau 2 : ## Jour X – titre descriptif (avec un emoji si possible)
+- Structure chaque moment de la journée avec un sous-titre de niveau 3 : ### Matin, ### Midi, ### Après-midi, ### Soir (chacun peut être introduit par un emoji)
 - Chaque moment doit être suivi de texte descriptif
-- À la fin de chaque restaurant ou activité, ajoute 👉 [En savoir plus](https://...)
+- Pour chaque lieu ou activité importante, ajoute une phrase de contexte (ce qu’on y découvre) suivie d’un lien réel vers une source fiable (Google Maps, Japan Guide, ou site officiel) au format 👉 [En savoir plus](https://exemple.com)
+- Ne mets jamais de lien vide ou fictif (pas de https://...)
 - Pas de bullet points, pas de tableaux, pas de code
 `;
 
