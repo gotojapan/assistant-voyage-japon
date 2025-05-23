@@ -79,7 +79,9 @@ app.post('/api/pdf', async (req, res) => {
     });
 
     // Injecter le contenu dans le template
-    htmlTemplate = htmlTemplate.replace('{{{content}}}', htmlContent);
+    const dateStr = req.body.date || ''; // récupère la date transmise
+    const introBlock = generateIntroHtmlForPdf(dateStr); // génère les cards météo+conseils
+    htmlTemplate = htmlTemplate.replace('{{{content}}}', introBlock + htmlContent);
 
     const browser = await puppeteer.launch({
       headless: true,
