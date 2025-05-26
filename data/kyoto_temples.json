@@ -93,5 +93,500 @@
     "patrimoine_unesco": true,
     "saigoku": false,
     "goshameguri": true
+  },
+  {
+    "nom": "仁和寺 (Ninna-ji)",
+    "nom_romaji": "Ninna-ji",
+    "quartier": "Ukyo",
+    "description": "Temple célèbre pour sa pagode et ses cerisiers tardifs, inscrit au patrimoine mondial.",
+    "type": "temple bouddhiste",
+    "tags": [
+      "temples",
+      "UNESCO",
+      "patrimoine",
+      "printemps",
+      "tranquille"
+    ],
+    "adresse": "京都市右京区御室大内33",
+    "url": "https://www.japan-guide.com/e/e3925.html",
+    "google_maps": "https://goo.gl/maps/EK7CVUADcZ8eQh1S9",
+    "patrimoine_unesco": true,
+    "saigoku": false,
+    "goshameguri": false
+  },
+  {
+    "nom": "東福寺 (Tofuku-ji)",
+    "nom_romaji": "Tōfuku-ji",
+    "quartier": "Higashiyama",
+    "description": "Temple zen connu pour son pont Tsūtenkyō et ses érables flamboyants en automne.",
+    "type": "temple bouddhiste",
+    "tags": [
+      "temples",
+      "automne",
+      "spiritualité",
+      "zen",
+      "photo"
+    ],
+    "adresse": "京都市東山区本町15丁目778",
+    "url": "https://www.japan-guide.com/e/e3933.html",
+    "google_maps": "https://goo.gl/maps/kAVDhBxqX3i2",
+    "patrimoine_unesco": false,
+    "saigoku": false,
+    "goshameguri": false
+  },
+  {
+    "nom": "平安神宮 (Heian Jingu)",
+    "nom_romaji": "Heian Jingu",
+    "quartier": "Sakyo",
+    "description": "Grand sanctuaire construit en 1895, connu pour ses jardins et son immense torii.",
+    "type": "sanctuaire shinto",
+    "tags": [
+      "shinto",
+      "goshameguri",
+      "jardins",
+      "architecture",
+      "photo"
+    ],
+    "adresse": "京都市左京区岡崎西天王町",
+    "url": "https://www.japan-guide.com/e/e3902.html",
+    "google_maps": "https://goo.gl/maps/WE77EhgtWqB2",
+    "patrimoine_unesco": false,
+    "saigoku": false,
+    "goshameguri": true
+  },
+  {
+    "nom": "六角堂 (Rokkaku-dō / Chōhō-ji)",
+    "nom_romaji": "Rokkaku-dō",
+    "quartier": "Nakagyō",
+    "description": "Petit temple du centre-ville, lieu d'origine de l'ikebana. Étape du pèlerinage Saigoku.",
+    "type": "temple bouddhiste",
+    "tags": [
+      "saigoku",
+      "temples",
+      "centre-ville",
+      "culture",
+      "authentique"
+    ],
+    "adresse": "京都市中京区六角通東洞院西入堂之前町248",
+    "url": "https://www.japan-guide.com/e/e3956.html",
+    "google_maps": "https://goo.gl/maps/dUmUMDkefJu",
+    "patrimoine_unesco": false,
+    "saigoku": true,
+    "goshameguri": false
+  },
+  {
+    "nom": "天龍寺 (Tenryu-ji)",
+    "nom_romaji": "Tenryu-ji",
+    "quartier": "Ukyo",
+    "description": "Temple zen classé UNESCO à Arashiyama, célèbre pour son jardin et son étang paisible.",
+    "type": "temple bouddhiste",
+    "tags": [
+      "temples",
+      "UNESCO",
+      "spiritualité",
+      "nature",
+      "jardin",
+      "classique"
+    ],
+    "adresse": "京都市右京区嵯峨天龍寺芒ノ馬場町68",
+    "url": "https://www.japan-guide.com/e/e3913.html",
+    "google_maps": "https://goo.gl/maps/VpBNJLj3H2Sv6zBy7",
+    "patrimoine_unesco": true,
+    "saigoku": false,
+    "goshameguri": false
+  },
+  {
+    "nom": "龍安寺 (Ryoan-ji)",
+    "nom_romaji": "Ryoan-ji",
+    "quartier": "Ukyo",
+    "description": "Célèbre pour son jardin sec zen avec 15 pierres. Classé UNESCO.",
+    "type": "temple bouddhiste",
+    "tags": [
+      "temples",
+      "zen",
+      "spiritualité",
+      "UNESCO",
+      "tranquille",
+      "photo"
+    ],
+    "adresse": "京都市右京区龍安寺御陵下町13",
+    "url": "https://www.japan-guide.com/e/e3909.html",
+    "google_maps": "https://goo.gl/maps/3vKj8i2iRKwPNDdG9",
+    "patrimoine_unesco": true,
+    "saigoku": false,
+    "goshameguri": false
+  },
+  {
+    "nom": "南禅寺 (Nanzen-ji)",
+    "nom_romaji": "Nanzen-ji",
+    "quartier": "Sakyo",
+    "description": "Temple zen imposant, avec un célèbre portail Sanmon et un aqueduc de style romain.",
+    "type": "temple bouddhiste",
+    "tags": [
+      "temples",
+      "zen",
+      "authentique",
+      "spiritualité",
+      "jardin"
+    ],
+    "adresse": "京都市左京区南禅寺福地町86",
+    "url": "https://www.japan-guide.com/e/e3908.html",
+    "google_maps": "https://goo.gl/maps/v9KgGUQAVDEe3dtc6",
+    "patrimoine_unesco": false,
+    "saigoku": false,
+    "goshameguri": false
+  },
+  {
+    "nom": "東本願寺 (Higashi Hongan-ji)",
+    "nom_romaji": "Higashi Hongan-ji",
+    "quartier": "Shimogyo",
+    "description": "Grand temple Jōdo-shinshū proche de Kyoto Station. Frère du temple Nishi Hongan-ji.",
+    "type": "temple bouddhiste",
+    "tags": [
+      "temples",
+      "classique",
+      "centre-ville",
+      "accessibilité"
+    ],
+    "adresse": "京都市下京区烏丸七条上ル常葉町754",
+    "url": "https://www.japan-guide.com/e/e3920.html",
+    "google_maps": "https://goo.gl/maps/ZPGMzeom7D6eUgMPA",
+    "patrimoine_unesco": false,
+    "saigoku": false,
+    "goshameguri": false
+  },
+  {
+    "nom": "清凉寺 (Seiryo-ji)",
+    "nom_romaji": "Seiryō-ji",
+    "quartier": "Ukyo",
+    "description": "Temple de style chinois avec une statue unique de Shakyamuni, étape du pèlerinage Saigoku.",
+    "type": "temple bouddhiste",
+    "tags": [
+      "temples",
+      "saigoku",
+      "spiritualité",
+      "hors des sentiers battus"
+    ],
+    "adresse": "京都市右京区嵯峨釈迦堂藤ノ木町46",
+    "url": "https://www.japan.travel/fr/spot/1396/",
+    "google_maps": "https://goo.gl/maps/LJtKcge65Ev",
+    "patrimoine_unesco": false,
+    "saigoku": true,
+    "goshameguri": false
+  },
+  {
+    "nom": "六波羅蜜寺 (Rokuharamitsu-ji)",
+    "nom_romaji": "Rokuharamitsu-ji",
+    "quartier": "Higashiyama",
+    "description": "Temple célèbre pour ses liens avec l’école Shingon et sa statue de Kūya-shōnin.",
+    "type": "temple bouddhiste",
+    "tags": [
+      "temples",
+      "saigoku",
+      "culture",
+      "centre-ville",
+      "authentique"
+    ],
+    "adresse": "京都市東山区松原通大和大路東入2丁目轆轤町81-1",
+    "url": "https://www.japan-guide.com/e/e3955.html",
+    "google_maps": "https://goo.gl/maps/3EkKJq2A44eT1DtdA",
+    "patrimoine_unesco": false,
+    "saigoku": true,
+    "goshameguri": false
+  },
+  {
+    "nom": "松尾大社 (Matsuo Taisha)",
+    "nom_romaji": "Matsuo Taisha",
+    "quartier": "Nishikyo",
+    "description": "Sanctuaire shinto célèbre pour ses jardins et sa relation avec le saké. Partie du 五社めぐり.",
+    "type": "sanctuaire shinto",
+    "tags": [
+      "shinto",
+      "goshameguri",
+      "nature",
+      "spiritualité",
+      "authentique"
+    ],
+    "adresse": "京都市西京区嵐山宮町3",
+    "url": "https://www.japan.travel/en/spot/2064/",
+    "google_maps": "https://goo.gl/maps/BJqkk9RBGMC2",
+    "patrimoine_unesco": false,
+    "saigoku": false,
+    "goshameguri": true
+  },
+  {
+    "nom": "八坂神社 (Yasaka Jinja)",
+    "nom_romaji": "Yasaka Jinja",
+    "quartier": "Higashiyama",
+    "description": "Sanctuaire emblématique situé à Gion, au cœur de Kyoto. Connu pour le festival Gion Matsuri.",
+    "type": "sanctuaire shinto",
+    "tags": [
+      "shinto",
+      "goshameguri",
+      "culture",
+      "centre-ville",
+      "classique"
+    ],
+    "adresse": "京都市東山区祇園町北側625",
+    "url": "https://www.japan-guide.com/e/e3907.html",
+    "google_maps": "https://goo.gl/maps/vE96enC7MQ12",
+    "patrimoine_unesco": false,
+    "saigoku": false,
+    "goshameguri": true
+  },
+  {
+    "nom": "城南宮 (Jonan-gu)",
+    "nom_romaji": "Jonan-gu",
+    "quartier": "Fushimi",
+    "description": "Sanctuaire au sud de Kyoto, réputé pour ses jardins et ses rituels de purification.",
+    "type": "sanctuaire shinto",
+    "tags": [
+      "shinto",
+      "goshameguri",
+      "nature",
+      "hors des sentiers battus"
+    ],
+    "adresse": "京都市伏見区中島鳥羽離宮町7",
+    "url": "https://www.japan.travel/en/spot/2095/",
+    "google_maps": "https://goo.gl/maps/69xQetxNzfq",
+    "patrimoine_unesco": false,
+    "saigoku": false,
+    "goshameguri": true
+  },
+  {
+    "nom": "革堂 (Kōdō / Gyōgan-ji)",
+    "nom_romaji": "Kōdō",
+    "quartier": "Nakagyo",
+    "description": "Petit temple du centre de Kyoto, 19e étape du pèlerinage Saigoku. Connue pour ses liens avec la bienveillance.",
+    "type": "temple bouddhiste",
+    "tags": [
+      "temples",
+      "saigoku",
+      "spiritualité",
+      "centre-ville",
+      "authentique"
+    ],
+    "adresse": "京都市中京区寺町通竹屋町上ル行願寺門前町17",
+    "url": "https://www.japan.travel/en/spot/2066/",
+    "google_maps": "https://goo.gl/maps/fgb6BZgzTTQeRSrb9",
+    "patrimoine_unesco": false,
+    "saigoku": true,
+    "goshameguri": false
+  },
+  {
+    "nom": "頂法寺 (Chōhō-ji / Rokkaku-dō)",
+    "nom_romaji": "Rokkaku-dō",
+    "quartier": "Nakagyo",
+    "description": "Temple central hexagonal, lieu de naissance de l'ikebana, 18e temple Saigoku.",
+    "type": "temple bouddhiste",
+    "tags": [
+      "temples",
+      "saigoku",
+      "culture",
+      "centre-ville",
+      "spiritualité"
+    ],
+    "adresse": "京都市中京区六角通東洞院西入堂之前町248",
+    "url": "https://www.japan.travel/en/spot/2100/",
+    "google_maps": "https://goo.gl/maps/Xi7Hjo2f7VsALRUZ7",
+    "patrimoine_unesco": false,
+    "saigoku": true,
+    "goshameguri": false
+  },
+  {
+    "nom": "誓願寺 (Seigan-ji)",
+    "nom_romaji": "Seigan-ji",
+    "quartier": "Nakagyo",
+    "description": "Temple Jōdo niché dans l’arcade Teramachi. Étape urbaine du pèlerinage Saigoku.",
+    "type": "temple bouddhiste",
+    "tags": [
+      "temples",
+      "saigoku",
+      "centre-ville",
+      "authentique"
+    ],
+    "adresse": "京都市中京区寺町通り三条上る天性寺前町",
+    "url": "https://www.japan.travel/en/spot/2101/",
+    "google_maps": "https://goo.gl/maps/KqK9i1QozVt6tWHo6",
+    "patrimoine_unesco": false,
+    "saigoku": true,
+    "goshameguri": false
+  },
+  {
+    "nom": "今熊野観音寺 (Imakumano Kannon-ji)",
+    "nom_romaji": "Imakumano Kannon-ji",
+    "quartier": "Higashiyama",
+    "description": "Temple discret en forêt, étape 15 du pèlerinage Saigoku. Atmosphère paisible.",
+    "type": "temple bouddhiste",
+    "tags": [
+      "temples",
+      "saigoku",
+      "nature",
+      "hors des sentiers battus",
+      "spiritualité"
+    ],
+    "adresse": "京都市東山区泉涌寺山内町32",
+    "url": "https://www.japan.travel/en/spot/2099/",
+    "google_maps": "https://goo.gl/maps/2nU1AbcF3KHkCLNZA",
+    "patrimoine_unesco": false,
+    "saigoku": true,
+    "goshameguri": false
+  },
+  {
+    "nom": "長岡天満宮 (Nagaoka Tenman-gū)",
+    "nom_romaji": "Nagaoka Tenmangū",
+    "quartier": "Nagaokakyo (Kyoto-fu)",
+    "description": "Sanctuaire en banlieue de Kyoto dédié à Sugawara no Michizane. Entouré d’étangs et de fleurs.",
+    "type": "sanctuaire shinto",
+    "tags": [
+      "shinto",
+      "nature",
+      "hors des sentiers battus",
+      "printemps"
+    ],
+    "adresse": "京都府長岡京市天神2丁目15−13",
+    "url": "https://www.japan.travel/en/spot/2102/",
+    "google_maps": "https://goo.gl/maps/FG79TmnGzuv",
+    "patrimoine_unesco": false,
+    "saigoku": false,
+    "goshameguri": false
+  },
+  {
+    "nom": "法然院 (Hōnen-in)",
+    "nom_romaji": "Hōnen-in",
+    "quartier": "Sakyo",
+    "description": "Petit temple caché entouré de nature, au calme absolu. Superbe à l’automne.",
+    "type": "temple bouddhiste",
+    "tags": [
+      "temples",
+      "hors des sentiers battus",
+      "spiritualité",
+      "automne",
+      "authentique",
+      "photo"
+    ],
+    "adresse": "京都市左京区鹿ケ谷御所ノ段町30",
+    "url": "https://www.japan.travel/en/spot/2098/",
+    "google_maps": "https://goo.gl/maps/LD9XxskLGXqQbVQB7",
+    "patrimoine_unesco": false,
+    "saigoku": false,
+    "goshameguri": false,
+    "saisonnalité": [
+      "automne"
+    ],
+    "fréquentation": "peu connu",
+    "style_recommandé": [
+      "authentique",
+      "inspirationnel"
+    ]
+  },
+  {
+    "nom": "真如堂 (Shinnyo-dō)",
+    "nom_romaji": "Shinnyo-dō",
+    "quartier": "Sakyo",
+    "description": "Grand temple méconnu, magnifique en automne. Peu fréquenté malgré sa beauté.",
+    "type": "temple bouddhiste",
+    "tags": [
+      "temples",
+      "spiritualité",
+      "automne",
+      "hors des sentiers battus"
+    ],
+    "adresse": "京都市左京区浄土寺真如町82",
+    "url": "https://www.japan.travel/en/spot/2094/",
+    "google_maps": "https://goo.gl/maps/qKDb5rA6WPK2",
+    "patrimoine_unesco": false,
+    "saigoku": false,
+    "goshameguri": false,
+    "saisonnalité": [
+      "automne"
+    ],
+    "fréquentation": "modéré",
+    "style_recommandé": [
+      "authentique",
+      "inspirationnel"
+    ]
+  },
+  {
+    "nom": "大原三千院 (Sanzen-in)",
+    "nom_romaji": "Sanzen-in",
+    "quartier": "Ōhara (Sakyo-ku)",
+    "description": "Temple mystique au nord de Kyoto, connu pour ses jardins moussus et ses petites statues jizō.",
+    "type": "temple bouddhiste",
+    "tags": [
+      "temples",
+      "nature",
+      "spiritualité",
+      "hors des sentiers battus",
+      "printemps",
+      "automne"
+    ],
+    "adresse": "京都市左京区大原来迎院町540",
+    "url": "https://www.japan-guide.com/e/e3936.html",
+    "google_maps": "https://goo.gl/maps/NnRcbAcrv6D2",
+    "patrimoine_unesco": false,
+    "saigoku": false,
+    "goshameguri": false,
+    "saisonnalité": [
+      "printemps",
+      "automne"
+    ],
+    "fréquentation": "modéré",
+    "style_recommandé": [
+      "inspirationnel",
+      "authentique"
+    ]
+  },
+  {
+    "nom": "積善院準提堂 (Sekizan-in Junteidō)",
+    "nom_romaji": "Sekizan-in",
+    "quartier": "Sakyo",
+    "description": "Temple zen discret au pied du mont Hiei, point de départ de randonnées spirituelles.",
+    "type": "temple bouddhiste",
+    "tags": [
+      "temples",
+      "nature",
+      "randonnée",
+      "spiritualité",
+      "hors des sentiers battus"
+    ],
+    "adresse": "京都市左京区修学院開根坊町18",
+    "url": "https://www.japan.travel/en/spot/2103/",
+    "google_maps": "https://goo.gl/maps/PHpYCSgdK9vUHL3o9",
+    "patrimoine_unesco": false,
+    "saigoku": false,
+    "goshameguri": false,
+    "saisonnalité": [],
+    "fréquentation": "peu connu",
+    "style_recommandé": [
+      "authentique",
+      "inspirationnel"
+    ]
+  },
+  {
+    "nom": "妙心寺 (Myōshin-ji)",
+    "nom_romaji": "Myoshin-ji",
+    "quartier": "Ukyo",
+    "description": "Immense complexe zen avec plusieurs sous-temples. Ambiance monastique, très peu touristique.",
+    "type": "temple bouddhiste",
+    "tags": [
+      "temples",
+      "zen",
+      "spiritualité",
+      "hors des sentiers battus",
+      "authentique"
+    ],
+    "adresse": "京都市右京区花園妙心寺町1",
+    "url": "https://www.japan.travel/en/spot/2104/",
+    "google_maps": "https://goo.gl/maps/NMHCTAJBGSH2",
+    "patrimoine_unesco": false,
+    "saigoku": false,
+    "goshameguri": false,
+    "saisonnalité": [],
+    "fréquentation": "modéré",
+    "style_recommandé": [
+      "authentique",
+      "spiritualité"
+    ]
   }
 ]
