@@ -1,4 +1,4 @@
-import { enrichirJournee } from './enrichissement_kyoto.js';
+const { enrichirJournee } = require('./enrichissement_kyoto.js');
 
 function formatList(item) {
   if (!item) return 'Non précisé';
@@ -119,7 +119,38 @@ Le voyageur cherche une expérience adaptée à :
 - Remarques : ${sanitizeInput(data.remarques)}`;
 
   const enrichissements = enrichPrompt(data);
+let enrichissementVille = '';
 
+if (data.ville === "Kyoto") {
+  const quartier = "東山区"; // à terme : détecté automatiquement selon la journée
+  const interets = Array.isArray(data.interests)
+    ? data.interests.map(e => e.toLowerCase())
+    : [];
+
+  const enrichissementsDynamiques = enrichirJournee("Kyoto", quartier, interets);
+
+  if (enrichissementsDynamiques) {
+    enrichissementVille += `
+
+---
+
+### Suggestions locales à ${quartier} (Kyoto)
+
+🛕 **Temples recommandés :**
+${enrichissementsDynamiques.temples.map(t => `- ${t.nom} 👉 ${t.url || ''}`).join('\n')}
+
+🍜 **Restaurants suggérés :**
+${enrichissementsDynamiques.gastronomie.map(r => `- ${r.nom} (${r.spécialité?.join(', ')})`).join('\n')}
+
+🏛️ **Sites d’intérêt :**
+${enrichissementsDynamiques.lieux.map(l => `- ${l.nom_japonais} 👉 ${l.url || ''}`).join('\n')}
+
+🏨 **Hébergements disponibles :**
+${enrichissementsDynamiques.hebergements.map(h => `- ${h.name || h.nom} à ${h.ward || ''}`).join('\n')}
+`;
+  }
+}
+  
   const structure = `
 Structure impérative :
 - Rédige l’itinéraire dans un style fluide, immersif, presque comme un carnet de voyage ou un récit personnel.
@@ -143,7 +174,7 @@ Structure impérative :
 - Pas de bullet points, pas de tableaux, pas de code
 `;
 
-  return `${intro}\n\n${enrichissements}\n\n${structure}`;
+  return `${intro}\n\n${enrichissements}\n\n${enrichissementVille}\n\n${structure}`;
 }
 
 module.exports = { generatePrompt };
