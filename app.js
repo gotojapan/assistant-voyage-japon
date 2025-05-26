@@ -38,7 +38,7 @@ app.post('/api/planificateur', async (req, res) => {
 
     let result = responseJson.choices?.[0]?.message?.content || "⚠️ Aucun résultat généré.";
 
-    // ✅ INJECTION de l'enrichissement Kyoto (si présent dans le prompt)
+    // ✅ Ajout de l'enrichissement Kyoto (si présent dans le prompt)
     if (prompt.includes("### Notre recommandation pour enrichir votre séjour à Kyoto")) {
       const enrichStart = prompt.indexOf("### Notre recommandation");
       const enrichEnd = prompt.indexOf("Structure impérative");
@@ -49,17 +49,6 @@ app.post('/api/planificateur', async (req, res) => {
       }
     }
 
-    res.json({ result });
-
-  } catch (err) {
-    console.error("❌ Erreur lors de la génération :", err);
-    res.status(500).json({ error: "Erreur de génération de contenu." });
-  }
-});
-
-    const responseJson = await completion.json();
-    let result = responseJson.choices?.[0]?.message?.content || "⚠️ Aucun résultat généré.";
-
     // Ajouter emojis dans les moments de la journée
     result = result.replace(/###\s*Matin/g, '### 🍵 Matin');
     result = result.replace(/###\s*Midi/g, '### 🍽️ Midi');
@@ -67,6 +56,7 @@ app.post('/api/planificateur', async (req, res) => {
     result = result.replace(/###\s*Soir/g, '### 🌙 Soir');
 
     res.json({ result });
+
   } catch (err) {
     console.error("❌ Erreur OpenRouter :", err);
     res.status(500).json({ error: err.toString() });
