@@ -57,8 +57,8 @@ app.post('/api/planificateur', async (req, res) => {
   }
 });
 
-    const data = await completion.json();
-    let result = data.choices?.[0]?.message?.content || "Une erreur est survenue.";
+    const responseJson = await completion.json();
+    let result = responseJson.choices?.[0]?.message?.content || "⚠️ Aucun résultat généré.";
 
     // Ajouter emojis dans les moments de la journée
     result = result.replace(/###\s*Matin/g, '### 🍵 Matin');
