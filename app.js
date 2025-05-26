@@ -36,6 +36,15 @@ app.post('/api/planificateur', async (req, res) => {
 
     const responseJson = await completion.json();
     let result = responseJson.choices?.[0]?.message?.content || "⚠️ Aucun résultat généré.";
+    // ✅ Injection forcée de l'enrichissementVille si présent dans le prompt
+    if (prompt.includes('Avant de commencer, voici une suggestion personnelle')) {
+    const enrichStart = prompt.indexOf('Avant de commencer');
+    const enrichEnd = prompt.indexOf('## Jour 1');
+    if (enrichStart !== -1 && enrichEnd !== -1) {
+    const bloc = prompt.substring(enrichStart, enrichEnd).trim();
+    result = `${bloc}\n\n${result}`;
+  }
+}
 
     // 🔁 Réinjection de la recommandation s'il y en a une
     const enrichStart = prompt.indexOf('---\nAvant de commencer, voici une suggestion personnelle');
