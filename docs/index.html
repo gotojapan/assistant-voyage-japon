@@ -312,6 +312,7 @@
             const prenom = data.username || 'voyageur';
             const welcome = `<p><strong>Bonjour ${prenom}-san 👋</strong><br>Voici votre itinéraire personnalisé pour le Japon. Laissez-vous guider étape par étape...</p><br>`;
             const intro = getIntroHtmlFromDate(data.start || data.periodeVille);
+            console.log("📦 PROMPT BRUT RENVOYÉ PAR LE BACKEND :", result.result);
             let html = result.result.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
             html = html.replace(/###\s*Matin/g, '### 🍵 Matin');
           html = html.replace(/###\s*Midi/g, '### 🍽️ Midi');
