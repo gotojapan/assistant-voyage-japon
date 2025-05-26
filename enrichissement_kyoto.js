@@ -1,11 +1,8 @@
-import fs from 'fs';
-import path from 'path';
+const fs = require('fs');
+const path = require('path');
 
 let kyotoData = null;
 
-/**
- * Charge les fichiers JSON liés à Kyoto (une seule fois)
- */
 function chargerDonneesKyoto() {
   if (!kyotoData) {
     kyotoData = {
@@ -17,14 +14,7 @@ function chargerDonneesKyoto() {
   }
 }
 
-/**
- * Enrichit une journée à Kyoto avec des suggestions éditoriales.
- * @param {string} ville - Doit être "Kyoto" pour activer l'enrichissement
- * @param {string} quartier - Quartier ciblé (ex. 'Higashiyama')
- * @param {string[]} interets - Tags d’intérêt (ex. ['temple', 'gastronomie'])
- * @returns {object|null} - Suggestions ou null si ville ≠ Kyoto
- */
-export function enrichirJournee(ville, quartier, interets = []) {
+function enrichirJournee(ville, quartier, interets = []) {
   if (ville !== "Kyoto") return null;
 
   chargerDonneesKyoto();
@@ -44,3 +34,6 @@ export function enrichirJournee(ville, quartier, interets = []) {
     hebergements: filtreParTags(kyotoData.hebergements).slice(0, 2),
   };
 }
+
+module.exports = { enrichirJournee };
+
