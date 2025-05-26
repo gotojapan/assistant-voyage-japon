@@ -134,7 +134,9 @@ if (data.ville === "Kyoto") {
 
 ---
 
-### Suggestions locales à ${quartier} (Kyoto)
+### Notre recommandation pour enrichir votre séjour à Kyoto :
+
+Voici quelques adresses sélectionnées avec soin, en fonction de vos envies exprimées dans le formulaire.
 
 🛕 **Temples recommandés :**
 ${enrichissementsDynamiques.temples.map(t => `- ${t.nom} 👉 ${t.url || ''}`).join('\n')}
@@ -146,7 +148,7 @@ ${enrichissementsDynamiques.gastronomie.map(r => `- ${r.nom} (${r.spécialité?.
 ${enrichissementsDynamiques.lieux.map(l => `- ${l.nom_japonais} 👉 ${l.url || ''}`).join('\n')}
 
 🏨 **Hébergements disponibles :**
-${enrichissementsDynamiques.hebergements.map(h => `- ${h.name || h.nom} à ${h.ward || ''}`).join('\n')}
+${enrichissementsDynamiques.hebergements.map(h => `- ${h.name || h.nom} à ${h.ward || 'Kyoto'}`).join('\n')}
 `;
   }
 }
