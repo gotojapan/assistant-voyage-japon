@@ -36,30 +36,12 @@ app.post('/api/planificateur', async (req, res) => {
 
     const responseJson = await completion.json();
     let result = responseJson.choices?.[0]?.message?.content || "⚠️ Aucun résultat généré.";
-    
-    // ✅ Injection forcée du bloc "Avant de commencer..." depuis le prompt si présent
-const enrichBlocMatch = prompt.match(/Avant de commencer[\s\S]+?(?=##\s*Jour\s*1)/i);
-if (enrichBlocMatch) {
-  console.log("✅ Bloc enrichissement Kyoto détecté et injecté !");
-  result = `${enrichBlocMatch[0].trim()}\n\n${result}`;
-}
 
-  if (enrichStart !== -1 && enrichEnd !== -1) {
-    const bloc = prompt.substring(enrichStart, enrichEnd).trim();
-    console.log("✅ Bloc enrichissement injecté");
-    result = `${bloc}\n\n${result}`;
-  } else {
-    console.warn("⚠️ Bloc enrichissement non trouvé malgré le mot-clé.");
-  }
-}
-
-    // 🔁 Réinjection de la recommandation s'il y en a une
-    const enrichStart = prompt.indexOf('---\nAvant de commencer, voici une suggestion personnelle');
-    const enrichEnd = prompt.indexOf('Structure impérative');
-
-    if (enrichStart !== -1 && enrichEnd !== -1) {
-      const blocRecommandation = prompt.substring(enrichStart, enrichEnd).trim();
-      result = `${blocRecommandation}\n\n${result}`;
+    // ✅ Injection du bloc enrichissement s'il est présent dans le prompt
+    const enrichBlocMatch = prompt.match(/Avant de commencer[\s\S]+?(?=##\s*Jour\s*1)/i);
+    if (enrichBlocMatch) {
+      console.log("✅ Bloc enrichissement Kyoto détecté et injecté !");
+      result = `${enrichBlocMatch[0].trim()}\n\n${result}`;
     }
 
     // Ajouter emojis dans les moments de la journée
@@ -184,4 +166,3 @@ function generateIntroHtmlForPdf(dateStr) {
 app.listen(PORT, () => {
   console.log(`🚀 Serveur final avec PDF stylisé lancé sur le port ${PORT}`);
 });
-
