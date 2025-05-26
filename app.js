@@ -19,20 +19,43 @@ app.use(express.static('public'));
 // ROUTE : Génération texte via OpenRouter
 app.post('/api/planificateur', async (req, res) => {
   const userInput = req.body;
-  const prompt = generatePrompt(userInput); // ⬅️ prompt généré à partir du module externe
+  const prompt = generatePrompt(userInput); // ⬅️ prompt enrichi avec contenu Kyoto
 
   try {
-  const completion = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-  method: "POST",
-  headers: {
-    "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    model: "openai/gpt-4",
-    messages: [{ role: "user", content: prompt }]
-  })
-  });
+    const completion = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "openai/gpt-4",
+        messages: [{ role: "user", content: prompt }]
+      })
+    });
+
+    const responseJson = await completion.json();
+
+    let result = responseJson.choices?.[0]?.message?.content || "⚠️ Aucun résultat généré.";
+
+    // ✅ INJECTION de l'enrichissement Kyoto (si présent dans le prompt)
+    if (prompt.includes("### Notre recommandation pour enrichir votre séjour à Kyoto")) {
+      const enrichStart = prompt.indexOf("### Notre recommandation");
+      const enrichEnd = prompt.indexOf("Structure impérative");
+
+      if (enrichStart !== -1 && enrichEnd !== -1) {
+        const enrichBloc = prompt.substring(enrichStart, enrichEnd).trim();
+        result = `${enrichBloc}\n\n${result}`;
+      }
+    }
+
+    res.json({ result });
+
+  } catch (err) {
+    console.error("❌ Erreur lors de la génération :", err);
+    res.status(500).json({ error: "Erreur de génération de contenu." });
+  }
+});
 
     const data = await completion.json();
     let result = data.choices?.[0]?.message?.content || "Une erreur est survenue.";
