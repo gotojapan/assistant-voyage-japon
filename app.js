@@ -37,16 +37,16 @@ app.post('/api/planificateur', async (req, res) => {
     const responseJson = await completion.json();
     let result = responseJson.choices?.[0]?.message?.content || "⚠️ Aucun résultat généré.";
 
-    // ✅ Injection forcée du bloc "Notre recommandation confidentielle" si présent dans le prompt
+    // Injection du bloc "Notre recommandation confidentielle..." depuis le prompt si présent
     const enrichBlocMatch = prompt.match(/### Notre recommandation confidentielle[\s\S]+?(?=##\s*Jour\s*1)/i);
     if (enrichBlocMatch) {
-      console.log("✅ Bloc 'Notre recommandation confidentielle' détecté et injecté !");
+      console.log("✅ Bloc enrichissement Kyoto détecté et injecté !");
       result = `${enrichBlocMatch[0].trim()}\n\n${result}`;
     } else {
-      console.warn("⚠️ Bloc 'Notre recommandation confidentielle' non détecté dans le prompt.");
+      console.warn("⚠️ Bloc enrichissement non trouvé malgré le mot-clé.");
     }
 
-    // Ajouter emojis dans les moments de la journée
+    // Emojis pour les moments de la journée
     result = result.replace(/###\s*Matin/g, '### 🍵 Matin');
     result = result.replace(/###\s*Midi/g, '### 🍽️ Midi');
     result = result.replace(/###\s*Après-midi/g, '### ☀️ Après-midi');
@@ -113,6 +113,7 @@ app.post('/api/pdf', async (req, res) => {
   }
 });
 
+// Blocs pratiques pour PDF
 function generateIntroHtmlForPdf(dateStr) {
   if (!dateStr) return '';
   const mois = new Date(dateStr).getMonth();
