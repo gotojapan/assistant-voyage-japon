@@ -7,7 +7,7 @@ const fetch = require('node-fetch');
 const fs = require('fs');
 const path = require('path');
 const { marked } = require('marked');
-const { generatePrompt } = require('./generatePrompt'); // Import propre ici
+const { generatePrompt } = require('./generatePrompt');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -19,7 +19,7 @@ app.use(express.static('public'));
 // ROUTE : Génération texte via OpenRouter
 app.post('/api/planificateur', async (req, res) => {
   const userInput = req.body;
-  const prompt = generatePrompt(userInput); // ⬅️ prompt enrichi avec contenu Kyoto
+  const prompt = generatePrompt(userInput);
 
   try {
     const completion = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -37,17 +37,6 @@ app.post('/api/planificateur', async (req, res) => {
     const responseJson = await completion.json();
 
     let result = responseJson.choices?.[0]?.message?.content || "⚠️ Aucun résultat généré.";
-
-    // ✅ Ajout de l'enrichissement Kyoto (si présent dans le prompt)
-    if (prompt.includes("### Notre recommandation pour enrichir votre séjour à Kyoto")) {
-      const enrichStart = prompt.indexOf("### Notre recommandation");
-      const enrichEnd = prompt.indexOf("Structure impérative");
-
-      if (enrichStart !== -1 && enrichEnd !== -1) {
-        const enrichBloc = prompt.substring(enrichStart, enrichEnd).trim();
-        result = `${enrichBloc}\n\n${result}`;
-      }
-    }
 
     // Ajouter emojis dans les moments de la journée
     result = result.replace(/###\s*Matin/g, '### 🍵 Matin');
@@ -71,29 +60,24 @@ app.post('/api/pdf', async (req, res) => {
     const templatePath = path.join(__dirname, 'templates', 'template.html');
     let htmlTemplate = fs.readFileSync(templatePath, 'utf8');
 
-    // Convertir Markdown → HTML
     let htmlContent = marked.parse(markdown);
 
-    // Injecter blocs .jour à partir des <h2> (Jour X : ...)
     htmlContent = htmlContent.replace(/<h2>(Jour\s*\d+.*?)<\/h2>/gi, (_m, title) => {
       return `</div><div class="jour"><h2 class="journee">${title}</h2>`;
     });
     htmlContent = `<div class="jour">` + htmlContent + `</div>`;
 
-    // Styliser les moments de la journée (Matin, Midi, etc.) avec emoji
     htmlContent = htmlContent.replace(/<h3>\s*Matin\s*<\/h3>/gi, '<h3 class="moment">🍵 Matin</h3>');
     htmlContent = htmlContent.replace(/<h3>\s*Midi\s*<\/h3>/gi, '<h3 class="moment">🍽️ Midi</h3>');
     htmlContent = htmlContent.replace(/<h3>\s*Après-midi\s*<\/h3>/gi, '<h3 class="moment">☀️ Après-midi</h3>');
     htmlContent = htmlContent.replace(/<h3>\s*Soir\s*<\/h3>/gi, '<h3 class="moment">🌙 Soir</h3>');
 
-    // Styliser les liens cliquables "👉"
     htmlContent = htmlContent.replace(/👉\s*<a href="([^"]+)"[^>]*>(.*?)<\/a>/gi, (_m, url, txt) => {
       return `<p class="link-block">👉 <a href="${url}" class="lien" target="_blank">${txt}</a></p>`;
     });
 
-    // Injecter le contenu dans le template
-    const dateStr = req.body.date || ''; // récupère la date transmise
-    const introBlock = generateIntroHtmlForPdf(dateStr); // génère les cards météo+conseils
+    const dateStr = req.body.date || '';
+    const introBlock = generateIntroHtmlForPdf(dateStr);
     htmlTemplate = htmlTemplate.replace('{{{content}}}', introBlock + htmlContent);
 
     const browser = await puppeteer.launch({
@@ -121,7 +105,6 @@ app.post('/api/pdf', async (req, res) => {
   }
 });
 
-// Fonction bloc météo + conseils pour PDF (sans <style>)
 function generateIntroHtmlForPdf(dateStr) {
   if (!dateStr) return '';
   const mois = new Date(dateStr).getMonth();
@@ -177,3 +160,4 @@ function generateIntroHtmlForPdf(dateStr) {
 app.listen(PORT, () => {
   console.log(`🚀 Serveur final avec PDF stylisé lancé sur le port ${PORT}`);
 });
+
