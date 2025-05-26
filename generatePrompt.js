@@ -122,6 +122,7 @@ Le voyageur cherche une expérience adaptée à :
 let enrichissementVille = '';
 
 if (data.ville === "Kyoto") {
+  console.log("🚀 ENRICHISSEMENT KYOTO ACTIVÉ !");
   const quartier = "東山区"; // à terme : détecté automatiquement selon la journée
   const interets = Array.isArray(data.interests)
     ? data.interests.map(e => e.toLowerCase())
@@ -176,6 +177,7 @@ Structure impérative :
 - Pas de bullet points, pas de tableaux, pas de code
 `;
 
+  console.log("🧠 Prompt avec enrichissement :", `${intro}\n\n${enrichissements}\n\n${enrichissementVille}\n\n${structure}`);
   return `${intro}\n\n${enrichissements}\n\n${enrichissementVille}\n\n${structure}`;
 }
 
