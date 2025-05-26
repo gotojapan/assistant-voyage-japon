@@ -121,7 +121,7 @@ Le voyageur cherche une expérience adaptée à :
   const enrichissements = enrichPrompt(data);
 let enrichissementVille = '';
 
-if (data.ville === "Kyoto") {
+if (data.ville?.toLowerCase() === "kyoto") {
   console.log("🚀 ENRICHISSEMENT KYOTO ACTIVÉ !");
   const quartier = "東山区"; // à terme : détecté automatiquement selon la journée
   const interets = Array.isArray(data.interests)
