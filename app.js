@@ -38,17 +38,13 @@ app.post('/api/planificateur', async (req, res) => {
     let result = responseJson.choices?.[0]?.message?.content || "⚠️ Aucun résultat généré.";
 
     // ✅ Injection forcée du bloc "Notre recommandation pour enrichir votre séjour à Kyoto" depuis le prompt si présent
-    const enrichBlocStart = prompt.indexOf('### Notre recommandation pour enrichir votre séjour');
-    const enrichBlocEnd = prompt.search(/##\s*Jour\s*1/i);
-
-    if (enrichBlocStart !== -1 && enrichBlocEnd !== -1) {
-    const blocRecommandation = prompt.substring(enrichBlocStart, enrichBlocEnd).trim();
-    console.log("✅ Bloc enrichissement Kyoto injecté !");
-    result = `${blocRecommandation}\n\n${result}`;
+    const enrichBlocMatch = prompt.match(/###\s*Notre recommandation pour enrichir votre séjour[\s\S]+?(?=##\s*Jour\s*\d+)/i);
+    if (enrichBlocMatch) {
+  console.log("✅ Bloc enrichissement Kyoto détecté et injecté !");
+  result = `${enrichBlocMatch[0].trim()}\n\n${result}`;
   } else {
   console.warn("⚠️ Bloc enrichissement Kyoto non détecté dans le prompt.");
 }
-
 
     // Ajouter emojis dans les moments de la journée
     result = result.replace(/###\s*Matin/g, '### 🍵 Matin');
