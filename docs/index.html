@@ -314,6 +314,7 @@
             const intro = getIntroHtmlFromDate(data.start || data.periodeVille);
             console.log("📦 PROMPT BRUT RENVOYÉ PAR LE BACKEND :", result.result);
             let html = result.result.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+            console.log("💬 HTML final injecté :", html);
             html = html.replace(/###\s*Matin/g, '### 🍵 Matin');
           html = html.replace(/###\s*Midi/g, '### 🍽️ Midi');
           html = html.replace(/###\s*Après-midi/g, '### ☀️ Après-midi');
