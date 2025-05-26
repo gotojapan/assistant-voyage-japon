@@ -20,13 +20,8 @@ function enrichirJournee(ville, interets = []) {
   chargerDonneesKyoto();
 
   const filtreParTags = (base) =>
-  base.filter(item =>
-    interets.some(tag => item.tags?.includes(tag.toLowerCase()))
-  );
-
-  const filtreParTags = (base) =>
     base.filter(item =>
-      matcher(item) && interets.some(tag => item.tags?.includes(tag.toLowerCase()))
+      interets.some(tag => item.tags?.includes(tag.toLowerCase()))
     );
 
   return {
