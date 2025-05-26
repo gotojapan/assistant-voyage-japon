@@ -8,7 +8,7 @@ function chargerDonneesKyoto() {
     kyotoData = {
       temples: JSON.parse(fs.readFileSync(path.resolve('data/kyoto_temples.json'), 'utf8')),
       gastronomie: JSON.parse(fs.readFileSync(path.resolve('data/kyoto_gastronomie.json'), 'utf8')),
-      installations: JSON.parse(fs.readFileSync(path.resolve('data/kyoto_installations_touristiques_enriched.json'), 'utf8')),
+      installations: JSON.parse(fs.readFileSync(path.resolve('data/kyoto_installations_touristiques.json'), 'utf8')),
       hebergements: JSON.parse(fs.readFileSync(path.resolve('data/kyoto_accommodations.json'), 'utf8')),
     };
   }
