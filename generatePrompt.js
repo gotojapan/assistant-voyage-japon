@@ -123,12 +123,11 @@ let enrichissementVille = '';
 
 if (data.ville?.toLowerCase() === "kyoto") {
   console.log("🚀 ENRICHISSEMENT KYOTO ACTIVÉ !");
-  const quartier = "東山区"; // à terme : détecté automatiquement selon la journée
   const interets = Array.isArray(data.interests)
     ? data.interests.map(e => e.toLowerCase())
     : [];
 
-  const enrichissementsDynamiques = enrichirJournee("Kyoto", quartier, interets);
+  const enrichissementsDynamiques = enrichirJournee("Kyoto", interets);
   console.log("📊 Résultat enrichirJournee :", enrichissementsDynamiques);
 
    if (enrichissementsDynamiques && (
