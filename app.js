@@ -37,10 +37,12 @@ app.post('/api/planificateur', async (req, res) => {
     const responseJson = await completion.json();
     let result = responseJson.choices?.[0]?.message?.content || "⚠️ Aucun résultat généré.";
     
-    // ✅ Injection forcée de l'enrichissementVille si présent dans le prompt
-    if (prompt.includes('Avant de commencer')) {
-    const enrichStart = prompt.indexOf('Avant de commencer');
-    const enrichEnd = prompt.search(/##\s*Jour\s*1/i);
+    // ✅ Injection forcée du bloc "Avant de commencer..." depuis le prompt si présent
+const enrichBlocMatch = prompt.match(/Avant de commencer[\s\S]+?(?=##\s*Jour\s*1)/i);
+if (enrichBlocMatch) {
+  console.log("✅ Bloc enrichissement Kyoto détecté et injecté !");
+  result = `${enrichBlocMatch[0].trim()}\n\n${result}`;
+}
 
   if (enrichStart !== -1 && enrichEnd !== -1) {
     const bloc = prompt.substring(enrichStart, enrichEnd).trim();
