@@ -1,3 +1,4 @@
+import { enrichirJournee } from './enrichissement_kyoto.js';
 
 function formatList(item) {
   if (!item) return 'Non précisé';
