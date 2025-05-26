@@ -130,7 +130,7 @@ ${lignes.join('\n\n')}`;
     }
   }
 
-  const structure = `
+  let structure = `
 Structure impérative :
 - Rédige l’itinéraire dans un style fluide, immersif, presque comme un carnet de voyage ou un récit personnel.
 - Utilise la 2e personne du pluriel ("vous") pour créer une connexion directe.
@@ -141,6 +141,10 @@ Structure impérative :
 - Ces liens sont essentiels pour guider le voyageur : ne les supprime jamais.
 - Utilise des sources fiables (Japan Guide, Google Maps, site officiel). Si aucun lien n’est disponible, ne cite pas le lieu.
 - Ne propose jamais d’éléments sous forme de bullet points, de tableaux ou de listes à puces.`;
+
+  if (enrichissementVille) {
+    structure += `\nIMPORTANT : reprends impérativement le paragraphe ci-dessus intitulé \"Notre recommandation pour enrichir votre séjour à Kyoto\" tel quel, et place-le en introduction du texte généré.`;
+  }
 
   console.log("🧠 Prompt avec enrichissement :", `${intro}\n\n${enrichissements}\n\n${enrichissementVille}\n\n${structure}`);
   return `${intro}\n\n${enrichissements}\n\n${enrichissementVille}\n\n${structure}`;
