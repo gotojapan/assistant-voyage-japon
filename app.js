@@ -37,11 +37,13 @@ app.post('/api/planificateur', async (req, res) => {
     const responseJson = await completion.json();
     let result = responseJson.choices?.[0]?.message?.content || "⚠️ Aucun résultat généré.";
 
-    // ✅ Injection du bloc enrichissement s'il est présent dans le prompt
-    const enrichBlocMatch = prompt.match(/Avant de commencer[\s\S]+?(?=##\s*Jour\s*1)/i);
+    // ✅ Injection forcée du bloc d’enrichissement Kyoto s’il existe dans le prompt
+    const enrichBlocMatch = prompt.match(/### Notre recommandation.*?Kyoto[\s\S]+?(?=##\s*Jour\s*\d+)/i);
     if (enrichBlocMatch) {
-      console.log("✅ Bloc enrichissement Kyoto détecté et injecté !");
-      result = `${enrichBlocMatch[0].trim()}\n\n${result}`;
+      console.log("✅ Bloc d'enrichissement Kyoto détecté et injecté !");
+      result = `${enrichBlocMatch[0].trim()}` + "\n\n" + result;
+    } else {
+      console.warn("⚠️ Aucun bloc d'enrichissement Kyoto détecté dans le prompt.");
     }
 
     // Ajouter emojis dans les moments de la journée
