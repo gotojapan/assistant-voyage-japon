@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Assistant de voyage au Japon</title>
   <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
     body { font-family: 'Lato', sans-serif; margin: 0; background: #fff; color: #111; }
     h2 { color: #DF2A2F; text-align: center; margin-bottom: 1.5rem; }
@@ -313,7 +314,8 @@
             const welcome = `<p><strong>Bonjour ${prenom}-san 👋</strong><br>Voici votre itinéraire personnalisé pour le Japon. Laissez-vous guider étape par étape...</p><br>`;
             const intro = getIntroHtmlFromDate(data.start || data.periodeVille);
             console.log("📦 PROMPT BRUT RENVOYÉ PAR LE BACKEND :", result.result);
-            let html = result.result.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+            let markdown = result.result;
+            let html = marked.parse(markdown);
             console.log("💬 HTML final injecté :", html);
             html = html.replace(/###\s*Matin/g, '### 🍵 Matin');
           html = html.replace(/###\s*Midi/g, '### 🍽️ Midi');
