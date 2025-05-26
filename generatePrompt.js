@@ -129,8 +129,15 @@ if (data.ville?.toLowerCase() === "kyoto") {
     : [];
 
   const enrichissementsDynamiques = enrichirJournee("Kyoto", quartier, interets);
+  console.log("📊 Résultat enrichirJournee :", enrichissementsDynamiques);
 
-  if (enrichissementsDynamiques) {
+   if (enrichissementsDynamiques && (
+      enrichissementsDynamiques.temples.length > 0 ||
+      enrichissementsDynamiques.gastronomie.length > 0 ||
+      enrichissementsDynamiques.lieux.length > 0 ||
+      enrichissementsDynamiques.hebergements.length > 0
+  )) {
+     
     enrichissementVille += `
 
 ---
