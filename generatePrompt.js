@@ -99,18 +99,35 @@ Le voyageur cherche une expérience adaptée à :
         enrichissementsDynamiques.lieux.length > 0 ||
         enrichissementsDynamiques.hebergements.length > 0)
     ) {
-      const temple = enrichissementsDynamiques.temples[0]?.nom;
-      const resto = enrichissementsDynamiques.gastronomie[0]?.nom;
-      const lieu = enrichissementsDynamiques.lieux[0]?.nom_japonais;
-      const hotel = enrichissementsDynamiques.hebergements[0]?.name || enrichissementsDynamiques.hebergements[0]?.nom;
+      const lignes = [];
+
+      if (enrichissementsDynamiques.temples[0]) {
+        const t = enrichissementsDynamiques.temples[0];
+        lignes.push(`Commencez votre parcours par un moment d’introspection au temple ${t.nom}, ${t.description?.toLowerCase() || "un lieu chargé de spiritualité."}`);
+      }
+
+      if (enrichissementsDynamiques.gastronomie[0]) {
+        const r = enrichissementsDynamiques.gastronomie[0];
+        lignes.push(`À midi, laissez-vous tenter par ${r.nom}, une adresse réputée pour sa spécialité : ${r.spécialité?.join(', ') || "une cuisine locale raffinée"}.`);
+      }
+
+      if (enrichissementsDynamiques.lieux[0]) {
+        const l = enrichissementsDynamiques.lieux[0];
+        lignes.push(`L’après-midi, explorez ${l.nom_japonais || "un lieu culturel d’exception"}, propice à la contemplation et à la découverte.`);
+      }
+
+      if (enrichissementsDynamiques.hebergements[0]) {
+        const h = enrichissementsDynamiques.hebergements[0];
+        lignes.push(`Pour la nuit, profitez du confort de ${h.name || h.nom}, un hébergement typique à Kyoto où règne l’élégance japonaise.`);
+      }
 
       enrichissementVille = `
 ---
-Avant de commencer, voici une suggestion personnelle pour enrichir votre séjour à Kyoto :
 
-Pourquoi ne pas débuter par un moment d’introspection au temple emblématique ${temple}, avant de déguster un repas végétarien raffiné chez ${resto} ? 
-L’après-midi, laissez-vous surprendre par la sérénité du site de ${lieu}, puis terminez la journée dans le confort de l’hébergement ${hotel}, où tradition rime avec élégance.
-`;
+### Notre recommandation confidentielle pour enrichir votre séjour à Kyoto
+
+${lignes.join('\n\n')}
+      `;
     }
   }
 
@@ -128,4 +145,3 @@ Structure impérative :
 }
 
 module.exports = { generatePrompt };
-
