@@ -12,18 +12,14 @@ const { generatePrompt } = require('./generatePrompt');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+app.use(cors({ origin: 'https://gotojapan.github.io' }));
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
 // ROUTE : Génération texte via OpenRouter
 app.post('/api/planificateur', async (req, res) => {
   const userInput = req.body;
-  const promptComplet = generatePrompt(userInput);
+  const prompt = generatePrompt(userInput);
 
   try {
     const completion = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -34,20 +30,20 @@ app.post('/api/planificateur', async (req, res) => {
       },
       body: JSON.stringify({
         model: "openai/gpt-4",
-        messages: [{ role: "user", content: promptComplet }]
+        messages: [{ role: "user", content: prompt }]
       })
     });
 
     const responseJson = await completion.json();
     let result = responseJson.choices?.[0]?.message?.content || "⚠️ Aucun résultat généré.";
 
-    // EXTRACTION et INSERTION du bloc "enrichissementVille" s'il est présent dans le prompt
-    const enrichStart = promptComplet.indexOf('---\nAvant de commencer');
-    const enrichEnd = promptComplet.indexOf('Structure impérative');
+    // 🔁 Réinjection de la recommandation s'il y en a une
+    const enrichStart = prompt.indexOf('---\nAvant de commencer, voici une suggestion personnelle');
+    const enrichEnd = prompt.indexOf('Structure impérative');
 
     if (enrichStart !== -1 && enrichEnd !== -1) {
-      const bloc = promptComplet.substring(enrichStart, enrichEnd).trim();
-      result = `${bloc}\n\n${result}`;
+      const blocRecommandation = prompt.substring(enrichStart, enrichEnd).trim();
+      result = `${blocRecommandation}\n\n${result}`;
     }
 
     // Ajouter emojis dans les moments de la journée
@@ -172,3 +168,4 @@ function generateIntroHtmlForPdf(dateStr) {
 app.listen(PORT, () => {
   console.log(`🚀 Serveur final avec PDF stylisé lancé sur le port ${PORT}`);
 });
+
