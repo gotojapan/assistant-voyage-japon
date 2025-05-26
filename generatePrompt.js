@@ -131,14 +131,18 @@ ${lignes.join('\n\n')}
     }
   }
 
-  const structure = `
+const structure = `
 Structure impérative :
 - Rédige l’itinéraire dans un style fluide, immersif, presque comme un carnet de voyage ou un récit personnel.
 - Utilise la 2e personne du pluriel ("vous") pour créer une connexion directe.
-- Structure chaque journée avec un titre de niveau 2 : ## Jour X – titre descriptif (avec un emoji si possible)
-- Structure chaque moment de la journée avec un sous-titre de niveau 3 : ### Matin, ### Midi, ### Après-midi, ### Soir (chacun peut être introduit par un emoji)
-- Chaque moment doit être suivi de texte descriptif, vivant et culturel (par exemple : ce qu’on y fait, voit, ressent, comprend)
-- Ne propose jamais d’éléments sous forme de bullet points ou de tableaux.`;
+- Structure chaque journée avec un titre de niveau 2 : ## Jour X – titre descriptif (avec un emoji si possible).
+- Structure chaque moment de la journée avec un sous-titre de niveau 3 : ### Matin, ### Midi, ### Après-midi, ### Soir (chacun peut être introduit par un emoji).
+- Chaque moment doit être suivi d’un texte vivant et culturel (ce qu’on y fait, voit, ressent, comprend).
+- Pour chaque lieu, activité, hébergement ou restaurant, ajoute impérativement un lien réel au format 👉 [En savoir plus](https://...).
+- Ces liens sont essentiels pour guider le voyageur : ne les supprime jamais.
+- Utilise des sources fiables (Japan Guide, Google Maps, site officiel). Si aucun lien n’est disponible, ne cite pas le lieu.
+- Ne propose jamais d’éléments sous forme de bullet points, de tableaux ou de listes à puces.
+`;
 
   console.log("🧠 Prompt avec enrichissement :", `${intro}\n\n${enrichissements}\n\n${enrichissementVille}\n\n${structure}`);
   return `${intro}\n\n${enrichissements}\n\n${enrichissementVille}\n\n${structure}`;
