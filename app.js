@@ -19,7 +19,7 @@ app.use(express.static('public'));
 // ROUTE : Génération texte via OpenRouter
 app.post('/api/planificateur', async (req, res) => {
   const userInput = req.body;
-  const prompt = generatePrompt(userInput);
+  const promptComplet = generatePrompt(userInput);
 
   try {
     const completion = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -30,13 +30,21 @@ app.post('/api/planificateur', async (req, res) => {
       },
       body: JSON.stringify({
         model: "openai/gpt-4",
-        messages: [{ role: "user", content: prompt }]
+        messages: [{ role: "user", content: promptComplet }]
       })
     });
 
     const responseJson = await completion.json();
-
     let result = responseJson.choices?.[0]?.message?.content || "⚠️ Aucun résultat généré.";
+
+    // EXTRACTION et INSERTION du bloc "enrichissementVille" s'il est présent dans le prompt
+    const enrichStart = promptComplet.indexOf('---\nAvant de commencer');
+    const enrichEnd = promptComplet.indexOf('Structure impérative');
+
+    if (enrichStart !== -1 && enrichEnd !== -1) {
+      const bloc = promptComplet.substring(enrichStart, enrichEnd).trim();
+      result = `${bloc}\n\n${result}`;
+    }
 
     // Ajouter emojis dans les moments de la journée
     result = result.replace(/###\s*Matin/g, '### 🍵 Matin');
@@ -160,4 +168,3 @@ function generateIntroHtmlForPdf(dateStr) {
 app.listen(PORT, () => {
   console.log(`🚀 Serveur final avec PDF stylisé lancé sur le port ${PORT}`);
 });
-
