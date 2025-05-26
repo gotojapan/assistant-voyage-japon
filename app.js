@@ -36,13 +36,18 @@ app.post('/api/planificateur', async (req, res) => {
 
     const responseJson = await completion.json();
     let result = responseJson.choices?.[0]?.message?.content || "⚠️ Aucun résultat généré.";
+    
     // ✅ Injection forcée de l'enrichissementVille si présent dans le prompt
-    if (prompt.includes('Avant de commencer, voici une suggestion personnelle')) {
+    if (prompt.includes('Avant de commencer')) {
     const enrichStart = prompt.indexOf('Avant de commencer');
-    const enrichEnd = prompt.indexOf('## Jour 1');
-    if (enrichStart !== -1 && enrichEnd !== -1) {
+    const enrichEnd = prompt.search(/##\s*Jour\s*1/i);
+
+  if (enrichStart !== -1 && enrichEnd !== -1) {
     const bloc = prompt.substring(enrichStart, enrichEnd).trim();
+    console.log("✅ Bloc enrichissement injecté");
     result = `${bloc}\n\n${result}`;
+  } else {
+    console.warn("⚠️ Bloc enrichissement non trouvé malgré le mot-clé.");
   }
 }
 
