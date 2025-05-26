@@ -14,13 +14,15 @@ function chargerDonneesKyoto() {
   }
 }
 
-function enrichirJournee(ville, quartier, interets = []) {
+function enrichirJournee(ville, interets = []) {
   if (ville !== "Kyoto") return null;
 
   chargerDonneesKyoto();
 
-  const matcher = (item) =>
-    item.adresse?.includes(quartier) || item.quartier?.includes(quartier);
+  const filtreParTags = (base) =>
+  base.filter(item =>
+    interets.some(tag => item.tags?.includes(tag.toLowerCase()))
+  );
 
   const filtreParTags = (base) =>
     base.filter(item =>
