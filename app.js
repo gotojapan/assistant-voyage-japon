@@ -37,10 +37,14 @@ app.post('/api/planificateur', async (req, res) => {
     const responseJson = await completion.json();
     let result = responseJson.choices?.[0]?.message?.content || "⚠️ Aucun résultat généré.";
 
-    // ✅ Injection forcée du bloc "Notre recommandation pour enrichir votre séjour" depuis le prompt si présent
     // ✅ Bloc enrichissement Kyoto (stylisé, avec emojis et encadré)
-const enrichBlocStart = prompt.indexOf('### Notre recommandation pour enrichir votre séjour');
-const enrichBlocEnd = prompt.search(/##\s*Jour\s*1/i);
+  const enrichBlocMatch = prompt.match(/<div class="bloc-recommandation">[\s\S]+?<\/div>/i);
+  if (enrichBlocMatch) {
+  console.log("✅ Bloc enrichissement Kyoto détecté et injecté !");
+  result = `${enrichBlocMatch[0].trim()}\n\n${result}`;
+} else {
+  console.warn("⚠️ Bloc enrichissement Kyoto non détecté dans le prompt.");
+}
 
 if (enrichBlocStart !== -1 && enrichBlocEnd !== -1) {
   let bloc = prompt.substring(enrichBlocStart, enrichBlocEnd).trim();
