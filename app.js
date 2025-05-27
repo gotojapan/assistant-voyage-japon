@@ -42,22 +42,27 @@ try {
   const enrichBlocMatch = prompt.match(/<div class="bloc-recommandation">[\s\S]+?<\/div>/i);
   if (enrichBlocMatch) {
     console.log("✅ Bloc enrichissement Kyoto détecté et injecté !");
-    result = `${enrichBlocMatch[0].trim()}\n\n${result}`;
+    let bloc = enrichBlocMatch[0].trim();
+
+    // Stylisation Markdown
+    bloc = bloc.replace(/^### Notre recommandation pour enrichir votre séjour.*$/im, '**🗾 Notre recommandation pour enrichir votre séjour à Kyoto :**');
+    bloc = bloc.replace(/(Commencez votre parcours|Pour commencer)/i, '⛩ $1');
+    bloc = bloc.replace(/À midi/i, '🍽️ À midi');
+    bloc = bloc.replace(/L’après-midi/i, '🌿 L’après-midi');
+    bloc = bloc.replace(/Pour la nuit|En soirée/i, '🛌 Pour la nuit');
+    bloc = bloc.replace(/\n{2,}/g, '\n'); // Suppression sauts de ligne multiples
+
+    // Encadrement style blockquote
+    bloc = `> ${bloc.split('\n').join('\n> ')}`;
+
+    result = `${bloc}\n\n${result}`;
+    console.log("✅ Bloc enrichissement Kyoto injecté (stylisé)");
   } else {
     console.warn("⚠️ Bloc enrichissement Kyoto non détecté dans le prompt.");
   }
 } catch (err) {
   console.error("❌ Erreur lors de l'injection du bloc enrichissement :", err);
 }
-
-  // Stylisation Markdown
-  bloc = bloc.replace(/^### Notre recommandation pour enrichir votre séjour.*$/im, '**🗾 Notre recommandation pour enrichir votre séjour à Kyoto :**');
-
-  // Ajout emojis par ligne (1er mot clé repéré automatiquement)
-  bloc = bloc.replace(/(Commencez votre parcours|Pour commencer)/i, '⛩ $1');
-  bloc = bloc.replace(/À midi/i, '🍽️ À midi');
-  bloc = bloc.replace(/L’après-midi/i, '🌿 L’après-midi');
-  bloc = bloc.replace(/Pour la nuit|En soirée/i, '🛌 Pour la nuit');
 
   // Suppression sauts de ligne multiples
   bloc = bloc.replace(/\n{2,}/g, '\n');
