@@ -39,36 +39,37 @@ app.post('/api/planificateur', async (req, res) => {
 
     // ✅ Bloc enrichissement Kyoto (stylisé, avec emojis et encadré)
     try {
-      const enrichBlocMatch = prompt.match(/<div class="recommendation-box">[\s\S]+?<\/div>/i);
+      const enrichBlocMatch = result.match(/<div class="recommendation-box">[\s\S]+?<\/div>/i);
       if (enrichBlocMatch) {
-        console.log("✅ Bloc enrichissement Kyoto détecté et injecté !");
+        console.log("✅ Bloc enrichissement Kyoto détecté et réorganisé !");
         let bloc = enrichBlocMatch[0].trim();
 
-        // Stylisation Markdown
-        bloc = bloc.replace(/^<p><strong>🌟 Notre recommandation.*?<\/strong><\/p>/i, '**🌟 Notre recommandation pour enrichir votre séjour :**');
+        // Nettoyage HTML
+        bloc = bloc
+          .replace(/^<p><strong>🌟 Notre recommandation.*?<\/strong><\/p>/i, '**🌟 Notre recommandation pour enrichir votre séjour :**')
+          .replace(/<ul>|<\/ul>|<li>|<\/li>/g, '')
+          .replace(/<\/?p>/g, '')
+          .replace(/<\/?.*?>/g, '');
 
         // Ajout emojis par ligne
-        bloc = bloc.replace(/Commencez votre parcours|Pour commencer/i, '⛩ $&');
+        bloc = bloc.replace(/(Commencez votre parcours|Pour commencer)/i, '⛩ $1');
         bloc = bloc.replace(/À midi/i, '🍽️ À midi');
         bloc = bloc.replace(/L’après-midi/i, '🌿 L’après-midi');
         bloc = bloc.replace(/Pour la nuit|En soirée/i, '🛌 $&');
 
-        // Nettoyage HTML
-        bloc = bloc.replace(/<\/?.*?>/g, '');
-
-        // Encadrement Markdown
+        // Encadrement visuel avec blockquote Markdown
         bloc = `> ${bloc.split('\n').map(line => line.trim()).join('\n> ')}`;
 
         // Insertion avant Jour 1
         result = result.replace(/(##\s*Jour\s*1[^]*)/i, `${bloc}\n\n$1`);
       } else {
-        console.warn("⚠️ Bloc enrichissement Kyoto non détecté dans le prompt.");
+        console.warn("⚠️ Bloc enrichissement Kyoto non détecté dans le résultat.");
       }
     } catch (err) {
       console.error("❌ Erreur lors de l'injection du bloc enrichissement :", err);
     }
 
-    // Ajouter emojis dans les moments de la journée
+    // Emoji dans les moments de la journée
     result = result.replace(/###\s*Matin/g, '### 🍵 Matin');
     result = result.replace(/###\s*Midi/g, '### 🍽️ Midi');
     result = result.replace(/###\s*Après-midi/g, '### ☀️ Après-midi');
@@ -82,25 +83,27 @@ app.post('/api/planificateur', async (req, res) => {
   }
 });
 
-// ROUTE : Génération PDF stylé et structuré
+// ROUTE : Génération PDF stylé
 app.post('/api/pdf', async (req, res) => {
   const markdown = req.body.texte || 'Itinéraire vide.';
 
   try {
     const templatePath = path.join(__dirname, 'templates', 'template.html');
     let htmlTemplate = fs.readFileSync(templatePath, 'utf8');
-
     let htmlContent = marked.parse(markdown);
 
+    // Ajout des blocs par jour
     htmlContent = htmlContent.replace(/<h2>(Jour\s*\d+.*?)<\/h2>/gi, (_m, title) => {
       return `</div><div class="jour"><h2 class="journee">${title}</h2>`;
     });
     htmlContent = `<div class="jour">` + htmlContent + `</div>`;
 
+    // Moments + liens externes
     htmlContent = htmlContent.replace(/<h3>\s*Matin\s*<\/h3>/gi, '<h3 class="moment">🍵 Matin</h3>');
     htmlContent = htmlContent.replace(/<h3>\s*Midi\s*<\/h3>/gi, '<h3 class="moment">🍽️ Midi</h3>');
     htmlContent = htmlContent.replace(/<h3>\s*Après-midi\s*<\/h3>/gi, '<h3 class="moment">☀️ Après-midi</h3>');
     htmlContent = htmlContent.replace(/<h3>\s*Soir\s*<\/h3>/gi, '<h3 class="moment">🌙 Soir</h3>');
+    htmlContent = htmlContent.replace(/<a href="([^"]+)"/gi, '<a href="$1" target="_blank"');
 
     htmlContent = htmlContent.replace(/👉\s*<a href="([^"]+)"[^>]*>(.*?)<\/a>/gi, (_m, url, txt) => {
       return `<p class="link-block">👉 <a href="${url}" class="lien" target="_blank">${txt}</a></p>`;
