@@ -122,12 +122,16 @@ Le voyageur cherche une expérience adaptée à :
       }
 
       enrichissementVille = `
-    <div class="recommendation-box">
-    <p><strong>✨ Notre recommandation pour enrichir votre séjour à Kyoto :</strong></p>
-    <ul>
-    ${lignes.map(l => `<li>🌸 ${l}</li>`).join('')}
+<div class="bloc-recommandation">
+<p><strong>🌟 Notre recommandation pour enrichir votre séjour :</strong></p>
+<ul>
+  <li>⛩️ ${lignes[0]}</li>
+  <li>🍽️ ${lignes[1]}</li>
+  <li>🎐 ${lignes[2]}</li>
+  <li>🛌 ${lignes[3]}</li>
 </ul>
-</div>`;
+</div>
+`;
     }
   }
 
