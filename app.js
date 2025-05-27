@@ -46,9 +46,6 @@ app.post('/api/planificateur', async (req, res) => {
   console.warn("⚠️ Bloc enrichissement Kyoto non détecté dans le prompt.");
 }
 
-if (enrichBlocStart !== -1 && enrichBlocEnd !== -1) {
-  let bloc = prompt.substring(enrichBlocStart, enrichBlocEnd).trim();
-
   // Stylisation Markdown
   bloc = bloc.replace(/^### Notre recommandation pour enrichir votre séjour.*$/im, '**🗾 Notre recommandation pour enrichir votre séjour à Kyoto :**');
 
