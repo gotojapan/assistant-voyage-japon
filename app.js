@@ -37,13 +37,17 @@ app.post('/api/planificateur', async (req, res) => {
     const responseJson = await completion.json();
     let result = responseJson.choices?.[0]?.message?.content || "⚠️ Aucun résultat généré.";
 
-    // ✅ Bloc enrichissement Kyoto (stylisé, avec emojis et encadré)
+  // ✅ Bloc enrichissement Kyoto (stylisé, avec emojis et encadré)
+try {
   const enrichBlocMatch = prompt.match(/<div class="bloc-recommandation">[\s\S]+?<\/div>/i);
   if (enrichBlocMatch) {
-  console.log("✅ Bloc enrichissement Kyoto détecté et injecté !");
-  result = `${enrichBlocMatch[0].trim()}\n\n${result}`;
-} else {
-  console.warn("⚠️ Bloc enrichissement Kyoto non détecté dans le prompt.");
+    console.log("✅ Bloc enrichissement Kyoto détecté et injecté !");
+    result = `${enrichBlocMatch[0].trim()}\n\n${result}`;
+  } else {
+    console.warn("⚠️ Bloc enrichissement Kyoto non détecté dans le prompt.");
+  }
+} catch (err) {
+  console.error("❌ Erreur lors de l'injection du bloc enrichissement :", err);
 }
 
   // Stylisation Markdown
