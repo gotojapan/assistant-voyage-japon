@@ -122,11 +122,12 @@ Le voyageur cherche une expérience adaptée à :
       }
 
       enrichissementVille = `
----
-
-### Notre recommandation pour enrichir votre séjour à Kyoto
-
-${lignes.join('\n\n')}`;
+    <div class="recommendation-box">
+    <p><strong>✨ Notre recommandation pour enrichir votre séjour à Kyoto :</strong></p>
+    <ul>
+    ${lignes.map(l => `<li>🌸 ${l}</li>`).join('')}
+</ul>
+</div>`;
     }
   }
 
