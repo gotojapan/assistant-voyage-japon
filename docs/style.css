@@ -156,28 +156,28 @@ h3.moment::before {
 
 /* Bloc de recommandation enrichie (Kyoto ou autre) */
 .recommendation-box {
-  background: #fff7f3;
   border-left: 4px solid #DF2A2F;
-  padding: 16px 20px;
-  margin-bottom: 32px;
-  margin-top: 32px;
+  background: #fff7f3;
+  padding: 1rem 1.5rem;
+  margin-bottom: 2rem;
+  margin-top: 2rem;
   border-radius: 8px;
-  font-size: 16px;
-  line-height: 1.5;
+  font-size: 1rem;
+  line-height: 1.6;
 }
 
 .recommendation-box p:first-child {
   font-weight: bold;
-  margin-bottom: 12px;
-  font-size: 17px;
+  font-size: 1.1rem;
+  color: #DF2A2F;
+  margin-bottom: 0.8rem;
 }
 
 .recommendation-box ul {
+  padding-left: 1.2rem;
   margin: 0;
-  padding-left: 1.2em;
 }
 
 .recommendation-box li {
-  margin-bottom: 8px;
-  line-height: 1.4;
+  margin-bottom: 0.3rem;
 }
