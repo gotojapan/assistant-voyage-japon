@@ -122,7 +122,7 @@ Le voyageur cherche une expérience adaptée à :
       }
 
       enrichissementVille = `
-<div class="bloc-recommandation">
+<div class="recommendation-box">
 <p><strong>🌟 Notre recommandation pour enrichir votre séjour :</strong></p>
 <ul>
   <li>⛩️ ${lignes[0]}</li>
