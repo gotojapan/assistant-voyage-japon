@@ -37,12 +37,32 @@ app.post('/api/planificateur', async (req, res) => {
     const responseJson = await completion.json();
     let result = responseJson.choices?.[0]?.message?.content || "⚠️ Aucun résultat généré.";
 
-    // ✅ Injection forcée du bloc "Notre recommandation pour enrichir votre séjour à Kyoto" depuis le prompt si présent
-    const enrichBlocMatch = prompt.match(/###\s*Notre recommandation pour enrichir votre séjour[\s\S]+?(?=##\s*Jour\s*\d+)/i);
-    if (enrichBlocMatch) {
-  console.log("✅ Bloc enrichissement Kyoto détecté et injecté !");
-  result = `${enrichBlocMatch[0].trim()}\n\n${result}`;
-  } else {
+    // ✅ Injection forcée du bloc "Notre recommandation pour enrichir votre séjour" depuis le prompt si présent
+    // ✅ Bloc enrichissement Kyoto (stylisé, avec emojis et encadré)
+const enrichBlocStart = prompt.indexOf('### Notre recommandation pour enrichir votre séjour');
+const enrichBlocEnd = prompt.search(/##\s*Jour\s*1/i);
+
+if (enrichBlocStart !== -1 && enrichBlocEnd !== -1) {
+  let bloc = prompt.substring(enrichBlocStart, enrichBlocEnd).trim();
+
+  // Stylisation Markdown
+  bloc = bloc.replace(/^### Notre recommandation pour enrichir votre séjour.*$/im, '**🗾 Notre recommandation pour enrichir votre séjour à Kyoto :**');
+
+  // Ajout emojis par ligne (1er mot clé repéré automatiquement)
+  bloc = bloc.replace(/(Commencez votre parcours|Pour commencer)/i, '⛩ $1');
+  bloc = bloc.replace(/À midi/i, '🍽️ À midi');
+  bloc = bloc.replace(/L’après-midi/i, '🌿 L’après-midi');
+  bloc = bloc.replace(/Pour la nuit|En soirée/i, '🛌 Pour la nuit');
+
+  // Suppression sauts de ligne multiples
+  bloc = bloc.replace(/\n{2,}/g, '\n');
+
+  // Encadrement visuel avec blockquote Markdown simulé (→ sera transformé via CSS)
+  bloc = `> ${bloc.split('\n').join('\n> ')}`;
+
+  console.log("✅ Bloc enrichissement Kyoto injecté (stylisé)");
+  result = `${bloc}\n\n${result}`;
+} else {
   console.warn("⚠️ Bloc enrichissement Kyoto non détecté dans le prompt.");
 }
 
