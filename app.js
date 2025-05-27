@@ -1,3 +1,4 @@
+
 require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -16,7 +17,6 @@ app.use(cors({ origin: 'https://gotojapan.github.io' }));
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
-// ROUTE : Génération texte via OpenRouter
 app.post('/api/planificateur', async (req, res) => {
   const userInput = req.body;
   const prompt = generatePrompt(userInput);
@@ -37,23 +37,22 @@ app.post('/api/planificateur', async (req, res) => {
     const responseJson = await completion.json();
     let result = responseJson.choices?.[0]?.message?.content || "⚠️ Aucun résultat généré.";
 
-    // ✅ Injection d'un bloc <div class="recommendation-box"> proprement transformé en bloc Markdown stylé
+    // ✅ Bloc enrichissement Kyoto (stylisé, avec emojis et encadré)
     try {
       const enrichBlocMatch = prompt.match(/<div class="recommendation-box">[\s\S]+?<\/div>/i);
       if (enrichBlocMatch) {
         console.log("✅ Bloc enrichissement Kyoto détecté et injecté !");
         let bloc = enrichBlocMatch[0]
-          .replace(/^<div class="recommendation-box">/, '')
-          .replace(/<\/div>$/, '')
-          .replace(/^<p><strong>(.*?)<\/strong><\/p>/i, '**$1**') // titre
-          .replace(/<\/?ul>/g, '')
+          .replace(/<p><strong>[^<]+<\/strong><\/p>/i, '**🌟 Notre recommandation pour enrichir votre séjour :**')
+          .replace(/<li>\s*undefined\s*<\/li>/gi, '')
           .replace(/<li>(.*?)<\/li>/g, '- $1')
-          .replace(/<\/?em>|<\/?p>/g, '') // nettoyage
+          .replace(/<[^>]+>/g, '') // remove all remaining HTML tags
           .trim();
 
-        bloc = `> ${bloc.split('\n').map(line => line.trim()).join('\n> ')}`;
+        // Encadrement en blockquote Markdown
+        bloc = '> ' + bloc.split('\n').map(line => line.trim()).join('\n> ');
 
-        // Insertion juste avant le titre ## Jour 1
+        // Insertion juste avant le Jour 1
         result = result.replace(/(##\s*Jour\s*1[^]*)/i, `${bloc}\n\n$1`);
       } else {
         console.warn("⚠️ Bloc enrichissement Kyoto non détecté dans le prompt.");
@@ -62,28 +61,25 @@ app.post('/api/planificateur', async (req, res) => {
       console.error("❌ Erreur lors de l'injection du bloc enrichissement :", err);
     }
 
-    // Ajouter emojis dans les moments de la journée
+    // Emojis automatiques
     result = result.replace(/###\s*Matin/g, '### 🍵 Matin');
     result = result.replace(/###\s*Midi/g, '### 🍽️ Midi');
     result = result.replace(/###\s*Après-midi/g, '### ☀️ Après-midi');
     result = result.replace(/###\s*Soir/g, '### 🌙 Soir');
 
     res.json({ result });
-
   } catch (err) {
     console.error("❌ Erreur OpenRouter :", err);
     res.status(500).json({ error: err.toString() });
   }
 });
 
-// ROUTE : Génération PDF stylé et structuré
 app.post('/api/pdf', async (req, res) => {
   const markdown = req.body.texte || 'Itinéraire vide.';
 
   try {
     const templatePath = path.join(__dirname, 'templates', 'template.html');
     let htmlTemplate = fs.readFileSync(templatePath, 'utf8');
-
     let htmlContent = marked.parse(markdown);
 
     htmlContent = htmlContent.replace(/<h2>(Jour\s*\d+.*?)<\/h2>/gi, (_m, title) => {
@@ -96,19 +92,10 @@ app.post('/api/pdf', async (req, res) => {
     htmlContent = htmlContent.replace(/<h3>\s*Après-midi\s*<\/h3>/gi, '<h3 class="moment">☀️ Après-midi</h3>');
     htmlContent = htmlContent.replace(/<h3>\s*Soir\s*<\/h3>/gi, '<h3 class="moment">🌙 Soir</h3>');
 
-    htmlContent = htmlContent.replace(/👉\s*<a href="([^"]+)"[^>]*>(.*?)<\/a>/gi, (_m, url, txt) => {
-      return `<p class="link-block">👉 <a href="${url}" class="lien" target="_blank">${txt}</a></p>`;
-    });
+    htmlContent = htmlContent.replace(/<a href="([^"]+)"(.*?)>/gi, '<a href="$1" target="_blank"$2>');
 
-    const dateStr = req.body.date || '';
-    const introBlock = generateIntroHtmlForPdf(dateStr);
-    htmlTemplate = htmlTemplate.replace('{{{content}}}', introBlock + htmlContent);
-
-    const browser = await puppeteer.launch({
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
-    });
-
+    htmlTemplate = htmlTemplate.replace('{{{content}}}', htmlContent);
+    const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
     const page = await browser.newPage();
     await page.setContent(htmlTemplate, { waitUntil: 'networkidle0' });
 
@@ -129,58 +116,6 @@ app.post('/api/pdf', async (req, res) => {
   }
 });
 
-function generateIntroHtmlForPdf(dateStr) {
-  if (!dateStr) return '';
-  const mois = new Date(dateStr).getMonth();
-  const moisNom = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"][mois];
-
-  const meteo = {
-    0: { t: "0-10°C", icon: "❄️", tips: "Prévoir vêtements chauds et imperméables." },
-    1: { t: "3-12°C", icon: "🌬️", tips: "Encore froid. Restez couvert." },
-    2: { t: "6-15°C", icon: "🌱", tips: "Premiers signes du printemps." },
-    3: { t: "10-20°C", icon: "🌸", tips: "Saison des cerisiers en fleurs." },
-    4: { t: "15-25°C", icon: "🌤️", tips: "Températures douces et floraisons." },
-    5: { t: "18-27°C", icon: "🌦️", tips: "Début de la saison des pluies." },
-    6: { t: "23-32°C", icon: "🌞", tips: "Chaleur et humidité marquées." },
-    7: { t: "25-33°C", icon: "☀️", tips: "Très chaud, bien s'hydrater." },
-    8: { t: "22-30°C", icon: "🍂", tips: "Fin de l'été, premiers typhons." },
-    9: { t: "17-25°C", icon: "🍁", tips: "Temps agréable, début de l'automne." },
-    10: { t: "10-20°C", icon: "🍂", tips: "Feuilles rouges, frais le matin." },
-    11: { t: "5-12°C", icon: "🎄", tips: "Froid sec, fêtes lumineuses." },
-  }[mois];
-
-  return `
-  <div style="display: flex; gap: 12px; margin-bottom: 24px;">
-    <div style="flex:1; border-left: 4px solid #DF2A2F; padding: 12px; background: #f5f5f5; border-radius: 6px;">
-      <h3 style="margin: 0 0 8px; font-size: 16px; color: #DF2A2F">${meteo.icon} Météo en ${moisNom}</h3>
-      <ul style="margin: 0; padding-left: 18px;">
-        <li>Températures moyennes : ${meteo.t}</li>
-        <li>${meteo.tips}</li>
-        <li>Vêtements : couches légères + pull / veste</li>
-      </ul>
-    </div>
-    <div style="flex:1; border-left: 4px solid #DF2A2F; padding: 12px; background: #f5f5f5; border-radius: 6px;">
-      <h3 style="margin: 0 0 8px; font-size: 16px; color: #DF2A2F">🚆 Transport</h3>
-      <ul style="margin: 0; padding-left: 18px;">
-        <li><strong>Japan Rail Pass</strong> : à acheter avant le départ</li>
-        <li><strong>Pass régionaux</strong> : Hakone / Kamakura / Kansai</li>
-        <li><strong>IC Cards</strong> : Suica, Pasmo, Icoca</li>
-      </ul>
-    </div>
-    <div style="flex:1; border-left: 4px solid #DF2A2F; padding: 12px; background: #f5f5f5; border-radius: 6px;">
-      <h3 style="margin: 0 0 8px; font-size: 16px; color: #DF2A2F">💡 Conseils pratiques</h3>
-      <ul style="margin: 0; padding-left: 18px;">
-        <li>💴 Devise : yen (prévoir du liquide)</li>
-        <li>📶 Pocket WiFi ou carte SIM</li>
-        <li>🔌 100V Type A / B</li>
-        <li>🗣️ Appli de traduction recommandée</li>
-        <li>🧦 Étiquette : pas de pourboire, déchaussage</li>
-      </ul>
-    </div>
-  </div>
-  `;
-}
-
 app.listen(PORT, () => {
-  console.log(`🚀 Serveur final avec PDF stylisé lancé sur le port ${PORT}`);
+  console.log(`🚀 Serveur lancé sur le port ${PORT}`);
 });
