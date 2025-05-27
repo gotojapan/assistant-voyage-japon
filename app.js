@@ -16,6 +16,7 @@ app.use(cors({ origin: 'https://gotojapan.github.io' }));
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
+// ROUTE : Génération texte via OpenRouter
 app.post('/api/planificateur', async (req, res) => {
   const userInput = req.body;
   const prompt = generatePrompt(userInput);
@@ -36,37 +37,45 @@ app.post('/api/planificateur', async (req, res) => {
     const responseJson = await completion.json();
     let result = responseJson.choices?.[0]?.message?.content || "⚠️ Aucun résultat généré.";
 
-    // ✅ Bloc enrichissement Kyoto : trouver, styliser, injecter avant ## Jour 1
+    // ✅ Bloc enrichissement Kyoto (stylisé, avec emojis et encadré)
     try {
-      const enrichMatch = prompt.match(/<div class=\"bloc-recommandation\">([\s\S]+?)<\/div>/i);
-      if (enrichMatch) {
-        let bloc = enrichMatch[1].trim();
-        console.log("✅ Bloc enrichissement Kyoto détecté !");
+      const enrichBlocMatch = prompt.match(/<div class="recommendation-box">[\s\S]+?<\/div>/i);
+      if (enrichBlocMatch) {
+        console.log("✅ Bloc enrichissement Kyoto détecté et injecté !");
+        let bloc = enrichBlocMatch[0].trim();
 
         // Stylisation Markdown
-        bloc = bloc.replace(/^### Notre recommandation.*$/im, '**🌟 Notre recommandation pour enrichir votre séjour :**');
-        bloc = bloc.replace(/(Commencez votre parcours|Pour commencer)/i, '⛩ $1');
-        bloc = bloc.replace(/\u00c0 midi/i, '🍽️ À midi');
-        bloc = bloc.replace(/L’après-midi/i, '🌿 L’après-midi');
-        bloc = bloc.replace(/Pour la nuit|En soirée/i, '🛌 Pour la nuit');
-        bloc = bloc.replace(/\n{2,}/g, '\n');
-        bloc = `> ${bloc.split('\n').join('\n> ')}`;
+        bloc = bloc.replace(/^<p><strong>🌟 Notre recommandation.*?<\/strong><\/p>/i, '**🌟 Notre recommandation pour enrichir votre séjour :**');
 
-        result = result.replace(/##\s*Jour\s*1.*/i, `${bloc}\n\n$&`);
-        console.log("✅ Bloc enrichissement Kyoto injecté avant Jour 1");
+        // Ajout emojis par ligne
+        bloc = bloc.replace(/Commencez votre parcours|Pour commencer/i, '⛩ $&');
+        bloc = bloc.replace(/À midi/i, '🍽️ À midi');
+        bloc = bloc.replace(/L’après-midi/i, '🌿 L’après-midi');
+        bloc = bloc.replace(/Pour la nuit|En soirée/i, '🛌 $&');
+
+        // Nettoyage HTML
+        bloc = bloc.replace(/<\/?.*?>/g, '');
+
+        // Encadrement Markdown
+        bloc = `> ${bloc.split('\n').map(line => line.trim()).join('\n> ')}`;
+
+        // Insertion avant Jour 1
+        result = result.replace(/(##\s*Jour\s*1[^]*)/i, `${bloc}\n\n$1`);
       } else {
-        console.warn("⚠️ Bloc enrichissement Kyoto non trouvé dans le prompt.");
+        console.warn("⚠️ Bloc enrichissement Kyoto non détecté dans le prompt.");
       }
     } catch (err) {
       console.error("❌ Erreur lors de l'injection du bloc enrichissement :", err);
     }
 
+    // Ajouter emojis dans les moments de la journée
     result = result.replace(/###\s*Matin/g, '### 🍵 Matin');
     result = result.replace(/###\s*Midi/g, '### 🍽️ Midi');
     result = result.replace(/###\s*Après-midi/g, '### ☀️ Après-midi');
     result = result.replace(/###\s*Soir/g, '### 🌙 Soir');
 
     res.json({ result });
+
   } catch (err) {
     console.error("❌ Erreur OpenRouter :", err);
     res.status(500).json({ error: err.toString() });
@@ -84,17 +93,17 @@ app.post('/api/pdf', async (req, res) => {
     let htmlContent = marked.parse(markdown);
 
     htmlContent = htmlContent.replace(/<h2>(Jour\s*\d+.*?)<\/h2>/gi, (_m, title) => {
-      return `</div><div class=\"jour\"><h2 class=\"journee\">${title}</h2>`;
+      return `</div><div class="jour"><h2 class="journee">${title}</h2>`;
     });
-    htmlContent = `<div class=\"jour\">` + htmlContent + `</div>`;
+    htmlContent = `<div class="jour">` + htmlContent + `</div>`;
 
     htmlContent = htmlContent.replace(/<h3>\s*Matin\s*<\/h3>/gi, '<h3 class="moment">🍵 Matin</h3>');
     htmlContent = htmlContent.replace(/<h3>\s*Midi\s*<\/h3>/gi, '<h3 class="moment">🍽️ Midi</h3>');
     htmlContent = htmlContent.replace(/<h3>\s*Après-midi\s*<\/h3>/gi, '<h3 class="moment">☀️ Après-midi</h3>');
     htmlContent = htmlContent.replace(/<h3>\s*Soir\s*<\/h3>/gi, '<h3 class="moment">🌙 Soir</h3>');
 
-    htmlContent = htmlContent.replace(/👉\s*<a href=\"([^\"]+)\"[^>]*>(.*?)<\/a>/gi, (_m, url, txt) => {
-      return `<p class=\"link-block\">👉 <a href=\"${url}\" class=\"lien\" target=\"_blank\">${txt}</a></p>`;
+    htmlContent = htmlContent.replace(/👉\s*<a href="([^"]+)"[^>]*>(.*?)<\/a>/gi, (_m, url, txt) => {
+      return `<p class="link-block">👉 <a href="${url}" class="lien" target="_blank">${txt}</a></p>`;
     });
 
     const dateStr = req.body.date || '';
@@ -136,14 +145,14 @@ function generateIntroHtmlForPdf(dateStr) {
     1: { t: "3-12°C", icon: "🌬️", tips: "Encore froid. Restez couvert." },
     2: { t: "6-15°C", icon: "🌱", tips: "Premiers signes du printemps." },
     3: { t: "10-20°C", icon: "🌸", tips: "Saison des cerisiers en fleurs." },
-    4: { t: "15-25°C", icon: "⛅", tips: "Températures douces et floraisons." },
+    4: { t: "15-25°C", icon: "🌤️", tips: "Températures douces et floraisons." },
     5: { t: "18-27°C", icon: "🌦️", tips: "Début de la saison des pluies." },
     6: { t: "23-32°C", icon: "🌞", tips: "Chaleur et humidité marquées." },
     7: { t: "25-33°C", icon: "☀️", tips: "Très chaud, bien s'hydrater." },
     8: { t: "22-30°C", icon: "🍂", tips: "Fin de l'été, premiers typhons." },
     9: { t: "17-25°C", icon: "🍁", tips: "Temps agréable, début de l'automne." },
     10: { t: "10-20°C", icon: "🍂", tips: "Feuilles rouges, frais le matin." },
-    11: { t: "5-12°C", icon: "🎄", tips: "Froid sec, fêtes lumineuses." }
+    11: { t: "5-12°C", icon: "🎄", tips: "Froid sec, fêtes lumineuses." },
   }[mois];
 
   return `
@@ -171,7 +180,7 @@ function generateIntroHtmlForPdf(dateStr) {
         <li>📶 Pocket WiFi ou carte SIM</li>
         <li>🔌 100V Type A / B</li>
         <li>🗣️ Appli de traduction recommandée</li>
-        <li>🧶 Étiquette : pas de pourboire, déchaussage</li>
+        <li>🧦 Étiquette : pas de pourboire, déchaussage</li>
       </ul>
     </div>
   </div>
